@@ -1,0 +1,15 @@
+.nav-bar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  background-color: white;
+  border-bottom: 1px solid #ddd; /* Add a bottom border for styling */
+  z-index: 1000; /* Ensure navbar stays on top of other content */
+}
+
+.form-container {
+  margin-top: 125px;
+  max-width: 400px; 
+  margin-left: auto; 
+  margin-right: auto;
+}
