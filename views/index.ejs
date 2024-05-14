@@ -12,6 +12,8 @@
     <link rel="stylesheet" href="/styles/index.css" />
     <link rel="stylesheet" href="/bootstrap/css/mdb.min.css" />
     <script src="/scripts/index.js"></script>
+
+
     <script src="/bootstrap/js/mdb.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
@@ -24,6 +26,7 @@
     <script async defer crossorigin="anonymous"
         src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v19.0&appId=417605231226749"
         nonce="rsxWh6CJ"></script>
+
 
     <!-- Nav bar -->
     <div class="nav-bar py-1 bg-white border-bottom">
@@ -49,26 +52,9 @@
                         </a>
                         <% } %>
 
-                            <!-- Right elements -->
             </div>
 
-            <!-- Search bar -->
-            <div class="col">
-                <form action="/search" method="GET" class="d-flex d-inline-block">
-                    <input type="text" name="query" placeholder="Search..." class="form-control">
-
-                    <button type="submit" class="btn btn-primary">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                            class="bi bi-search" viewBox="0 0 16 16">
-                            <path
-                                d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001q.044.06.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1 1 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0" />
-                        </svg>
-                    </button>
-
-                </form>
-            </div>
-
-
+     
             <!-- Centered title -->
             <div class="col" id="page_title" style="cursor: pointer;">
                 <h1>Ruthy Michaels</h1>
@@ -113,147 +99,148 @@
     </div>
     <!-- END nav bar -->
 
-    <% if (session && session.login) { %>
-        <div class="col-lg form-container border rounded justify-content-center align-items-center text-center">
-            <h2 class="text-center m-2">Log in</h2>
 
-            <!-- login form -->
-            <form class="container" style="width: 90%;" action="/login" method="POST">
+    <% if (session && (session.login || session.createAccount)) { %>
+        <div id="overlay"></div>
+        <% } %>
 
-                <!-- email input -->
-                <div class="form-outline m-3">
-                    <input type="email" class="form-control border" id="email" name="email" required />
-                    <label class="form-label" for="email">Email address</label>
-                    <label class='error-label' for='email' id='emailError' hidden>* email invalid</label>
-                </div>
+            <% if (session && session.login) { %>
+                <div
+                    class="col-lg form-container border rounded justify-content-center align-items-center text-center">
+                    <h2 class="text-center mt-2 mb-3">login</h2>
 
-                <!-- password input -->
-                <div class="form-outline m-3">
-                    <input type="password" class="form-control border" id="password" name="password" required />
-                    <label class="form-label" for="password">Password</label>
-                    <label class='error-label' for='password' id='passwordError' hidden>* password
-                        invalid</label>
-                </div>
+                    <!-- login form -->
+                    <form id="login-form" class="container" style="width: 90%;" action="/login" method="POST">
 
-                <!-- show password checkbox -->
-                <div class="row m-3">
-                    <div class="col d-flex justify-content-center">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="showPassword"
-                                onclick="togglePassword()" />
-                            show password
+                        <!-- Email input -->
+                        <div class="form-outline mb-4" style="text-align: left;">
+                            <input type="email" class="form-control border" id="email_login" name="email" required />
+                            <label class="form-label" for="email_login">Email address</label>
+                            <label class='error-label' for='email_login' id='emailError_login' hidden>* email invalid</label>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Submit button -->
-                <button type="SUBMIT" class="btn btn-primary btn-block m-2 form-btn">Sign in</button>
-
-                <p>or</p>
-
-                <!-- Or Login with Facebook and Google buttons -->
-                <div class="m-3">
-
-                    <div class="fb-login-button" data-width="" data-size="large" data-button-type="" data-layout=""
-                        data-auto-logout-link="false" data-use-continue-as="true">
-
-                    </div>
-
-                    <div class="m-2">
-                        <a href="/auth/google" class="btn btn-link btn-block" style="text-decoration: underline;">Login
-                            with
-                            Google</a>
-                    </div>
-
-                </div>
-
-
-                <!-- create account button -->
-                <div class="text-center m-3">
-                    <p>New user? <a href="/createAccount">Create account</a></p>
-                </div>
-
-            </form>
-
-        </div>
-    <% } %>
-
-    <% if (session && session.createAccount) { %>
-        <div class="col-lg form-container border rounded justify-content-center align-items-center text-center">
-            <h2 class="text-center m-2">Create account</h2>
-
-            <!-- login form -->
-            <form id="createAccount-form" class="container" style="width: 90%;" action="/createAccount" method="POST">
-
-
-                <!-- Email input -->
-                <div class="form-outline mb-4">
-                    <input type="email" class="form-control border" id="email" name="email" required />
-                    <label class="form-label" for="email">Email address</label>
-                    <label class='error-label' for='email' id='emailError' hidden>* email invalid</label>
-
-                </div>
-
-                <!-- Password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" class="form-control border" id="password" name="password" required />
-                    <label class="form-label" for="password">Password</label>
-                    <label class='error-label' for='password' id='passwordError' hidden>* password must be 6
-                        characters with 1 uppercase</label>
-
-                </div>
-
-                <!-- Confirm password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" class="form-control border" id="confPassword" name="confPassword"
-                        required />
-                    <label class="form-label" for="confPassword">Confirm password</label>
-                    <label class='error-label' for='confPassword' id='confPasswordError' hidden>* passwords must
-                        match</label>
-                </div>
-
-                <!-- show password checkbox -->
-                <div class="row mb-4">
-                    <div class="col d-flex justify-content-center">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" value="" id="showPassword"
-                                onclick="togglePassword()" /> show password
+                        <!-- Password input -->
+                        <div class="form-outline mb-4" style="text-align: left;">
+                            <input type="password" class="form-control border" id="password_login" name="password" required />
+                            <label class="form-label" for="password_login">Password</label>
+                            <label class='error-label' for='password_login' id='passwordError_login' hidden>* password must be 6 characters with 1 uppercase</label>
                         </div>
-                    </div>
+
+                        <!-- show password checkbox -->
+                        <div class="row mb-4">
+                            <div class="col d-flex justify-content-center">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" onclick="togglePassword()" /> show password
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="SUBMIT" class="btn btn-primary btn-block mb-4">Sign in</button>
+
+                        <p>or</p>
+
+                        <!-- Or Login with Facebook and Google buttons -->
+                        <div class="m-3">
+
+                            <div class="fb-login-button" data-width="" data-size="large" data-button-type=""
+                                data-layout="" data-auto-logout-link="false" data-use-continue-as="true">
+
+                            </div>
+
+                            <div class="m-2">
+                                <a href="/auth/google" class="btn btn-link btn-block"
+                                    style="text-decoration: underline;">Login
+                                    with
+                                    Google</a>
+                            </div>
+
+                        </div>
+
+                        <!-- Log in button -->
+                        <div class="text-center">
+                            <p>Don't have an account? <a href="/createAccount">Sign up</a></p>
+                        </div>
+                    </form>
+
                 </div>
+                <% } %>
 
-                <!-- Submit button -->
-                <button type="SUBMIT" class="btn btn-primary btn-block mb-4">Sign up</button>
+                    <% if (session && session.createAccount) { %>
+                        <div
+                            class="col-lg form-container border rounded justify-content-center align-items-center text-center">
+                            <h2 class="text-center mt-2 mb-3">Create account</h2>
 
-                <p>or</p>
+                            <!-- login form -->
+                            <form id="createAccount-form" class="container" style="width: 90%;" action="/createAccount" method="POST">
 
-                <!-- Or Login with Facebook and Google buttons -->
-                <div class="m-3">
+                                <!-- Email input -->
+                                <div class="form-outline mb-4">
+                                    <input type="email" class="form-control border" id="email_signup" name="email" required />
+                                    <label class="form-label" for="email_signup">Email address</label>
+                                    <label class='error-label' for='email_signup' id='emailError_signup' hidden>* email
+                                        invalid</label>
+                                </div>
 
-                    <div class="fb-login-button" data-width="" data-size="large" data-button-type="" data-layout=""
-                        data-auto-logout-link="false" data-use-continue-as="true">
+                                <!-- Password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" class="form-control border" id="password_signup" name="password"
+                                        required />
+                                    <label class="form-label" for="password_signup">Password</label>
+                                    <label class='error-label' for='password_signup' id='passwordError_signup' hidden>* password must
+                                        be 6
+                                        characters with 1 uppercase</label>
+                                </div>
 
-                    </div>
+                                <!-- Confirm password input -->
+                                <div class="form-outline mb-4">
+                                    <input type="password" class="form-control border" id="confPassword_signup"
+                                        name="confPassword" required />
+                                    <label class="form-label" for="confPassword_signup">Confirm password</label>
+                                    <label class='error-label' for='confPassword_signup' id='confPasswordError_signup' hidden>*
+                                        passwords must
+                                        match</label>
+                                </div>
 
-                    <div class="m-2">
-                        <a href="/auth/google" class="btn btn-link btn-block" style="text-decoration: underline;">Login
-                            with
-                            Google</a>
-                    </div>
+                                <!-- show password checkbox -->
+                                <div class="row mb-4">
+                                    <div class="col d-flex justify-content-center">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" onclick="togglePassword()" /> show password
+                                        </div>
+                                    </div>
+                                </div>
 
-                </div>
+                                <!-- Submit button -->
+                                <button type="SUBMIT" class="btn btn-primary btn-block mb-4">Sign up</button>
 
+                                <p>or</p>
 
+                                <!-- Or Login with Facebook and Google buttons -->
+                                <div class="m-3">
 
-                <!-- Log in button -->
-                <div class="text-center">
-                    <p>Already have an account? <a href="/login">Sign in</a></p>
-                </div>
-            </form>
+                                    <div class="fb-login-button" data-width="" data-size="large" data-button-type=""
+                                        data-layout="" data-auto-logout-link="false" data-use-continue-as="true">
 
-        </div>
-    <% } %>
+                                    </div>
 
+                                    <div class="m-2">
+                                        <a href="/auth/google" class="btn btn-link btn-block"
+                                            style="text-decoration: underline;">Login
+                                            with
+                                            Google</a>
+                                    </div>
+
+                                </div>
+
+                                <!-- Log in button -->
+                                <div class="text-center">
+                                    <p>Already have an account? <a href="/login">Sign in</a></p>
+                                </div>
+                            </form>
+
+                        </div>
+                        <% } %>
 
 </body>
 
@@ -265,7 +252,6 @@
         // facebook login
         function statusChangeCallback(response) {
             console.log('statusChangeCallback');
-            console.log(response);
             if (response.status === 'connected') {
                 // Logged into your app and Facebook.
                 testAPI();
@@ -279,7 +265,7 @@
         function checkLoginState() {
             FB.getLoginStatus(function (response) {
                 if (response.status === 'connected') {
-                    console.log(response.authResponse);
+                    // console.log(response.authResponse);
                 };
             });
         };

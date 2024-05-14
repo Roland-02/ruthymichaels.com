@@ -4,10 +4,6 @@ var router = express.Router();
 const mysql = require('mysql');
 var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
-const path = require('path');
-const { spawn } = require('child_process');
-const axios = require('axios');
-
 
 
 //post request - user wants to create again
@@ -18,13 +14,12 @@ router.post('/', async (req, res) => {
 
     if (!email || !password) {
         //empty fields
-        return res.redirect('createAccount');
+        res.render('index', { title: 'Express', session: { email: null, id: null, createAccount: true } });
     }
 
     const hashPassword = await bcrypt.hash(password, 10);
 
     getConnection(async (err, connection) => {
-
 
         if (err) throw (err)
         const sqlSearch = "SELECT * FROM user_login WHERE email = ?"
@@ -40,7 +35,7 @@ router.post('/', async (req, res) => {
                 //user already exists: error
                 connection.release();
                 console.log("------> User already exists");
-                return res.render('createAccount', { title: 'Express', session: req.session, message: 'User already exists' });
+                return res.render('index', { title: 'Express', session: { session: req.session,  message: 'User already exists', createAccount: true } });
 
             }
             else {
@@ -54,11 +49,9 @@ router.post('/', async (req, res) => {
                     res.cookie('sessionEmail', email); // Store email in a cookie
                     console.log("--------> Created new User");
 
-                    await updateProfileAndVectors(user_id);
-
                     connection.release()
 
-                    return res.redirect('index');
+                    return res.redirect('/');
                 });                
             }
         });
@@ -66,6 +59,7 @@ router.post('/', async (req, res) => {
     //end of getConnection
 });
 //end of post request
+
 
 
 module.exports = router;

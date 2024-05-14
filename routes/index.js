@@ -22,6 +22,19 @@ router.get(['/', '/login'], function (req, res) {
 router.get(['/', '/createAccount'], function (req, res) {
     res.render('index', { title: 'Express', session: { email: null, id: null, createAccount: true } });
 });
+
+//user logs out
+router.post('/signout', function (req, res) {
+
+    //clear session
+    res.clearCookie('sessionEmail');
+    res.clearCookie('sessionID');
+    req.session.destroy();
+    console.log("--------> User signed out");
+    res.redirect('/');
+
+});
+
  
  
 

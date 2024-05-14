@@ -17,7 +17,7 @@ router.post('/', async (req, res) => {
 
     if (!email || !password) {
         //empty fields
-        return res.render('login', { title: 'Express', session: req.session, message: null, email: null, id: null });
+        return res.render('index', { title: 'Express', session: req.session, message: null, email: null, id: null, login: true });
     }
 
     getConnection(async (err, connection) => {
@@ -33,7 +33,7 @@ router.post('/', async (req, res) => {
             if (result.length == 0) {
                 connection.release();
                 console.log('--------> User not found');
-                return res.render('login', { title: 'Express', session: req.session, message: 'User not found' });
+                return res.render('index', { title: 'Express', session: req.session, message: 'User not found', login: true });
 
             } else {
                 let dbPassword = result[0].password;
@@ -48,14 +48,12 @@ router.post('/', async (req, res) => {
                         res.cookie('sessionEmail', email); // Store email in a cookie
                         res.cookie('sessionID', user_id);
 
-                        await updateProfileLoadFilms(user_id);
-
-                        return res.redirect('index');
+                        return res.redirect('/');
                     }
                     else {
                         //credentials incorrect
                         connection.release()
-                        return res.render('login', { title: 'Express', session: req.session, message: 'Credentials incorrect' });
+                        return res.render('index', { title: 'Express', session: { session: req.session,  message: 'Credentials incorrect', login: true } });
 
                     }
 
