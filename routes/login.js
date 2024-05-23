@@ -10,7 +10,7 @@ const axios = require('axios');
 
 
 //post request - user wants to login
-router.post('/', async (req, res) => {
+router.post('/login', async (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
@@ -66,6 +66,7 @@ router.post('/', async (req, res) => {
 
 });
 //end of post request
+
 
 
 module.exports = router;

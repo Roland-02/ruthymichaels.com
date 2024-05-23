@@ -30,9 +30,43 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-
 .error-label {
   text-align: left;
   color: red;
   font-size: 12px;
+}
+
+.login-buttons-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+.fa {
+  padding: 20px;
+  font-size: 30px;
+  width: 50px;
+  height: 50px;
+  text-align: center;
+  text-decoration: none;
+}
+
+.fa:hover {
+    cursor: pointer;
+}
+
+/* .fa-facebook {
+  background: #3B5998;
+  color: white;
+} */
+
+.fa-facebook {
+  background: #3B5998;
+  color: white;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.fa-facebook:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 10px 0 rgba(59, 89, 152, 0.5);
 }

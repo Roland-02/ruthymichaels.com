@@ -15,7 +15,13 @@ router.get(['/', '/home'], async function (req, res) {
 
 //login form
 router.get(['/', '/login'], function (req, res) {
-    res.render('index', { title: 'Express', session: { email: null, id: null, login: true } });
+    const session = {
+        email: req.cookies.sessionEmail || null,
+        id: req.cookies.sessionID || null,
+        login: !(req.cookies.sessionEmail && req.cookies.sessionID)
+    };
+    
+    res.render('index', { title: 'Express', session });
 });
 
 //create account form
@@ -24,18 +30,20 @@ router.get(['/', '/createAccount'], function (req, res) {
 });
 
 //user logs out
-router.post('/signout', function (req, res) {
-
-    //clear session
-    res.clearCookie('sessionEmail');
-    res.clearCookie('sessionID');
-    req.session.destroy();
-    console.log("--------> User signed out");
-    res.redirect('/');
-
+router.post(['/', '/signout'], function (req, res) {
+    // Destroy the session
+    req.session.destroy(err => {
+        if (err) {
+            return res.status(500).send('Failed to destroy session');
+        }
+        // Clear cookies
+        res.clearCookie('sessionEmail');
+        res.clearCookie('sessionID');
+        console.log("--------> User signed out");
+        // Redirect to home or login page
+        res.redirect('/');
+    });
 });
 
- 
- 
 
 module.exports = router;

@@ -9,7 +9,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+
+
 
 // load SSL certificate and key
 const sslOptions = {
@@ -27,6 +28,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 app.use(cookieParser());
 app.use(passport.initialize()); 
+
 
 //allow additional files to be read
 app.use('/styles', express.static(path.join(__dirname, 'styles'), { type: 'application/css' }));
@@ -50,11 +52,11 @@ app.use(session({
 var indexRoute = require('./routes/index');
 app.use('/', indexRoute);
 
-var createAccountRoute = require('./routes/createAccount');
-app.use('/createAccount', createAccountRoute);
-
 var loginRoute = require('./routes/login');
 app.use('/login', loginRoute);
+
+var createAccountRoute = require('./routes/createAccount');
+app.use('/createAccount', createAccountRoute);
 
 // Facebook authentication
 passport.use(new FacebookStrategy({
