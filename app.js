@@ -11,7 +11,6 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook').Strategy;
 
 
-
 // load SSL certificate and key
 const sslOptions = {
     key: fs.readFileSync(path.resolve(__dirname, 'keys/private.key')),
@@ -28,7 +27,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 app.use(cookieParser());
 app.use(passport.initialize()); 
-
 
 //allow additional files to be read
 app.use('/styles', express.static(path.join(__dirname, 'styles'), { type: 'application/css' }));

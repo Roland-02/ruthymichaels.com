@@ -59,9 +59,8 @@ window.onload = async function () {
                 document.getElementById('confPasswordError_signup').hidden = true;
             }
     
-            form.submit();
+            createAccountForm.submit();
             
-
         });
     };
 
@@ -133,3 +132,91 @@ function togglePassword() {
     }
     
 };
+
+document.addEventListener('DOMContentLoaded', function() {
+
+    function handleCredentialResponse(response) {
+        const data = parseJwt(response.credential);
+        document.cookie = `sessionID=${data.sub}; path=/; SameSite=None; Secure`;
+        document.cookie = `sessionEmail=${data.email}; path=/; SameSite=None; Secure`;
+        window.location.href = '/';
+    }
+
+    function parseJwt(token) {
+        var base64Url = token.split('.')[1];
+        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+        var jsonPayload = decodeURIComponent(atob(base64).split('').map(function (c) {
+            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+        }).join(''));
+
+        return JSON.parse(jsonPayload);
+    }
+
+    window.handleCredentialResponse = handleCredentialResponse;
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId: '417605231226749',
+            cookie: true,
+            xfbml: true,
+            version: 'v19.0'
+        });
+        FB.AppEvents.logPageView();
+    };
+
+    function checkLoginState() {
+        FB.getLoginStatus(function(response) {
+            if (response.status === 'connected') {
+                statusChangeCallback(response);
+            }
+        });
+    }
+
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+            facebookLogin(response.authResponse.accessToken);
+        } else {
+            document.getElementById('status').innerHTML = 'Please log into this app.';
+            window.location.href = '/login';
+        }
+    }
+
+    function facebookLogin(accessToken) {
+        FB.api('/me', { access_token: accessToken }, function(response) {
+            if (response && !response.error) {
+                console.log('Successful login for: ' + response.name);
+                document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
+                document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
+                window.location.href = '/';
+            } else {
+                console.error('Error during the API call:', response.error);
+            }
+        });
+    }
+
+    function customFacebookLogin() {
+        FB.login(function(response) {
+            if (response.authResponse) {
+                checkLoginState();
+            }
+        }, { scope: 'public_profile,email' });
+    }
+
+    if (document.getElementById('FBlogin')) {
+        document.getElementById('FBlogin').addEventListener('click', function() {
+            customFacebookLogin();
+        });
+    }
+
+    // Google Sign-In callback function
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        document.cookie = `sessionID=${profile.getId()}; path=/; SameSite=None; Secure`;
+        document.cookie = `sessionEmail=${profile.getEmail()}; path=/; SameSite=None; Secure`;
+        window.location.href = '/';
+    }
+
+    window.onSignIn = onSignIn;
+
+
+});

@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    
+
     <meta charset=utf-8>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
@@ -12,18 +12,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <script src="/scripts/index.js"></script>
-
     <script src="/bootstrap/js/mdb.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+
     <script async defer crossorigin="anonymous"
         src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v19.0&appId=417605231226749"
         nonce="rsxWh6CJ"></script>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id"
         content="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
-
-
 
 </head>
 
@@ -96,7 +95,6 @@
             </div>
 
         </div>
-
     </div>
     <!-- END nav bar -->
 
@@ -145,13 +143,26 @@
                         <p>or continue with</p>
 
                         <!-- Or Login with Facebook and Google buttons -->
-                        <div class="login-buttons-container m-3">
+                        <div class="m-3">
 
                             <!-- FB login button -->
+
+                            <!-- <div id="FBlogin" class="fb-login-button m-2" data-max-rows="1" data-size="medium"
+                                data-button-type="continue_with" data-use-continue-as="true">
+                            </div> -->
+
                             <div class="fa fa-facebook m-2" id="FBlogin"></div>
 
                             <!-- Google login button -->
-                            <div class="g-signin2 m-2" data-width="50" data-height="50" data-longtitle="false" onlogin="onSignIn()"></div>
+                            <div class="d-flex justify-content-center">
+                                <div id="g_id_onload"
+                                    data-client_id="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com"
+                                    data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
+                                    data-auto_prompt="false">
+                                </div>
+
+                                <div class="g_id_signin" data-type="standard"></div>
+                            </div>
 
                             <div id="status"></div>
 
@@ -224,15 +235,16 @@
 
                                 <!-- Or Login with Facebook and Google buttons -->
                                 <div class="login-buttons-container m-3">
-        
+
                                     <!-- FB login button -->
                                     <div class="fa fa-facebook m-2" id="FBlogin"></div>
-        
+
                                     <!-- Google login button -->
-                                    <div class="g-signin2 m-2" data-width="50" data-height="50" data-longtitle="false" onlogin="onSignIn()"></div>
-        
+                                    <div class="g-signin2 m-2" data-width="50" data-height="50" data-longtitle="false"
+                                        onlogin="onSignIn()"></div>
+
                                     <div id="status"></div>
-        
+
                                 </div>
 
                                 <!-- Log in button -->
@@ -251,94 +263,7 @@
 
     <script>
 
-        var user_email = `<% session.email %>` || null;
 
-        function onSignIn(googleUser) {
-            var profile = googleUser.getBasicProfile();
-            console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
-            console.log('Name: ' + profile.getName());
-            console.log('Image URL: ' + profile.getImageUrl());
-            console.log('Email: ' + profile.getEmail()); // This is null if the 'email' scope is not present.
-        }
-
-        window.fbAsyncInit = function () {
-            FB.init({
-                appId: '417605231226749',
-                cookie: true,
-                xfbml: true,
-                version: 'v19.0'
-            });
-            FB.AppEvents.logPageView();
-            checkLoginState();
-        };
-
-        function checkLoginState() {
-            FB.getLoginStatus(function (response) {
-                if (response.status === 'connected') {
-                    statusChangeCallback(response);
-                };
-            });
-        };
-
-        // facebook login
-        function statusChangeCallback(response) {
-            if (response.status === 'connected') {
-                // Logged into your app and Facebook.
-                testAPI();
-            } else {
-                document.getElementById('status').innerHTML = 'Please log into this app.';
-                window.location.href = '/login';
-            }
-        };
-
-        function testAPI() {
-            console.log('testAPI called');
-            FB.getLoginStatus(function (response) {
-                if (response.status === 'connected' && !(user_email === null)) {
-                    FB.api('/me', { access_token: response.authResponse.accessToken, fields: 'name,email' }, function (response) {
-                        if (response.name && response.email) {
-                            console.log('succesfull login for ' + response.email)
-                            document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
-                            document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
-                            // window.location.href = '/home';
-
-                        };
-                    });
-                };
-            });
-        };
-
-        (function (d, s, id) {
-            var js, fjs = d.getElementsByTagName(s)[0];
-            if (d.getElementById(id)) { return; }
-            js = d.createElement(s); js.id = id;
-            js.src = "https://connect.facebook.net/en_US/sdk.js";
-            fjs.parentNode.insertBefore(js, fjs);
-        }(document, 'script', 'facebook-jssdk'));
-
-        // handle Facebook logout and then server-side logout
-        if (document.getElementById('signoutBtn')) {
-            document.getElementById('signoutBtn').addEventListener('click', function () {
-                FB.logout(function (response) {
-                    // Log out from the server side after Facebook logout
-                    document.getElementById('signoutForm').submit();
-                });
-            });
-        };
-
-        // Custom Facebook login function
-        function customFacebookLogin() {
-            FB.login(function (response) {
-                if (response.authResponse) {
-                    checkLoginState();
-                }
-            }, { scope: 'public_profile,email' });
-        }
-
-        // Add event listener to the custom element
-        document.getElementById('FBlogin').addEventListener('click', function () {
-            customFacebookLogin();
-        })
 
     </script>
 
