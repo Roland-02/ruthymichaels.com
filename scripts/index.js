@@ -40,27 +40,27 @@ window.onload = async function () {
             var email = document.getElementById('email_signup').value;
             var password = document.getElementById('password_signup').value;
             var confirmPassword = document.getElementById('confPassword_signup').value;
-            
+
             if (!validateEmail_signup(email)) {
                 return document.getElementById('emailError_signup').hidden = false;
-            }else{
+            } else {
                 document.getElementById('emailError_signup').hidden = true;
             }
-    
+
             if (!validatePassword_signup(password)) {
                 return document.getElementById('passwordError_signup').hidden = false;
-            }else{
+            } else {
                 document.getElementById('passwordError_signup').hidden = true;
             }
-    
+
             if (password !== confirmPassword) {
                 return document.getElementById('confPasswordError_signup').hidden = false;
-            }else{
+            } else {
                 document.getElementById('confPasswordError_signup').hidden = true;
             }
-    
+
             createAccountForm.submit();
-            
+
         });
     };
 
@@ -121,19 +121,87 @@ function togglePassword() {
 
     if (password.type === "password") {
         password.type = "text";
-        if(confPassword){
-            confPassword.type ="text"
+        if (confPassword) {
+            confPassword.type = "text"
         }
     } else {
         password.type = "password";
-        if(confPassword){
-            confPassword.type ="password"
+        if (confPassword) {
+            confPassword.type = "password"
         }
     }
-    
+
 };
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
+
+
+
+
+    // facebook login
+    window.fbAsyncInit = function () {
+        FB.init({
+            appId: '417605231226749',
+            cookie: true,
+            xfbml: true,
+            version: 'v19.0'
+        });
+        FB.AppEvents.logPageView();
+    };
+
+    function checkLoginState() {
+        FB.getLoginStatus(function (response) {
+            if (response.status === 'connected') {
+                statusChangeCallback(response);
+            }
+        });
+    };
+
+    function statusChangeCallback(response) {
+        if (response.status === 'connected') {
+            facebookLogin(response.authResponse.accessToken);
+        } else {
+            document.getElementById('status').innerHTML = 'Please log into this app.';
+            window.location.href = '/login';
+        }
+    };
+
+    function facebookLogin(accessToken) {
+        FB.api('/me', { access_token: accessToken }, function (response) {
+            if (response && response.token) {
+                console.log('Successful login for: ' + response.name);
+                document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
+                document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
+                window.location.href = '/';
+            } else {
+                console.log('User cancelled login or did not fully authorize.');
+            }
+        });
+    }
+
+
+    if (document.getElementById('FBlogin')) {
+        document.getElementById('FBlogin').addEventListener('click', function () {
+            FB.login(function (response) {
+                if (response.authResponse) {
+                    checkLoginState();
+                } else {
+                    // Handle the case where the user closes the login dialog without logging in
+                    console.log('User cancelled login or did not fully authorize.');
+                    document.getElementById('status').innerHTML = 'Please log into this app.';
+                }
+            }, { scope: 'public_profile,email' });
+        });
+    }
+    // end facebook login
+
+    // google login
+    function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        document.cookie = `sessionID=${profile.getId()}; path=/; SameSite=None; Secure`;
+        document.cookie = `sessionEmail=${profile.getEmail()}; path=/; SameSite=None; Secure`;
+        window.location.href = '/';
+    }
 
     function handleCredentialResponse(response) {
         const data = parseJwt(response.credential);
@@ -151,72 +219,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
         return JSON.parse(jsonPayload);
     }
+    // end google login
 
     window.handleCredentialResponse = handleCredentialResponse;
 
-    window.fbAsyncInit = function() {
-        FB.init({
-            appId: '417605231226749',
-            cookie: true,
-            xfbml: true,
-            version: 'v19.0'
-        });
-        FB.AppEvents.logPageView();
-    };
-
-    function checkLoginState() {
-        FB.getLoginStatus(function(response) {
-            if (response.status === 'connected') {
-                statusChangeCallback(response);
-            }
-        });
-    }
-
-    function statusChangeCallback(response) {
-        if (response.status === 'connected') {
-            facebookLogin(response.authResponse.accessToken);
-        } else {
-            document.getElementById('status').innerHTML = 'Please log into this app.';
-            window.location.href = '/login';
-        }
-    }
-
-    function facebookLogin(accessToken) {
-        FB.api('/me', { access_token: accessToken }, function(response) {
-            if (response && !response.error) {
-                console.log('Successful login for: ' + response.name);
-                document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
-                document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
-                window.location.href = '/';
-            } else {
-                console.error('Error during the API call:', response.error);
-            }
-        });
-    }
-
-    function customFacebookLogin() {
-        FB.login(function(response) {
-            if (response.authResponse) {
-                checkLoginState();
-            }
-        }, { scope: 'public_profile,email' });
-    }
-
-    if (document.getElementById('FBlogin')) {
-        document.getElementById('FBlogin').addEventListener('click', function() {
-            customFacebookLogin();
-        });
-    }
-
-    // Google Sign-In callback function
-    function onSignIn(googleUser) {
-        var profile = googleUser.getBasicProfile();
-        document.cookie = `sessionID=${profile.getId()}; path=/; SameSite=None; Secure`;
-        document.cookie = `sessionEmail=${profile.getEmail()}; path=/; SameSite=None; Secure`;
-        window.location.href = '/';
-    }
-
     window.onSignIn = onSignIn;
+
 
 
 });

@@ -16,13 +16,16 @@
     <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
+    <div id="fb-root"></div>
+
     <script async defer crossorigin="anonymous"
-        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v19.0&appId=417605231226749"
-        nonce="rsxWh6CJ"></script>
+        src="https://connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v20.0&appId=417605231226749"
+        nonce="jErlXmO4"></script>
 
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <meta name="google-signin-client_id"
         content="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
+
 
 </head>
 
@@ -131,8 +134,9 @@
                         <div class="row mb-4">
                             <div class="col d-flex justify-content-center">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" onclick="togglePassword()" /> show
-                                    password
+                                    <input class="form-check-input" id="show" type="checkbox"
+                                        onclick="togglePassword()" />
+                                    <label for="show">show password</label>
                                 </div>
                             </div>
                         </div>
@@ -146,15 +150,15 @@
                         <div class="m-3">
 
                             <!-- FB login button -->
-
-                            <!-- <div id="FBlogin" class="fb-login-button m-2" data-max-rows="1" data-size="medium"
-                                data-button-type="continue_with" data-use-continue-as="true">
-                            </div> -->
-
-                            <div class="fa fa-facebook m-2" id="FBlogin"></div>
+                            <div class="d-flex justify-content-center">
+                                <div id="FBlogin" class="loginBtn m-2">
+                                    Login with Facebook
+                                </div>
+                            </div>
 
                             <!-- Google login button -->
                             <div class="d-flex justify-content-center">
+
                                 <div id="g_id_onload"
                                     data-client_id="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com"
                                     data-context="signin" data-ux_mode="popup" data-callback="handleCredentialResponse"
@@ -234,18 +238,31 @@
                                 <p>or continue with</p>
 
                                 <!-- Or Login with Facebook and Google buttons -->
-                                <div class="login-buttons-container m-3">
+                                <div class="m-3">
 
                                     <!-- FB login button -->
-                                    <div class="fa fa-facebook m-2" id="FBlogin"></div>
+                                    <div class="d-flex justify-content-center">
+                                        <div id="FBlogin" class="loginBtn m-2">
+                                            Login with Facebook
+                                        </div>
+                                    </div>
 
                                     <!-- Google login button -->
-                                    <div class="g-signin2 m-2" data-width="50" data-height="50" data-longtitle="false"
-                                        onlogin="onSignIn()"></div>
+                                    <div class="d-flex justify-content-center">
+
+                                        <div id="g_id_onload"
+                                            data-client_id="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com"
+                                            data-context="signin" data-ux_mode="popup"
+                                            data-callback="handleCredentialResponse" data-auto_prompt="false">
+                                        </div>
+
+                                        <div class="g_id_signin" data-type="standard"></div>
+                                    </div>
 
                                     <div id="status"></div>
 
                                 </div>
+
 
                                 <!-- Log in button -->
                                 <div class="text-center">
