@@ -135,9 +135,6 @@ function togglePassword() {
 
 document.addEventListener('DOMContentLoaded', function () {
 
-
-
-
     // facebook login
     window.fbAsyncInit = function () {
         FB.init({
@@ -178,7 +175,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         });
     }
-
 
     if (document.getElementById('FBlogin')) {
         document.getElementById('FBlogin').addEventListener('click', function () {
@@ -224,7 +220,5 @@ document.addEventListener('DOMContentLoaded', function () {
     window.handleCredentialResponse = handleCredentialResponse;
 
     window.onSignIn = onSignIn;
-
-
 
 });
