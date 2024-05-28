@@ -165,7 +165,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function facebookLogin(accessToken) {
         FB.api('/me', { access_token: accessToken }, function (response) {
-            if (response && response.token) {
+            if (response && !response.error ) {
                 console.log('Successful login for: ' + response.name);
                 document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
                 document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;

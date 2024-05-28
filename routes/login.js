@@ -1,30 +1,35 @@
 //handle POST and GET request for /login
 
 var express = require('express');
-const router = express.Router();
+var router = express.Router();
 const mysql = require('mysql');
 var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
-const axios = require('axios');
+var crypto = require('crypto');
 
-
+// Function to hash email
+function hashEmail(email) {
+    return crypto.createHash('sha256').update(email).digest('hex');
+}
 
 //post request - user wants to login
-router.post('/login', async (req, res) => {
+router.post('/', async (req, res) => {
 
     const email = req.body.email;
     const password = req.body.password;
 
     if (!email || !password) {
         //empty fields
-        return res.render('index', { title: 'Express', session: req.session, message: null, email: null, id: null, login: true });
+        return res.render('index', { title: 'Express', session: req.session, email: null, id: null, login: true });
     }
+
+    const hashedEmail = hashEmail(email);
 
     getConnection(async (err, connection) => {
 
         if (err) throw (err)
         const sqlSearch = "SELECT * FROM user_login WHERE email = ?";
-        const search_query = mysql.format(sqlSearch, [email]);
+        const search_query = mysql.format(sqlSearch, [hashedEmail]);
 
         await connection.query(search_query, async (err, result) => {
 
@@ -42,7 +47,7 @@ router.post('/login', async (req, res) => {
 
                     if (isMatch) {
                         //successful login
-                        let user_id = result[0].user_id
+                        let user_id = result[0].user_id;
                         connection.release()
                         console.log('--------> User login')
                         res.cookie('sessionEmail', email); // Store email in a cookie
@@ -66,7 +71,6 @@ router.post('/login', async (req, res) => {
 
 });
 //end of post request
-
 
 
 module.exports = router;

@@ -4,7 +4,12 @@ var router = express.Router();
 const mysql = require('mysql');
 var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
+var crypto = require('crypto');
 
+// Function to hash email
+async function hashEmail(email) {
+    return crypto.createHash('sha256').update(email).digest('hex');
+}
 
 //post request - user wants to create again
 router.post('/', async (req, res) => {
@@ -17,15 +22,17 @@ router.post('/', async (req, res) => {
         res.render('index', { title: 'Express', session: { email: null, id: null, createAccount: true } });
     }
 
-    const hashPassword = await bcrypt.hash(password, 10);
+    const hashedEmail = await hashEmail(email);
+    const salt = await bcrypt.genSalt(10);
+    const hashPassword = await bcrypt.hash(password, salt);
 
     getConnection(async (err, connection) => {
 
         if (err) throw (err)
         const sqlSearch = "SELECT * FROM user_login WHERE email = ?"
-        const search_query = mysql.format(sqlSearch, [email])
+        const search_query = mysql.format(sqlSearch, [hashedEmail])
         const sqlInsert = "INSERT INTO user_login (user_id, email, password) VALUES (0,?,?)"
-        const insert_query = mysql.format(sqlInsert, [email, hashPassword])
+        const insert_query = mysql.format(sqlInsert, [hashedEmail, hashPassword])
 
         await connection.query(search_query, async (err, result) => {
 
@@ -35,7 +42,7 @@ router.post('/', async (req, res) => {
                 //user already exists: error
                 connection.release();
                 console.log("------> User already exists");
-                return res.render('index', { title: 'Express', session: { session: req.session,  message: 'User already exists', createAccount: true } });
+                return res.render('index', { title: 'Express', session: { session: req.session, message: 'User already exists', createAccount: true } });
 
             }
             else {
