@@ -7,7 +7,6 @@
   z-index: 1000; 
 }
 
-/* Overlay styles */
 #overlay {
   position: fixed;
   top: 0;
@@ -18,7 +17,6 @@
   z-index: 1000;
 }
 
-/* Form container styles */
 .form-container {
   margin-top: 110px;
   max-width: 400px; 
@@ -71,3 +69,12 @@
   box-shadow: 0 0 10px 0 rgba(70, 106, 183, 0.847);
 }
 
+
+.menu-item svg {
+  transition: transform 0.3s ease, filter 0.3s ease;
+}
+
+.menu-item:hover svg {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
+}
