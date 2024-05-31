@@ -221,4 +221,13 @@ document.addEventListener('DOMContentLoaded', function () {
 
     window.onSignIn = onSignIn;
 
+
+    if(document.getElementById('signoutBtn')){
+        document.getElementById('signoutBtn').addEventListener('click', function() {
+        document.getElementById('signoutForm').submit();
+    });
+    
+    }
+    
+
 });

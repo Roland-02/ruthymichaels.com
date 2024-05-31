@@ -15,10 +15,8 @@ const db = mysql.createPool({
 function getConnection(callback) {
     db.getConnection((err, connection) => {
         if (err) throw (err)
-        //console.log("DB connected successfully")
         callback(err, connection);
     });
-
 };
 
 
