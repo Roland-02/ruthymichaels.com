@@ -56,6 +56,9 @@ app.use('/login', loginRoute);
 var createAccountRoute = require('./routes/createAccount');
 app.use('/createAccount', createAccountRoute);
 
+var adminRoute = require('./routes/admin');
+app.use('/admin', adminRoute);
+
 // Facebook authentication
 passport.use(new FacebookStrategy({
     clientID: process.env.FACEBOOK_APP_ID,
