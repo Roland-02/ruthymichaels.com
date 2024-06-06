@@ -16,9 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-
         const formData = new FormData(form);
-
+        
         try {
             const response = await axios.post(`/admin/add_product`, formData, {
                 headers: {

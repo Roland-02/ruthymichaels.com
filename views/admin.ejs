@@ -122,40 +122,40 @@
                         </div>
                         <div class="card-body">
 
-                            <form id="addProductForm">
+                            <form id="addProductForm" method="POST" action="/admin/add_product" enctype="multipart/form-data">
 
                                 <!-- Product Name -->
                                 <div class="mb-3">
                                     <label for="productName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" id="productName"
+                                    <input type="text" class="form-control" id="productName" name="name"
                                         placeholder="Enter product name">
                                 </div>
 
                                 <!-- Product Description -->
                                 <div class="mb-3">
                                     <label for="productDescription" class="form-label">Product Description</label>
-                                    <textarea class="form-control" id="productDescription" rows="1"
+                                    <textarea class="form-control" id="productDescription" rows="1" name="description"
                                         placeholder="Enter product description"></textarea>
                                 </div>
 
                                 <!-- Product Images -->
                                 <div class="mb-3">
                                     <label for="productImage1" class="form-label">Product Image 1</label>
-                                    <input type="file" class="form-control" id="productImage1">
+                                    <input type="file" class="form-control" id="productImage1" name="images">
                                 </div>
                                 <div class="mb-3">
                                     <label for="productImage2" class="form-label">Product Image 2</label>
-                                    <input type="file" class="form-control" id="productImage2">
+                                    <input type="file" class="form-control" id="productImage2" name="images">
                                 </div>
                                 <div class="mb-3">
                                     <label for="productImage3" class="form-label">Product Image 3</label>
-                                    <input type="file" class="form-control" id="productImage3">
+                                    <input type="file" class="form-control" id="productImage3" name="images">
                                 </div>
 
                                 <!-- Product Price -->
                                 <div class="mb-3">
                                     <label for="productPrice" class="form-label">Product Price (£)</label>
-                                    <input type="number" step="0.01" class="form-control" id="productPrice"
+                                    <input type="number" step="0.01" class="form-control" id="productPrice" name="price"
                                         placeholder="Enter product price">
                                 </div>
 
