@@ -1,6 +1,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.getElementById('addProductForm');
+    const loadingCircle = document.getElementById('spinner');
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
 
@@ -17,8 +19,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const formData = new FormData(form);
-        
+        Array.from(form.elements).forEach(element => element.disabled = true);
+        loadingCircle.style.display = 'block';
+
         try {
+
             const response = await axios.post(`/admin/add_product`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
@@ -35,7 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             console.error('Error submitting form:', error);
             document.getElementById('message').innerHTML = `<div class="alert alert-danger text-center">An error occurred while submitting the form</div>`;
-        };
+        } finally {
+            // Re-enable the submit button and hide the loading spinner
+            Array.from(form.elements).forEach(element => element.disabled = false);
+            loadingCircle.style.display = 'none';
+        }
 
     });
 });

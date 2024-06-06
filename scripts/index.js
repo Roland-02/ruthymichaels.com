@@ -1,10 +1,26 @@
+async function get_products() {
+    try {
+        const response = await axios.get(`/get_products`);
+        return response.data
+    } catch (error) {
+        console.error('Error shuffling films')
+    }
+}
+
+
 window.onload = async function () {
 
+    // login
     const loginForm = document.getElementById('login-form') || null;
     const createAccountForm = document.getElementById('createAccount-form') || null;
     const overlay = document.getElementById('overlay') || null;
 
-    // event listener for form submission
+    // products
+    const products = await get_products();
+    const products_container = document.getElementById('products_section');
+    let products_html = ''
+
+    // login form submission
     if (loginForm != null) {
         loginForm.addEventListener('submit', async function (event) {
             event.preventDefault(); // Prevent form submission
@@ -31,7 +47,7 @@ window.onload = async function () {
         });
     };
 
-    //event listener for form submission
+    //sign up form submission
     if (createAccountForm != null) {
         createAccountForm.addEventListener('submit', async function (event) {
             event.preventDefault();
@@ -64,7 +80,7 @@ window.onload = async function () {
         });
     };
 
-    // Event listener for clicking on the overlay
+    // close login form on outside click
     if (overlay != null) {
         overlay.addEventListener('click', function (event) {
             if (event.target === this) {
@@ -73,6 +89,34 @@ window.onload = async function () {
         });
     };
 
+    // load products
+    products.forEach(product => {
+        console.log(product.image_1)
+        products_html += `
+            <div class="col-4">
+                <div class="card product-card">
+                    <div class="card-body">
+                        <img src="https://drive.google.com/thumbnail?id=${product.image_1}" class="product-image" alt="Product Image">
+                        <h4 class="card-title">${product.name}</h4>
+                        <p class="card-text">${product.description}</p>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                        <div>
+                            <h3 class="price-text-style">£${product.price}</h3>
+                        </div>
+                        <div>
+                            <button type="button" class="btn penguin-btn">
+                                <i class="fa fa-shopping-cart"></i> BUY
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        `;
+
+    });
+    products_container.innerHTML = products_html;
+
 };
 
 function validateEmail_signup(email) {
@@ -80,18 +124,6 @@ function validateEmail_signup(email) {
 
     //matches email format
     const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (regex.test(email)) {
-        valid = true;
-    }
-
-    return valid;
-};
-
-function validateEmail_login(email) {
-    let valid = false;
-
-    //matches email format
-    const regex = /\S+@\S+\.\S+/;
     if (regex.test(email)) {
         valid = true;
     }
@@ -109,6 +141,18 @@ function validatePassword_signup(password) {
     };
 
     return valid; // Replace with your validation logic
+};
+
+function validateEmail_login(email) {
+    let valid = false;
+
+    //matches email format
+    const regex = /\S+@\S+\.\S+/;
+    if (regex.test(email)) {
+        valid = true;
+    }
+
+    return valid;
 };
 
 function validatePassword_login(password) {
@@ -133,6 +177,7 @@ function togglePassword() {
 
 };
 
+// google and facebook login
 document.addEventListener('DOMContentLoaded', function () {
 
     // facebook login
@@ -165,7 +210,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function facebookLogin(accessToken) {
         FB.api('/me', { access_token: accessToken }, function (response) {
-            if (response && !response.error ) {
+            if (response && !response.error) {
                 console.log('Successful login for: ' + response.name);
                 document.cookie = `sessionID=${response.id}; path=/; secure; samesite=Strict`;
                 document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
@@ -174,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 console.log('User cancelled login or did not fully authorize.');
             }
         });
-    }
+    };
 
     if (document.getElementById('FBlogin')) {
         document.getElementById('FBlogin').addEventListener('click', function () {
@@ -188,7 +233,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }, { scope: 'public_profile,email' });
         });
-    }
+    };
     // end facebook login
 
     // google login
@@ -197,14 +242,14 @@ document.addEventListener('DOMContentLoaded', function () {
         document.cookie = `sessionID=${profile.getId()}; path=/; SameSite=None; Secure`;
         document.cookie = `sessionEmail=${profile.getEmail()}; path=/; SameSite=None; Secure`;
         window.location.href = '/';
-    }
+    };
 
     function handleCredentialResponse(response) {
         const data = parseJwt(response.credential);
         document.cookie = `sessionID=${data.sub}; path=/; SameSite=None; Secure`;
         document.cookie = `sessionEmail=${data.email}; path=/; SameSite=None; Secure`;
         window.location.href = '/';
-    }
+    };
 
     function parseJwt(token) {
         var base64Url = token.split('.')[1];
@@ -214,20 +259,17 @@ document.addEventListener('DOMContentLoaded', function () {
         }).join(''));
 
         return JSON.parse(jsonPayload);
-    }
+    };
     // end google login
 
     window.handleCredentialResponse = handleCredentialResponse;
-
     window.onSignIn = onSignIn;
 
+    if (document.getElementById('signoutBtn')) {
+        document.getElementById('signoutBtn').addEventListener('click', function () {
+            document.getElementById('signoutForm').submit();
+        });
 
-    if(document.getElementById('signoutBtn')){
-        document.getElementById('signoutBtn').addEventListener('click', function() {
-        document.getElementById('signoutForm').submit();
-    });
-    
-    }
-    
+    };
 
 });

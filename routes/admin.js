@@ -29,16 +29,15 @@ router.get(['/', '/admin'], async function (req, res) {
 router.get('/oauth2callback', async (req, res) => {
     const code = req.query.code;
     try {
-      const { tokens } = await oauth2Client.getToken(code);
-      oauth2Client.setCredentials(tokens);
-      console.log('Tokens:', tokens);
-      res.send('Authentication successful! You can close this tab.');
+        const { tokens } = await oauth2Client.getToken(code);
+        oauth2Client.setCredentials(tokens);
+        console.log('Tokens:', tokens);
+        res.send('Authentication successful! You can close this tab.');
     } catch (error) {
-      console.error('Error getting tokens:', error);
-      res.send('Error getting tokens. Check the console for more details.');
+        console.error('Error getting tokens:', error);
+        res.send('Error getting tokens. Check the console for more details.');
     }
-  });
-
+});
 
 // Handle product upload
 router.post('/add_product', upload.array('images', 3), async (req, res) => {
@@ -64,7 +63,15 @@ router.post('/add_product', upload.array('images', 3), async (req, res) => {
                     body: Readable.from(buffer)
                 }
             });
-            imageUrls.push(`https://drive.google.com/uc?id=${driveResponse.data.id}`);
+            // Set file permissions to public
+            await drive.permissions.create({
+                fileId: driveResponse.data.id,
+                requestBody: {
+                    role: 'reader',
+                    type: 'anyone'
+                }
+            });
+            imageUrls.push(`${driveResponse.data.id}`);
         }
 
         getConnection((err, connection) => {
@@ -88,7 +95,6 @@ router.post('/add_product', upload.array('images', 3), async (req, res) => {
         res.status(500).send('An error occurred while processing the request');
     }
 });
-
 
 
 module.exports = router;

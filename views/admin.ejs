@@ -121,8 +121,10 @@
                             <h4>Add New Product</h4>
                         </div>
                         <div class="card-body">
+                            <div id="spinner" class="loading-spinner" style="display: none;"></div>
 
-                            <form id="addProductForm" method="POST" action="/admin/add_product" enctype="multipart/form-data">
+                            <form id="addProductForm" method="POST" action="/admin/add_product"
+                                enctype="multipart/form-data">
 
                                 <!-- Product Name -->
                                 <div class="mb-3">
@@ -161,9 +163,9 @@
 
                                 <!-- Submit Button -->
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary">Add Product</button>
+                                    <button type="submit" class="btn btn-primary" id="submitBtn">Add Product</button>
                                 </div>
-                                
+
                             </form>
 
                         </div>
