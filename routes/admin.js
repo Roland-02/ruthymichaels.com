@@ -26,6 +26,14 @@ router.get(['/', '/admin'], async function (req, res) {
     }
 });
 
+router.get(['/', '/add_product'], async function (req, res) {
+    try {
+        res.render('admin', { title: 'Express', session: { email: req.cookies.sessionEmail, id: req.cookies.sessionID, addProducts: true } });
+    } catch (error) {
+        res.status(500).send('Internal Server Error');
+    }
+});
+
 router.get('/oauth2callback', async (req, res) => {
     const code = req.query.code;
     try {
@@ -39,7 +47,7 @@ router.get('/oauth2callback', async (req, res) => {
     }
 });
 
-// Handle product upload
+// handle product upload
 router.post('/add_product', upload.array('images', 3), async (req, res) => {
     try {
         const { name, description, price } = req.body;

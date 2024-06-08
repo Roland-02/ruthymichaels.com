@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
 
+    <link rel="stylesheet" href="/styles/all_pages.css" />
     <link rel="stylesheet" href="/styles/admin.css" />
     <link rel="stylesheet" href="/bootstrap/css/mdb.min.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -109,71 +110,175 @@
     </section>
     <!-- END nav bar -->
 
-    <section>
-        <div class="container add-product">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
 
-                    <div id="message" class="mt-3"></div>
+    <section class="container" id="productsContainer">
+        <div class="row">
 
-                    <div class="card shadow">
-                        <div class="card-header text-center">
-                            <h4>Add New Product</h4>
-                        </div>
-                        <div class="card-body">
-                            <div id="spinner" class="loading-spinner" style="display: none;"></div>
+            <h2>Stock</h2>
 
-                            <form id="addProductForm" method="POST" action="/admin/add_product"
-                                enctype="multipart/form-data">
+            <!-- products displayed here -->
+            <div class="container" id="viewProducts">
+                <div class="row justify-content-center">
+                    <div class="col-md-12" style="width: 100%;">
+                        <div class="product-card d-flex align-items-center justify-content-between p-2">
 
-                                <!-- Product Name -->
-                                <div class="mb-3">
-                                    <label for="productName" class="form-label">Product Name</label>
-                                    <input type="text" class="form-control" id="productName" name="name"
-                                        placeholder="Enter product name">
+                            <div class="col-md-5 text-left product-column" style="border-right: 1px solid black;">
+                                <h2 class="product-title">Black girl colourfg fgbfing book dgrg drfgher tyh</h2>
+                            </div>
+
+                            <div class="col-md-2 text-center product-column" style="border-right: 1px solid black;">
+                                <h3>£15.99</h3>
+                            </div>
+
+                            <div class="col-md-5 image-container product-column">
+                                <div class="image-wrapper">
+                                    <img src="images/black_girl_colouring_book.jpg" class="product-image"
+                                        alt="Product Image">
+                                    <svg class="replace" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                                        <path
+                                            d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+                                    </svg>
+                                    <input type="file" class="image-input" style="display: none;">
                                 </div>
+                                <div class="image-wrapper">
+                                    <img src="images/black_girl_colouring_book.jpg" class="product-image"
+                                        alt="Product Image">
+                                    <svg class="replace" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                                        <path
+                                            d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+                                    </svg>
+                                    <input type="file" class="image-input" style="display: none;">
+                                </div>
+                                <div class="image-wrapper">
+                                    <img src="images/black_girl_colouring_book.jpg" class="product-image"
+                                        alt="Product Image">
+                                    <svg class="replace" xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                                        viewBox="0 0 16 16">
+                                        <path
+                                            d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5" />
+                                        <path
+                                            d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708z" />
+                                    </svg>
+                                    <input type="file" class="image-input" style="display: none;">
+                                </div>
+                            </div>
 
-                                <!-- Product Description -->
-                                <div class="mb-3">
-                                    <label for="productDescription" class="form-label">Product Description</label>
-                                    <textarea class="form-control" id="productDescription" rows="1" name="description"
-                                        placeholder="Enter product description"></textarea>
-                                </div>
+                            <div class="control-buttons">
+                                <svg class="control-icon bi bi-trash3-fill" xmlns="http://www.w3.org/2000/svg"
+                                    width="40" height="40" viewBox="0 0 16 16">
+                                    <path
+                                        d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
+                                </svg>
 
-                                <!-- Product Images -->
-                                <div class="mb-3">
-                                    <label for="productImage1" class="form-label">Product Image 1</label>
-                                    <input type="file" class="form-control" id="productImage1" name="images">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="productImage2" class="form-label">Product Image 2</label>
-                                    <input type="file" class="form-control" id="productImage2" name="images">
-                                </div>
-                                <div class="mb-3">
-                                    <label for="productImage3" class="form-label">Product Image 3</label>
-                                    <input type="file" class="form-control" id="productImage3" name="images">
-                                </div>
-
-                                <!-- Product Price -->
-                                <div class="mb-3">
-                                    <label for="productPrice" class="form-label">Product Price (£)</label>
-                                    <input type="number" step="0.01" class="form-control" id="productPrice" name="price"
-                                        placeholder="Enter product price">
-                                </div>
-
-                                <!-- Submit Button -->
-                                <div class="text-center">
-                                    <button type="submit" class="btn btn-primary" id="submitBtn">Add Product</button>
-                                </div>
-
-                            </form>
+                                <svg class="control-icon bi bi-floppy2-fill" xmlns="http://www.w3.org/2000/svg"
+                                    width="40" height="40" viewBox="0 0 16 16">
+                                    <path d="M12 2h-2v3h2z" />
+                                    <path
+                                        d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147.439A1.5 1.5 0 0 0 13.086 0zM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1zM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1" />
+                                </svg>
+                            </div>
 
                         </div>
                     </div>
                 </div>
             </div>
+
+            <div class="addBtnContainer">
+                <a href="/admin/add_product">
+                    <svg class="control-icon" xmlns="http://www.w3.org/2000/svg" width="50" height="50"
+                        class="bi bi-plus-square-fill" viewBox="0 0 16 16">
+                        <path
+                            d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
+                    </svg>
+                </a>
+            </div>
+
         </div>
+
+
     </section>
+
+
+    <!-- Add products form -->
+    <section>
+        <% if (session && session.addProducts) { %>
+            <div id="overlay"></div>
+
+            <div class="container" id="addProductsContainer">
+                <div class="row justify-content-center">
+                    <div class="col-md-8">
+
+                        <div class="card shadow add-product">
+
+                            <div id="message" class="mt-3"></div>
+
+                            <div class="card-header text-center">
+                                <h4>Add New Product</h4>
+                            </div>
+                            <div class="card-body">
+                                <div id="spinner" class="loading-spinner" style="display: none;"></div>
+
+                                <form id="addProductForm" method="POST" action="/add_product"
+                                    enctype="multipart/form-data">
+
+                                    <!-- Product Name -->
+                                    <div class="mb-3">
+                                        <label for="productName" class="form-label">Product Name</label>
+                                        <input type="text" class="form-control" id="productName" name="name"
+                                            placeholder="Enter product name">
+                                    </div>
+
+                                    <!-- Product Description -->
+                                    <div class="mb-3">
+                                        <label for="productDescription" class="form-label">Product Description</label>
+                                        <textarea class="form-control" id="productDescription" rows="1"
+                                            name="description" placeholder="Enter product description"></textarea>
+                                    </div>
+
+                                    <!-- Product Images -->
+                                    <div class="mb-3">
+                                        <label for="productImage1" class="form-label">Product Image 1</label>
+                                        <input type="file" class="form-control" id="productImage1" name="images">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="productImage2" class="form-label">Product Image 2</label>
+                                        <input type="file" class="form-control" id="productImage2" name="images">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="productImage3" class="form-label">Product Image 3</label>
+                                        <input type="file" class="form-control" id="productImage3" name="images">
+                                    </div>
+
+                                    <!-- Product Price -->
+                                    <div class="mb-3">
+                                        <label for="productPrice" class="form-label">Product Price (£)</label>
+                                        <input type="number" step="0.01" class="form-control" id="productPrice"
+                                            name="price" placeholder="Enter product price">
+                                    </div>
+
+                                    <!-- Submit Button -->
+                                    <div class="text-center">
+                                        <button type="submit" class="btn btn-primary" id="submitBtn">Add
+                                            Product</button>
+                                    </div>
+
+                                </form>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+    </section>
+    <!-- END add products form -->
+
 
 
 </body>
