@@ -1,0 +1,164 @@
+// src/pages/Login.js
+import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useContext } from 'react';
+import { SessionContext } from '../context/SessionContext';
+
+import axios from 'axios';
+import '../../styles/common.css';
+import '../../bootstrap/css/mdb.min.css';
+import FacebookLogin from 'react-facebook-login';
+import Cookies from 'js-cookie';
+
+const responseFacebook = (response) => {
+    if (response.accessToken) {
+        document.cookie = `sessionID=${response.userID}; path=/; secure; samesite=Strict`;
+        document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
+        window.location.href = '/';
+    } else {
+        console.log('User cancelled login or did not fully authorize.');
+        document.getElementById('status').innerHTML = 'Please log into this app.';
+    }
+};
+
+const parseJwt = (token) => {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+        atob(base64)
+            .split('')
+            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+            .join('')
+    );
+
+    return JSON.parse(jsonPayload);
+};
+
+
+const Login = () => {
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    const navigate = useNavigate();
+    const { setSession } = useContext(SessionContext);
+
+    useEffect(() => {
+        const userId = Cookies.get('sessionID');
+        if (userId) {
+          console.log('Logged in User ID:', userId);
+        }
+      }, []);
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password }),
+            });
+
+            const result = await response.json();
+
+            if (result.id) {
+                setSession({ id: result.id, email: result.email });
+                navigate('/'); // Redirect to the home page or dashboard
+            } else {
+                setErrorMessage('Password or email incorrect');
+            }
+        } catch (error) {
+            setErrorMessage('An error occurred. Please try again.');
+        }
+    };
+
+    const togglePassword = () => {
+        const passwordInput = document.getElementById('password_login');
+        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    };
+
+    return (
+        <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+            <h2 className="text-center mt-2 mb-3">Login</h2>
+
+            {errorMessage && <label className="error-label">{errorMessage}</label>}
+
+            <form id="login-form" className="container" style={{ width: '90%' }} onSubmit={handleSubmit}>
+                <div className="form-outline mb-4" style={{ textAlign: 'left' }}>
+                    <input
+                        type="email"
+                        className="form-control border"
+                        id="email_login"
+                        name="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                    />
+                    <label className="form-label" htmlFor="email_login">Email address</label>
+                    <label className='error-label' htmlFor='email_login' id='emailError_login' hidden>email invalid</label>
+                </div>
+
+                <div className="form-outline mb-4" style={{ textAlign: 'left' }}>
+                    <input
+                        type="password"
+                        className="form-control border"
+                        id="password_login"
+                        name="password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                    />
+                    <label className="form-label" htmlFor="password_login">Password</label>
+                    <label className='error-label' htmlFor='password_login' id='passwordError_login' hidden>password must be 6 characters with 1 uppercase</label>
+                </div>
+
+                <div className="row mb-4">
+                    <div className="col d-flex justify-content-center">
+                        <div className="form-check">
+                            <input className="form-check-input" id="show" type="checkbox" onClick={togglePassword} />
+                            <label htmlFor="show">Show password</label>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" className="btn btn-primary btn-block mb-4">Sign in</button>
+{/* 
+                <p>or continue with</p>
+                <div className="m-3">
+
+                    <div className="d-flex justify-content-center">
+                        <FacebookLogin
+                            appId="417605231226749"
+                            autoLoad={false}
+                            fields="name"
+                            callback={responseFacebook}
+                            icon="fa-facebook"
+                            cssClass="btn btn-primary m-2"
+                            textButton="Login with Facebook"
+                        />
+                    </div>
+                    
+                    { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
+                        <div className="d-flex justify-content-center">
+                            <GoogleLogin
+                                onSuccess={responseGoogle}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                                className="btn btn-danger m-2"
+                            />
+                        </div>
+                    </GoogleOAuthProvider> }
+                    <div id="status"></div>
+                </div> */}
+                <div className="text-center">
+                    <p>Don't have an account? <a href="/createAccount">Sign up</a></p>
+                </div>
+            </form>
+        </div>
+    );
+};
+
+export default Login;

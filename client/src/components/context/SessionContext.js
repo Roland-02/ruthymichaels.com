@@ -7,7 +7,7 @@ export const SessionProvider = ({ children }) => {
     const [session, setSession] = useState(null);
 
     useEffect(() => {
-        const fetchSession = async () => {
+        const checkSession = async () => {
             try {
                 const response = await axios.get('/session'); // Updated endpoint
                 setSession(response.data);
@@ -16,7 +16,7 @@ export const SessionProvider = ({ children }) => {
             }
         };
 
-        fetchSession();
+        checkSession();
     }, []);
 
     return (

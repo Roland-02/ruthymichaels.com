@@ -1,6 +1,7 @@
 // client/src/components/common/Footer.js
 import React from 'react';
-// import '../../styles/common.css';
+import '../../styles/common.css';
+import '../../bootstrap/css/mdb.min.css';
 
 const Footer = () => {
   return (

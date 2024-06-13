@@ -16,19 +16,19 @@ const sslOptions = {
 };
 
 //middleware to be used by application
+app.use(express.json());
+
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 app.use(cookieParser());
 app.use(passport.initialize());
 
-
-
 //allow additional files to be read
-app.use('/styles', express.static(path.join(__dirname, 'styles'), { type: 'application/css' }));
-app.use('/bootstrap/js', express.static(path.join(__dirname, 'js'), { type: 'application/javascript' }));
-app.use('/bootstrap/css', express.static(path.join(__dirname, 'css'), { type: 'application/css' }));
-app.use('/scripts', express.static(path.join(__dirname, 'scripts'), { type: 'application/javascript' }));
+// app.use('/styles', express.static(path.join(__dirname, 'styles'), { type: 'application/css' }));
+// app.use('/bootstrap/js', express.static(path.join(__dirname, 'js'), { type: 'application/javascript' }));
+// app.use('/bootstrap/css', express.static(path.join(__dirname, 'css'), { type: 'application/css' }));
+// app.use('/scripts', express.static(path.join(__dirname, 'scripts'), { type: 'application/javascript' }));
 
 //for sessions
 const timeout = 86400; // 1 day
@@ -47,8 +47,6 @@ app.use(session({
 // var indexRoute = require('./routes/index');
 // app.use('/', indexRoute);
 
-// var loginRoute = require('./routes/login');
-// app.use('/login', loginRoute);
 
 // var createAccountRoute = require('./routes/createAccount');
 // app.use('/createAccount', createAccountRoute);
@@ -56,11 +54,14 @@ app.use(session({
 // var adminRoute = require('./routes/admin');
 // app.use('/admin', adminRoute);
 
-// const sessionRoute = require('./routes/session');
-// app.use('/session', sessionRoute);
+const sessionRoute = require('./routes/session');
+app.use('/session', sessionRoute);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
+
+var loginRoute = require('./routes/login');
+app.use('/', loginRoute);
 
 // Catch-all route to serve the React app's index.html file
 app.get('*', (req, res) => {

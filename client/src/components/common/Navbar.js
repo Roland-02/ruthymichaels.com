@@ -1,16 +1,24 @@
-// client/src/components/common/Navbar.js
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
-// import '../../styles/common.css';
+import { useEffect } from 'react';
+
 import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
+import '../../styles/common.css';
+import '../../bootstrap/css/mdb.min.css';
+import Cookies from 'js-cookie';
+import  { useState } from 'react';
+
 
 const Navbar = () => {
-  const { session } = useContext(SessionContext);
+  const { session, setSession } = useContext(SessionContext);
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const handleSignOut = async () => {
     try {
       await axios.post('/signout');
+      setSession(null); // Clear session context
       window.location.reload(); // Reload the page to update the session state
     } catch (error) {
       console.error('Error signing out:', error);
@@ -24,7 +32,7 @@ const Navbar = () => {
           <div className="container d-flex justify-content-center align-items-center text-center">
             {/* Left elements */}
             <div className="col text-start">
-              {session && session.email ? (
+              {session && session.id ? (
                 <div className="menu-item" onClick={handleSignOut}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" className="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
                     <path fillRule="evenodd" d="M10 3.5a.5.5 0 0 0-.5-.5h-8a.5.5 0 0 0-.5.5v9a.5.5 0 0 0 .5.5h8a.5.5 0 0 0 .5-.5v-2a.5.5 0 0 1 1 0v2A1.5 1.5 0 0 1 9.5 14h-8A1.5 1.5 0 0 1 0 12.5v-9A1.5 1.5 0 0 1 1.5 2h8A1.5 1.5 0 0 1 11 3.5v2a.5.5 0 0 1-1 0z" />
