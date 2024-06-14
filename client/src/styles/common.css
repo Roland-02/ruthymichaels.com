@@ -63,7 +63,8 @@ body {
 
 .loginBtn {
     position: relative;
-    width: 72.5%;
+    width: 100%;
+    height: 100%;
     cursor: pointer;
     box-sizing: border-box;
     padding: 0 15px 0 46px;

@@ -5,22 +5,14 @@ import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { SessionContext } from '../context/SessionContext';
 
-import axios from 'axios';
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
+// import { GoogleOAuthProvider, GoogleLogin } from 'react-google-login';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
+
 import Cookies from 'js-cookie';
 
-const responseFacebook = (response) => {
-    if (response.accessToken) {
-        document.cookie = `sessionID=${response.userID}; path=/; secure; samesite=Strict`;
-        document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
-        window.location.href = '/';
-    } else {
-        console.log('User cancelled login or did not fully authorize.');
-        document.getElementById('status').innerHTML = 'Please log into this app.';
-    }
-};
 
 const parseJwt = (token) => {
     const base64Url = token.split('.')[1];
@@ -40,16 +32,17 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate();
     const { setSession } = useContext(SessionContext);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const userId = Cookies.get('sessionID');
         if (userId) {
-          console.log('Logged in User ID:', userId);
+            console.log('Logged in User ID:', userId);
         }
-      }, []);
+    }, []);
 
+ 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -65,7 +58,7 @@ const Login = () => {
 
             if (result.id) {
                 setSession({ id: result.id, email: result.email });
-                navigate('/'); // Redirect to the home page or dashboard
+                navigate('/'); 
             } else {
                 setErrorMessage('Password or email incorrect');
             }
@@ -73,6 +66,32 @@ const Login = () => {
             setErrorMessage('An error occurred. Please try again.');
         }
     };
+
+
+    const responseFacebook = (response) => {
+        if (response.accessToken) {
+            Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
+            setSession({ id: response.userID, email: response.email, });
+            navigate('/');
+        } else {
+            console.log('User cancelled login or did not fully authorize.');
+            setErrorMessage('Please log into this app.');
+        }
+    }
+
+    const responseGoogle = (response) => {
+        if (response.accessToken) {
+            Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
+            setSession({ id: response.userID, email: response.email, });
+            navigate('/');
+        } else {
+            console.log('User cancelled login or did not fully authorize.');
+            setErrorMessage('Please log into this app.');
+        }
+    };
+    
 
     const togglePassword = () => {
         const passwordInput = document.getElementById('password_login');
@@ -124,22 +143,22 @@ const Login = () => {
                 </div>
 
                 <button type="submit" className="btn btn-primary btn-block mb-4">Sign in</button>
-{/* 
+
                 <p>or continue with</p>
                 <div className="m-3">
 
-                    <div className="d-flex justify-content-center">
+                    <div className="d-flex justify-content-center mb-2">
                         <FacebookLogin
                             appId="417605231226749"
                             autoLoad={false}
                             fields="name"
                             callback={responseFacebook}
-                            icon="fa-facebook"
-                            cssClass="btn btn-primary m-2"
-                            textButton="Login with Facebook"
+                            // icon="fa-facebook"
+                            cssClass="loginBtn"
+                            // textButton="Login with Facebook"
                         />
                     </div>
-                    
+
                     { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
                         <div className="d-flex justify-content-center">
                             <GoogleLogin
@@ -147,12 +166,14 @@ const Login = () => {
                                 onError={() => {
                                     console.log('Login Failed');
                                 }}
-                                className="btn btn-danger m-2"
+                                // className="btn btn-danger m-2"
+                                cssClass="loginBtn"
+
                             />
                         </div>
                     </GoogleOAuthProvider> }
                     <div id="status"></div>
-                </div> */}
+                </div>
                 <div className="text-center">
                     <p>Don't have an account? <a href="/createAccount">Sign up</a></p>
                 </div>
