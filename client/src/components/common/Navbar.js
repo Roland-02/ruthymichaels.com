@@ -1,5 +1,6 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 import { SessionContext } from '../context/SessionContext';
@@ -12,8 +13,7 @@ import  { useState } from 'react';
 
 const Navbar = () => {
   const { session, setSession } = useContext(SessionContext);
-
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
     try {
@@ -23,7 +23,11 @@ const Navbar = () => {
     } catch (error) {
       console.error('Error signing out:', error);
     }
-  };
+  }
+
+  const handleTitleClick = async () => {
+    navigate('/')
+  }
 
   return (
     <section>
@@ -50,7 +54,7 @@ const Navbar = () => {
             </div>
 
             {/* Centered title */}
-            <div className="col" id="page_title" style={{ cursor: 'pointer' }}>
+            <div className="col" onClick={handleTitleClick} id="page_title" style={{ cursor: 'pointer' }}>
               <h1>Ruthy Michaels</h1>
             </div>
 

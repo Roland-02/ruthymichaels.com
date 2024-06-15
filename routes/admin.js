@@ -18,21 +18,6 @@ const drive = google.drive({ version: 'v3', auth: oauth2Client });
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-router.get(['/', '/admin'], async function (req, res) {
-    try {
-        res.render('admin', { title: 'Express', session: { email: req.cookies.sessionEmail, id: req.cookies.sessionID } });
-    } catch (error) {
-        res.status(500).send('Internal Server Error');
-    }
-});
-
-router.get(['/', '/add_product'], async function (req, res) {
-    try {
-        res.render('admin', { title: 'Express', session: { email: req.cookies.sessionEmail, id: req.cookies.sessionID, addProducts: true } });
-    } catch (error) {
-        res.status(500).send('Internal Server Error');
-    }
-});
 
 router.get('/oauth2callback', async (req, res) => {
     const code = req.query.code;

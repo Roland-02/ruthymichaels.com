@@ -1,5 +1,5 @@
 import React from 'react';
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -7,6 +7,8 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import Login from '../components/common/Login';
 import CreateAccount from '../components/common/CreateAccount';
+import Banner from '../components/common/Banner';
+import Products from '../components/index/Products';
 
 
 const Index = ({ session }) => {
@@ -50,7 +52,7 @@ const Index = ({ session }) => {
   return (
     <div>
       <Navbar session={session} />
-      <main>
+          <main>
         {/* Your index page content */}
         {(showLogin || showCreateAccount) && (
           <div>
@@ -59,6 +61,9 @@ const Index = ({ session }) => {
             {showCreateAccount && <CreateAccount onClose={handleClose} />}
           </div>
         )}
+        <Banner />
+        <Products/>
+      
       </main>
       <Footer />
     </div>

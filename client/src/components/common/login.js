@@ -8,7 +8,6 @@ import { SessionContext } from '../context/SessionContext';
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
-// import { GoogleOAuthProvider, GoogleLogin } from 'react-google-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 
 import Cookies from 'js-cookie';
@@ -42,6 +41,10 @@ const Login = () => {
         }
     }, []);
 
+    useEffect(() => {
+        window.scrollTo(0, 0);
+      }, []);
+
  
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -67,7 +70,6 @@ const Login = () => {
         }
     };
 
-
     const responseFacebook = (response) => {
         if (response.accessToken) {
             Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
@@ -92,7 +94,6 @@ const Login = () => {
         }
     };
     
-
     const togglePassword = () => {
         const passwordInput = document.getElementById('password_login');
         passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
@@ -153,22 +154,18 @@ const Login = () => {
                             autoLoad={false}
                             fields="name"
                             callback={responseFacebook}
-                            // icon="fa-facebook"
                             cssClass="loginBtn"
-                            // textButton="Login with Facebook"
                         />
                     </div>
 
                     { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
                         <div className="d-flex justify-content-center">
                             <GoogleLogin
+                                cssClass="loginBtn"
                                 onSuccess={responseGoogle}
                                 onError={() => {
                                     console.log('Login Failed');
                                 }}
-                                // className="btn btn-danger m-2"
-                                cssClass="loginBtn"
-
                             />
                         </div>
                     </GoogleOAuthProvider> }
