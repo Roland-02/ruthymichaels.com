@@ -53,7 +53,6 @@ const Index = ({ session }) => {
     <div>
       <Navbar session={session} />
           <main>
-        {/* Your index page content */}
         {(showLogin || showCreateAccount) && (
           <div>
             <div id="overlay" onClick={handleClose}></div>

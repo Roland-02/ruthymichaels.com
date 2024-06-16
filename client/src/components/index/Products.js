@@ -29,7 +29,7 @@ const Products = () => {
                         <div className="card product-card">
                             <div className="card-body">
                                 <img
-                                    src={`https://drive.google.com/uc?export=view&id=${product.image_1}`}
+                                    src={`https://drive.google.com/thumbnail?id=${product.image_1}`}
                                     className="product-image"
                                     alt="Product"
                                 />

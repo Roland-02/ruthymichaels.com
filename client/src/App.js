@@ -4,8 +4,6 @@ import { SessionProvider } from '../../client/src/components/context/SessionCont
 import Index from './pages/index';
 import Admin from './pages/admin'; 
 import AdminProducts from './components/admin/Admin_Products_View';
-import AddProductsForm from './components/admin/Add_Products_Form';
-
 
 
 const App = () => {
@@ -18,7 +16,7 @@ const App = () => {
                 <Route path="/createAccount" element={<Index />} />
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
-                <Route path="/admin/products/add_products" element={<AdminProducts />} />
+                <Route path="/admin/products/add_product" element={<AdminProducts />} />
 
 
                 </Routes>

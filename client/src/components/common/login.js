@@ -1,4 +1,3 @@
-// src/pages/Login.js
 import React, { useState } from 'react';
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,22 +8,7 @@ import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-
 import Cookies from 'js-cookie';
-
-
-const parseJwt = (token) => {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-        atob(base64)
-            .split('')
-            .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-            .join('')
-    );
-
-    return JSON.parse(jsonPayload);
-};
 
 
 const Login = () => {

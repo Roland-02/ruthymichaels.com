@@ -33,7 +33,7 @@ router.get('/oauth2callback', async (req, res) => {
 });
 
 // handle product upload
-router.post('/add_product', upload.array('images', 3), async (req, res) => {
+router.post('/products/add_product', upload.array('images', 6), async (req, res) => {
     try {
         const { name, description, price } = req.body;
         const files = req.files;
@@ -66,12 +66,13 @@ router.post('/add_product', upload.array('images', 3), async (req, res) => {
             });
             imageUrls.push(`${driveResponse.data.id}`);
         }
+        const imageUrlsString = imageUrls.join(',');
 
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'INSERT INTO products (id, name, description, price, image_1, image_2, image_3) VALUES (0, ?, ?, ?, ?, ?, ?)';
-            connection.query(query, [name, description, price, imageUrls[0], imageUrls[1], imageUrls[2]], (error, results) => {
+            const query = 'INSERT INTO products (id, name, description, price, image_URLs) VALUES (0, ?, ?, ?, ?)';
+            connection.query(query, [name, description, price, imageUrlsString], (error, results) => {
                 connection.release();
 
                 if (error) {
