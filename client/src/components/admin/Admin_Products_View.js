@@ -12,9 +12,108 @@ import Footer from '../common/Footer';
 import AddProductsForm from './Add_Products_Form';
 
 const Admin_Products_View = ({ session }) => {
-    const [products, setProducts] = useState([]);
+    // const [products, setProducts] = useState([]);
+    const products = [
+        {
+            id: 1,
+            name: 'Sample Product 1',
+            type: 'Electronics',
+            description: 'Description for product 1',
+            price: '99.99',
+            image_URLs: 'sampleImageId1'
+        },
+        {
+            id: 2,
+            name: 'Sample Product 2',
+            type: 'Clothing',
+            description: 'Description for product 2',
+            price: '49.99',
+            image_URLs: 'sampleImageId2'
+        },
+        {
+            id: 3,
+            name: 'Sample Product 3',
+            type: 'Books',
+            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
+            price: '19.99',
+            image_URLs: 'sampleImageId3'
+        },
+        {
+            id: 4,
+            name: 'Sample Product 1',
+            type: 'Electronics',
+            description: 'Description for product 1',
+            price: '99.99',
+            image_URLs: 'sampleImageId1'
+        },
+        {
+            id: 5,
+            name: 'Sample Product 2',
+            type: 'Clothing',
+            description: 'Description for product 2',
+            price: '49.99',
+            image_URLs: 'sampleImageId2'
+        },
+        {
+            id: 6,
+            name: 'Sample Product 3',
+            type: 'Books',
+            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
+            price: '19.99',
+            image_URLs: 'sampleImageId3'
+        },
+        {
+            id: 7,
+            name: 'Sample Product 1',
+            type: 'Electronics',
+            description: 'Description for product 1',
+            price: '99.99',
+            image_URLs: 'sampleImageId1'
+        },
+        {
+            id: 8,
+            name: 'Sample Product 2',
+            type: 'Clothing',
+            description: 'Description for product 2',
+            price: '49.99',
+            image_URLs: 'sampleImageId2'
+        },
+        {
+            id: 9,
+            name: 'Sample Product 3',
+            type: 'Books',
+            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
+            price: '19.99',
+            image_URLs: 'sampleImageId3'
+        },
+        {
+            id: 10,
+            name: 'Sample Product 1',
+            type: 'Electronics',
+            description: 'Description for product 1',
+            price: '99.99',
+            image_URLs: 'sampleImageId1'
+        },
+        {
+            id: 11,
+            name: 'Sample Product 2',
+            type: 'Clothing',
+            description: 'Description for product 2',
+            price: '49.99',
+            image_URLs: 'sampleImageId2'
+        },
+        {
+            id: 12,
+            name: 'Sample Product 3',
+            type: 'Books',
+            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
+            price: '19.99',
+            image_URLs: 'sampleImageId3'
+        }
+    ];
+
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
+    const [message, setMessage] = useState({ text: '', type: '' });
     const [showAddForm, setShowAddForm] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -24,14 +123,14 @@ const Admin_Products_View = ({ session }) => {
             setLoading(true);
             try {
                 const response = await axios.get('/get_products');
-                setProducts(response.data);
+                // setProducts(response.data);
             } catch (error) {
-                setMessage('Error loading products. Please try again.');
+                setMessage({ text: 'Error fetching products, try refreshing', type: 'danger' });
             } finally {
                 setLoading(false);
             }
         };
-        loadProducts();
+        // loadProducts();
 
         if (location.pathname === '/admin/products/add_product') {
             setShowAddForm(true);
@@ -44,7 +143,7 @@ const Admin_Products_View = ({ session }) => {
     const handleDelete = async (productId) => {
         try {
             await axios.delete(`/delete_product/${productId}`);
-            setProducts(products.filter(product => product.id !== productId));
+            // setProducts(products.filter(product => product.id !== productId));
         } catch (error) {
             setMessage('Error deleting product. Please try again.');
         }
@@ -64,54 +163,55 @@ const Admin_Products_View = ({ session }) => {
                     <AddProductsForm session={session} onClose={handleClose} />
                 </div>
             )}
+
             <div className="container" id="adminProductsContainer">
+
                 <div className="row">
                     <h2>Stock</h2>
-                    <div className="container" id="adminProducts">
-                        <div className="row justify-content-center">
-                            {loading && <div className="loading-spinner"></div>}
-                            {message && <div id="message" className="mt-3">{message}</div>}
-
-                            {products.map(product => (
-                                <div key={product.id} className="col-lg-12 mb-3">
-                                    <div className="admin-product-card d-flex align-items-center justify-content-between p-2">
-
-                                        <div className="col-lg-2 admin-image-container admin-product-column" style={{ borderRight: '1px solid black' }}>
-                                            <div className="admin-image-wrapper">
-                                                <img src={`https://drive.google.com/thumbnail?id=${product.image_1}`} className="admin-product-image" alt="Product Image" />
-                                            </div>
-                                        </div>
-
-                                        <div className="col-lg-4 text-left admin-product-column" style={{ borderRight: '1px solid black' }}>
-                                            <h2 className="product-title">{product.name}</h2>
-                                        </div>
-
-                                        <div className="col-lg-3 text-left admin-product-column" style={{ borderRight: '1px solid black' }}>
-                                            <p>{product.description}</p>
-                                        </div>
-
-                                        <div className="col-lg-2 text-center admin-product-column" style={{ borderRight: '1px solid black' }}>
-                                            <h3>£{product.price}</h3>
-                                        </div>
-
-                                        <div className="col-lg-1 product-control-buttons">
-                                            <svg className="product-control-icon bi bi-trash3-fill" onClick={() => handleDelete(product.id)} width="40" height="40" viewBox="0 0 16 16">
+                    {loading && <div className="loading-spinner"></div>}
+                    {message.text && (
+                        <div className={`alert alert-${message.type} text-center`} role="alert">
+                            {message.text}
+                        </div>
+                    )}
+                    {/* {!loading && !message && ( */}
+                    <div className="table-container">
+                        <table className="table table-striped admin-product-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                    <th>Description</th>
+                                    <th>Price</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {products.map(product => (
+                                    <tr key={product.id}>
+                                        <td>{product.name}</td>
+                                        <td>{product.type}</td>
+                                        <td>{product.description}</td>
+                                        <td>£{product.price}</td>
+                                        <td>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                width="24"
+                                                height="24"
+                                                className="bi bi-trash control-icon"
+                                                viewBox="0 0 16 16"
+                                                onClick={() => handleDelete(product.id)}
+                                            >
                                                 <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
                                             </svg>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
 
-                                            <svg className="product-control-icon bi bi-floppy2-fill" xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 16 16">
-                                                <path d="M12 2h-2v3h2z" />
-                                                <path
-                                                    d="M1.5 0A1.5 1.5 0 0 0 0 1.5v13A1.5 1.5 0 0 0 1.5 16h13a1.5 1.5 0 0 0 1.5-1.5V2.914a1.5 1.5 0 0 0-.44-1.06L14.147.439A1.5 1.5 0 0 0 13.086 0zM4 6a1 1 0 0 1-1-1V1h10v4a1 1 0 0 1-1 1zM3 9h10a1 1 0 0 1 1 1v5H2v-5a1 1 0 0 1 1-1" />
-                                            </svg>
-                                        </div>
-
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
                     </div>
-
+                    {/* )} */}
                     <div className='addBtnContainer'>
                         <Link to="/admin/products/add_product">
                             <svg className="control-icon" width="50" height="50" viewBox="0 0 16 16">
