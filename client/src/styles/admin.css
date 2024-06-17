@@ -1,3 +1,8 @@
+.alert{
+  /* position:absolute; */
+  /* z-index: 101; */
+}
+
 /* MANAGE PRODUCTS */
 .manage-products-container {
   position: relative;
@@ -48,6 +53,7 @@
   padding: 0;
   margin-bottom: 15px;
   overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .admin-product-table {
@@ -72,7 +78,17 @@
   text-align: left;
   align-items: center;
   cursor: pointer;
+  border: 0.1px solid  #dee2e6;
 }
+
+.admin-product-table tbody tr td:first-child {
+  border-left: none;
+}
+
+.admin-product-table tbody tr td:last-child {
+  border-right: none;
+}
+
 
 .admin-product-table tbody tr:hover {
   transform: scale(1.009);
@@ -100,7 +116,6 @@
   align-items: center;
   margin-top: 10px;
 }
-
 /* END VIEW PRODUCTS */
 
 

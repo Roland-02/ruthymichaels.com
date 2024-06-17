@@ -12,109 +12,11 @@ import Footer from '../common/Footer';
 import AddProductsForm from './Add_Products_Form';
 
 const Admin_Products_View = ({ session }) => {
-    // const [products, setProducts] = useState([]);
-    const products = [
-        {
-            id: 1,
-            name: 'Sample Product 1',
-            type: 'Electronics',
-            description: 'Description for product 1',
-            price: '99.99',
-            image_URLs: 'sampleImageId1'
-        },
-        {
-            id: 2,
-            name: 'Sample Product 2',
-            type: 'Clothing',
-            description: 'Description for product 2',
-            price: '49.99',
-            image_URLs: 'sampleImageId2'
-        },
-        {
-            id: 3,
-            name: 'Sample Product 3',
-            type: 'Books',
-            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
-            price: '19.99',
-            image_URLs: 'sampleImageId3'
-        },
-        {
-            id: 4,
-            name: 'Sample Product 1',
-            type: 'Electronics',
-            description: 'Description for product 1',
-            price: '99.99',
-            image_URLs: 'sampleImageId1'
-        },
-        {
-            id: 5,
-            name: 'Sample Product 2',
-            type: 'Clothing',
-            description: 'Description for product 2',
-            price: '49.99',
-            image_URLs: 'sampleImageId2'
-        },
-        {
-            id: 6,
-            name: 'Sample Product 3',
-            type: 'Books',
-            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
-            price: '19.99',
-            image_URLs: 'sampleImageId3'
-        },
-        {
-            id: 7,
-            name: 'Sample Product 1',
-            type: 'Electronics',
-            description: 'Description for product 1',
-            price: '99.99',
-            image_URLs: 'sampleImageId1'
-        },
-        {
-            id: 8,
-            name: 'Sample Product 2',
-            type: 'Clothing',
-            description: 'Description for product 2',
-            price: '49.99',
-            image_URLs: 'sampleImageId2'
-        },
-        {
-            id: 9,
-            name: 'Sample Product 3',
-            type: 'Books',
-            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
-            price: '19.99',
-            image_URLs: 'sampleImageId3'
-        },
-        {
-            id: 10,
-            name: 'Sample Product 1',
-            type: 'Electronics',
-            description: 'Description for product 1',
-            price: '99.99',
-            image_URLs: 'sampleImageId1'
-        },
-        {
-            id: 11,
-            name: 'Sample Product 2',
-            type: 'Clothing',
-            description: 'Description for product 2',
-            price: '49.99',
-            image_URLs: 'sampleImageId2'
-        },
-        {
-            id: 12,
-            name: 'Sample Product 3',
-            type: 'Books',
-            description: 'Description for productscription for productscription for productscription for productscription for productscription for product 3',
-            price: '19.99',
-            image_URLs: 'sampleImageId3'
-        }
-    ];
-
+    const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState({ text: '', type: '' });
     const [showAddForm, setShowAddForm] = useState(false);
+    const [selectedProduct, setSelectedProduct] = useState(null);
+    const [message, setMessage] = useState({ text: '', type: '' });
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -123,16 +25,16 @@ const Admin_Products_View = ({ session }) => {
             setLoading(true);
             try {
                 const response = await axios.get('/get_products');
-                // setProducts(response.data);
+                setProducts(response.data);
             } catch (error) {
                 setMessage({ text: 'Error fetching products, try refreshing', type: 'danger' });
             } finally {
                 setLoading(false);
             }
         };
-        // loadProducts();
+        loadProducts();
 
-        if (location.pathname === '/admin/products/add_product') {
+        if (location.pathname.includes('/admin/products/')) {
             setShowAddForm(true);
         } else {
             setShowAddForm(false);
@@ -142,11 +44,31 @@ const Admin_Products_View = ({ session }) => {
 
     const handleDelete = async (productId) => {
         try {
-            await axios.delete(`/delete_product/${productId}`);
-            // setProducts(products.filter(product => product.id !== productId));
+            await axios.post(`/admin/products/delete_product/${productId}`);
+            setProducts(products.filter(product => product.id !== productId));
+            setMessage({ text: 'Product deleted', type: 'success' });
+
         } catch (error) {
-            setMessage('Error deleting product. Please try again.');
-        }
+            setMessage({ text: 'Error deleting product. Please try again.', type: 'danger' });
+
+        } finally {
+            setTimeout(() => {
+                setMessage({ text: '', type: '' });
+            }, 2000);
+        };
+    };
+
+    const handleEdit = (product) => {
+        setSelectedProduct(product);
+        setShowAddForm(true);
+        console.log(product)
+        navigate(`/admin/products/edit_product/${product.id}`);
+    };
+
+    const handleNew = () => {
+        setSelectedProduct(null);
+        setShowAddForm(true);
+        navigate(`/admin/products/add_product`);
     };
 
     const handleClose = () => {
@@ -160,7 +82,7 @@ const Admin_Products_View = ({ session }) => {
             {showAddForm && (
                 <div>
                     <div id="overlay" onClick={handleClose}></div>
-                    <AddProductsForm session={session} onClose={handleClose} />
+                    <AddProductsForm initialData={selectedProduct} />
                 </div>
             )}
 
@@ -174,7 +96,6 @@ const Admin_Products_View = ({ session }) => {
                             {message.text}
                         </div>
                     )}
-                    {/* {!loading && !message && ( */}
                     <div className="table-container">
                         <table className="table table-striped admin-product-table">
                             <thead>
@@ -188,7 +109,7 @@ const Admin_Products_View = ({ session }) => {
                             </thead>
                             <tbody>
                                 {products.map(product => (
-                                    <tr key={product.id}>
+                                    <tr key={product.id} onClick={() => handleEdit(product)}>
                                         <td>{product.name}</td>
                                         <td>{product.type}</td>
                                         <td>{product.description}</td>
@@ -200,7 +121,10 @@ const Admin_Products_View = ({ session }) => {
                                                 height="24"
                                                 className="bi bi-trash control-icon"
                                                 viewBox="0 0 16 16"
-                                                onClick={() => handleDelete(product.id)}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleDelete(product.id);
+                                                }}
                                             >
                                                 <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5m-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5M4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06m6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528M8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5" />
                                             </svg>
@@ -209,15 +133,14 @@ const Admin_Products_View = ({ session }) => {
                                 ))}
                             </tbody>
                         </table>
-
                     </div>
-                    {/* )} */}
+
                     <div className='addBtnContainer'>
-                        <Link to="/admin/products/add_product">
+                        <div onClick={handleNew}>
                             <svg className="control-icon" width="50" height="50" viewBox="0 0 16 16">
                                 <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2zm6.5 4.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3a.5.5 0 0 1 1 0" />
                             </svg>
-                        </Link>
+                        </div>
                     </div>
 
                 </div>

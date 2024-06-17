@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import '../../styles/common.css';
 import '../../styles/admin.css';
@@ -6,7 +6,7 @@ import '../../bootstrap/css/mdb.min.css';
 import { useNavigate } from 'react-router-dom';
 
 
-const Add_Products_Form = ({ session }) => {
+const Add_Products_Form = ({ initialData }) => {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
@@ -16,6 +16,17 @@ const Add_Products_Form = ({ session }) => {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (initialData) {
+      setFormData({
+        name: initialData.name,
+        type: initialData.type,
+        description: initialData.description,
+        price: initialData.price,
+      });
+    }
+  }, [initialData]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -30,36 +41,60 @@ const Add_Products_Form = ({ session }) => {
   };
 
   const handleSubmit = async (e) => {
+
     e.preventDefault();
     setLoading(true);
     const form = new FormData();
     form.append('name', formData.name);
+    form.append('type', formData.type);
     form.append('description', formData.description);
     form.append('price', formData.price);
     images.forEach((image, index) => {
       if (image) form.append(`images`, image);
     });
 
-    try {
-      const response = await axios.post('/admin/products/add_product', form, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      setMessage({ text: 'Product added successfully!', type: 'success' });
+    if (initialData) {
+      try {
+        const response = await axios.post(`/admin/products/edit_product/${initialData.id}`, form, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        setMessage({ text: 'Changes saved!', type: 'success' });
+        setTimeout(() => {
+          setMessage({ text: 'Changes saved!', type: 'success' });
+        }, 2000);
 
-      // Clear form and message after 3 seconds
-      setTimeout(() => {
-        setFormData({ name: '', description: '', price: '' });
-        setImages(Array(6).fill(null));
-        setMessage({ text: '', type: '' });
-      }, 2000);
+      } catch (error) {
+        setMessage({ text: 'Error saving changes. Please check your fields.', type: 'danger' });
+      } finally {
+        setLoading(false);
+      }
 
-    } catch (error) {
-      setMessage({ text: 'Error adding product. Please try again.', type: 'danger' });
-    } finally {
-      setLoading(false);
+    } else {
+
+      try {
+        const response = await axios.post('/admin/products/add_product', form, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        setMessage({ text: 'Product added!', type: 'success' });
+
+        // Clear form and message after 3 seconds
+        setTimeout(() => {
+          setFormData({ name: '', description: '', price: '' });
+          setImages(Array(6).fill(null));
+          setMessage({ text: '', type: '' });
+        }, 2000);
+
+      } catch (error) {
+        setMessage({ text: 'Error adding product. Please check your fields.', type: 'danger' });
+      } finally {
+        setLoading(false);
+      }
     }
+
   };
 
   return (
@@ -69,7 +104,7 @@ const Add_Products_Form = ({ session }) => {
           <div className="add-product-card card shadow">
 
             <div className="card-header text-center">
-              <h2>New Product</h2>
+              <h2>{initialData ? 'Edit Product' : 'New Product'}</h2>
             </div>
 
             <div className="card-body add-card">
@@ -107,7 +142,35 @@ const Add_Products_Form = ({ session }) => {
                   ></textarea>
                 </div>
 
-                <div className="mb-3">
+                <div className="row mb-3">
+                  <div className="col-md-6">
+                    <label htmlFor="productPrice" className="form-label">Price (£)</label>
+                    <input
+                      type="number"
+                      step="0.01"
+                      className="form-control"
+                      id="productPrice"
+                      name="price"
+                      value={formData.price}
+                      onChange={handleInputChange}
+                      placeholder="Enter product price"
+                    />
+                  </div>
+                  <div className="col-md-6">
+                    <label htmlFor="productType" className="form-label">Type</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      id="productType"
+                      name="type"
+                      value={formData.type}
+                      onChange={handleInputChange}
+                      placeholder="Enter product type"
+                    />
+                  </div>
+                </div>
+
+                <div className="mb-5">
                   <label className="form-label">Pictures</label>
                   <div className="image-upload-container">
                     {images.map((image, index) => (
@@ -138,24 +201,12 @@ const Add_Products_Form = ({ session }) => {
                   </div>
                 </div>
 
-                <div className="mb-3">
-                  <label htmlFor="productPrice" className="form-label">Price (£)</label>
-                  <input
-                    type="number"
-                    step="0.01"
-                    className="form-control"
-                    id="productPrice"
-                    name="price"
-                    value={formData.price}
-                    onChange={handleInputChange}
-                    placeholder="Enter product price"
-                  />
-                </div>
                 <div className="text-center">
-                  <button type="submit" className="btn btn-primary" id="submitBtn">
-                    Add
+                  <button type="submit" className="btn btn-primary">
+                    {initialData ? 'Save' : 'Add'}
                   </button>
                 </div>
+
               </form>
             </div>
           </div>

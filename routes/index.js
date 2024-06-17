@@ -16,7 +16,7 @@ router.get('/get_products', async (req, res) => {
             return res.status(500).send('Database connection failed');
         }
 
-        const query = 'SELECT name, description, price, image_URLs FROM products';
+        const query = 'SELECT id, name, type, description, price, image_URLs FROM products';
         connection.query(query, (error, results) => {
             connection.release();
 
