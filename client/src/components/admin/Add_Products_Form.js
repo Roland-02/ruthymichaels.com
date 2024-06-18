@@ -3,30 +3,63 @@ import axios from 'axios';
 import '../../styles/common.css';
 import '../../styles/admin.css';
 import '../../bootstrap/css/mdb.min.css';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 
-const Add_Products_Form = ({ initialData }) => {
+const Add_Products_Form = ({ }) => {
   const [formData, setFormData] = useState({
     name: '',
+    type: '',
     description: '',
     price: '',
   });
   const [images, setImages] = useState(Array(6).fill(null));  //set number of images to upload
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
+  const [edit, setEdit] = useState(false)
+  const { id } = useParams();
   const navigate = useNavigate();
 
+
   useEffect(() => {
-    if (initialData) {
-      setFormData({
-        name: initialData.name,
-        type: initialData.type,
-        description: initialData.description,
-        price: initialData.price,
-      });
-    }
-  }, [initialData]);
+    const fetchProduct = async () => {
+      try {
+        setLoading(true); // Set loading state
+
+        if (id) { // Check if ID is present
+          const response = await axios.get(`/server/get_product/${id}`);
+          const product = response.data;
+          console.log(product)
+          setEdit(true);
+
+          setFormData({
+            name: product.name,
+            type: product.type,
+            description: product.description,
+            price: product.price,
+          });
+
+        } else {
+          setEdit(false);
+
+        }
+
+      } catch (error) {
+        setEdit(false); // Set edit state to false if there's an error
+        setMessage({ text: 'Product not found. Create new?', type: 'danger' });
+        setTimeout(() => {
+          setMessage({ text: '', type: '' });
+        }, 2000);
+
+      } finally {
+        setLoading(false); // Set loading state to false after request completes
+
+      }
+
+    };
+
+    fetchProduct();
+  }, [id]); // Re-run useEffect only when id changes
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -53,16 +86,16 @@ const Add_Products_Form = ({ initialData }) => {
       if (image) form.append(`images`, image);
     });
 
-    if (initialData) {
+    if (id) {
       try {
-        const response = await axios.post(`/admin/products/edit_product/${initialData.id}`, form, {
+        const response = await axios.post(`/admin/products/edit_product?${id}`, form, {
           headers: {
             'Content-Type': 'multipart/form-data',
           },
         });
         setMessage({ text: 'Changes saved!', type: 'success' });
         setTimeout(() => {
-          setMessage({ text: 'Changes saved!', type: 'success' });
+          setMessage({ text: '', type: '' });
         }, 2000);
 
       } catch (error) {
@@ -104,7 +137,7 @@ const Add_Products_Form = ({ initialData }) => {
           <div className="add-product-card card shadow">
 
             <div className="card-header text-center">
-              <h2>{initialData ? 'Edit Product' : 'New Product'}</h2>
+              <h2>{edit ? 'Edit Product' : 'New Product'}</h2>
             </div>
 
             <div className="card-body add-card">
@@ -203,7 +236,7 @@ const Add_Products_Form = ({ initialData }) => {
 
                 <div className="text-center">
                   <button type="submit" className="btn btn-primary">
-                    {initialData ? 'Save' : 'Add'}
+                    {edit ? 'Save' : 'Add'}
                   </button>
                 </div>
 

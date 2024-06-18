@@ -11,9 +11,11 @@ const App = () => {
         <SessionProvider>
             <Router>
                 <Routes>
+                    
                 <Route path="/" element={<Index />} />
                 <Route path="/login" element={<Index />} />
                 <Route path="/createAccount" element={<Index />} />
+
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
                 <Route path="/admin/products/add_product" element={<AdminProducts />} />

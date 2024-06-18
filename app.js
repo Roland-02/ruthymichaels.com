@@ -39,7 +39,7 @@ var adminRoute = require('./routes/admin');
 app.use('/admin', adminRoute);
 
 var indexRoute = require('./routes/index');
-app.use('/', indexRoute);
+app.use('/server', indexRoute);
 
 const sessionRoute = require('./routes/session');
 app.use('/', sessionRoute);

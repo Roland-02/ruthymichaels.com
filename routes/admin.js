@@ -91,7 +91,7 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
 });
 
 // handle product edit
-router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
+router.post('/products/edit_product', upload.array('images', 6), async (req, res) => {
     try {
         const { id } = req.params;
         const { name, type, description, price } = req.body;
@@ -150,7 +150,7 @@ router.post('/products/edit_product/:id', upload.array('images', 6), async (req,
 });
 
 // handle product delete
-router.post('/products/delete_product/:id', async (req, res) => {
+router.post('/products/delete_product', async (req, res) => {
     try {
         const { id } = req.params;
        
@@ -165,7 +165,7 @@ router.post('/products/delete_product/:id', async (req, res) => {
                     console.error(error);
                     return res.status(500).send('Database deletion failed');
                 }
-
+                console.log('deleted from db')
                 res.status(200).send({ message: 'Product deleted successfully' });
             });
         });

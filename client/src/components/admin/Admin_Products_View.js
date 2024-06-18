@@ -24,7 +24,7 @@ const Admin_Products_View = ({ session }) => {
         const loadProducts = async () => {
             setLoading(true);
             try {
-                const response = await axios.get('/get_products');
+                const response = await axios.get('/server/get_products');
                 setProducts(response.data);
             } catch (error) {
                 setMessage({ text: 'Error fetching products, try refreshing', type: 'danger' });
@@ -44,7 +44,7 @@ const Admin_Products_View = ({ session }) => {
 
     const handleDelete = async (productId) => {
         try {
-            await axios.post(`/admin/products/delete_product/${productId}`);
+            await axios.post(`/admin/products/delete_product?${productId}`);
             setProducts(products.filter(product => product.id !== productId));
             setMessage({ text: 'Product deleted', type: 'success' });
 
@@ -61,7 +61,6 @@ const Admin_Products_View = ({ session }) => {
     const handleEdit = (product) => {
         setSelectedProduct(product);
         setShowAddForm(true);
-        console.log(product)
         navigate(`/admin/products/edit_product/${product.id}`);
     };
 
@@ -82,7 +81,7 @@ const Admin_Products_View = ({ session }) => {
             {showAddForm && (
                 <div>
                     <div id="overlay" onClick={handleClose}></div>
-                    <AddProductsForm initialData={selectedProduct} />
+                    <AddProductsForm/>
                 </div>
             )}
 
