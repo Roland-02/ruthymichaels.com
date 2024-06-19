@@ -11,8 +11,14 @@ const Products = () => {
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await axios.get('/get_products');
-                setProducts(response.data);
+                const response = await axios.get('/server/get_products');
+                const productsWithImages = response.data.map(product => {
+                    const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
+                    const firstImageUrl = imageIds.length > 0 ? `https://drive.google.com/thumbnail?id=${imageIds[0]}` : null;
+                    return { ...product, firstImageUrl };
+                });
+                setProducts(productsWithImages);
+
             } catch (error) {
                 console.error('Error fetching products:', error);
             }
@@ -28,11 +34,13 @@ const Products = () => {
                     <div className="col-3" key={product.name}>
                         <div className="card product-card">
                             <div className="card-body">
+
                                 <img
-                                    src={`https://drive.google.com/thumbnail?id=${product.image_1}`}
+                                    src={product.firstImageUrl}  // Render only the first image
                                     className="product-image"
                                     alt="Product"
                                 />
+
                                 <h4 className="card-title">{product.name}</h4>
                                 <p className="card-text">{product.description}</p>
                             </div>

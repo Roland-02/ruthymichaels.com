@@ -9,9 +9,9 @@ import '../../bootstrap/css/mdb.min.css';
 
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
-import AddProductsForm from './Add_Products_Form';
+import ProductForm from './Product_Form';
 
-const Admin_Products_View = ({ session }) => {
+const Products_View = ({ session }) => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [showAddForm, setShowAddForm] = useState(false);
@@ -25,9 +25,13 @@ const Admin_Products_View = ({ session }) => {
             setLoading(true);
             try {
                 const response = await axios.get('/server/get_products');
-                setProducts(response.data);
+                if (response.status == 200) {
+                    setProducts(response.data);
+                } else {
+                    setMessage({ text: 'No products found', type: 'info' });
+                }
             } catch (error) {
-                setMessage({ text: 'Error fetching products, try refreshing', type: 'danger' });
+                setMessage({ text: 'No products found', type: 'info' });
             } finally {
                 setLoading(false);
             }
@@ -44,10 +48,13 @@ const Admin_Products_View = ({ session }) => {
 
     const handleDelete = async (productId) => {
         try {
-            await axios.post(`/admin/products/delete_product?${productId}`);
-            setProducts(products.filter(product => product.id !== productId));
+            const response = await axios.post(`/admin/products/delete_product/${productId}`);
+            if (response.status == 200) {
+                setProducts(products.filter(product => product.id !== productId));
             setMessage({ text: 'Product deleted', type: 'success' });
-
+            } else {
+                setMessage({ text: 'Failed to delete', type: 'danger' });
+            }
         } catch (error) {
             setMessage({ text: 'Error deleting product. Please try again.', type: 'danger' });
 
@@ -59,13 +66,13 @@ const Admin_Products_View = ({ session }) => {
     };
 
     const handleEdit = (product) => {
-        setSelectedProduct(product);
+        // setSelectedProduct(product);
         setShowAddForm(true);
         navigate(`/admin/products/edit_product/${product.id}`);
     };
 
     const handleNew = () => {
-        setSelectedProduct(null);
+        // setSelectedProduct(null);
         setShowAddForm(true);
         navigate(`/admin/products/add_product`);
     };
@@ -81,7 +88,7 @@ const Admin_Products_View = ({ session }) => {
             {showAddForm && (
                 <div>
                     <div id="overlay" onClick={handleClose}></div>
-                    <AddProductsForm/>
+                    <ProductForm/>
                 </div>
             )}
 
@@ -152,4 +159,4 @@ const Admin_Products_View = ({ session }) => {
     );
 };
 
-export default Admin_Products_View;
+export default Products_View;

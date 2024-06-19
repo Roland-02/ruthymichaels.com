@@ -37,7 +37,6 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
     try {
         const { name, type, description, price } = req.body;
         const files = req.files;
-
         if (!name || !price || files.length === 0) {
             return res.status(400).send({ message: 'Name, price, and at least one image are required' });
         }
@@ -67,6 +66,7 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
             imageUrls.push(`${driveResponse.data.id}`);
         }
         const imageUrlsString = imageUrls.join(',');
+
 
         getConnection((err, connection) => {
             if (err) throw err;
@@ -91,15 +91,38 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
 });
 
 // handle product edit
-router.post('/products/edit_product', upload.array('images', 6), async (req, res) => {
+router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
     try {
         const { id } = req.params;
         const { name, type, description, price } = req.body;
         const files = req.files;
+        console.log(files)
+        console.log(req.body)
 
         if (!name || !price || files.length === 0) {
-            return res.status(400).send({ message: 'Name, price, and at least one image are required' });
+            return res.status(400).send({ message: 'Name, price and at least 1 image are required' });
         }
+
+        let existingImageUrls = '';
+        getConnection((err, connection) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).send('Database connection failed');
+            }
+
+            // Fetch the existing image URLs from the database
+            const querySelect = 'SELECT image_URLs FROM products WHERE id = ?';
+            connection.query(querySelect, [id], async (error, results) => {
+                if (error) {
+                    connection.release();
+                    console.error(error);
+                    return res.status(500).send('Database query failed');
+                };
+
+                existingImageUrls = results[0].image_URLs.split(',');
+            });
+        });
+        console.log(existingImageUrls)
 
         const imageUrls = [];
 
@@ -115,7 +138,6 @@ router.post('/products/edit_product', upload.array('images', 6), async (req, res
                     body: Readable.from(buffer)
                 }
             });
-            // Set file permissions to public
             await drive.permissions.create({
                 fileId: driveResponse.data.id,
                 requestBody: {
@@ -125,13 +147,14 @@ router.post('/products/edit_product', upload.array('images', 6), async (req, res
             });
             imageUrls.push(`${driveResponse.data.id}`);
         }
+
         const imageUrlsString = imageUrls.join(',');
 
         getConnection((err, connection) => {
             if (err) throw err;
 
-            let query = 'UPDATE products SET name = ?, description = ?, type = ?, price = ?, image_URLs = ? WHERE id = ?';
-            connection.query(query, [name, description, type, price, imageUrlsString, id], (error, results) => {
+            let query = 'UPDATE products SET name = ?, type = ?, description = ?, price = ?, image_URLs = ? WHERE id = ?';
+            connection.query(query, [name, type, description, price, imageUrlsString, id], (error, results) => {
                 connection.release();
 
                 if (error) {
@@ -149,11 +172,94 @@ router.post('/products/edit_product', upload.array('images', 6), async (req, res
     }
 });
 
-// handle product delete
-router.post('/products/delete_product', async (req, res) => {
+// router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
+//     try {
+//         const { id } = req.params;
+//         const { name, type, description, price } = req.body;
+//         const files = req.files;
+
+//         if (!name || !price) {
+//             return res.status(400).send({ message: 'Name and price are required' });
+//         }
+
+//         getConnection((err, connection) => {
+//             if (err) {
+//                 console.error(err);
+//                 return res.status(500).send('Database connection failed');
+//             }
+
+//             // Fetch the existing image URLs from the database
+//             const querySelect = 'SELECT image_URLs FROM products WHERE id = ?';
+//             connection.query(querySelect, [id], async (error, results) => {
+//                 if (error) {
+//                     connection.release();
+//                     console.error(error);
+//                     return res.status(500).send('Database query failed');
+//                 }
+
+//                 const existingImageUrls = results.length > 0 ? results[0].image_URLs.split(',') : [];
+//                 const newImageUrls = [...existingImageUrls];
+
+//                 try {
+//                     for (let i = 0; i < files.length; i++) {
+//                         const file = files[i];
+//                         const { buffer, originalname } = file;
+//                         const driveResponse = await drive.files.create({
+//                             requestBody: {
+//                                 name: originalname,
+//                                 mimeType: file.mimetype
+//                             },
+//                             media: {
+//                                 mimeType: file.mimetype,
+//                                 body: Readable.from(buffer)
+//                             }
+//                         });
+
+//                         // Set file permissions to public
+//                         await drive.permissions.create({
+//                             fileId: driveResponse.data.id,
+//                             requestBody: {
+//                                 role: 'reader',
+//                                 type: 'anyone'
+//                             }
+//                         });
+
+//                         // Replace the existing image URL with the new one in the corresponding slot
+//                         newImageUrls[i] = `${driveResponse.data.id}`;
+//                     }
+
+//                     const imageUrlsString = newImageUrls.join(',');
+
+//                     // Update the product with the new data and merged image URLs
+//                     const queryUpdate = 'UPDATE products SET name = ?, type = ?, description = ?, price = ?, image_URLs = ? WHERE id = ?';
+//                     connection.query(queryUpdate, [name, type, description, price, imageUrlsString, id], (error, results) => {
+//                         connection.release();
+
+//                         if (error) {
+//                             console.error(error);
+//                             return res.status(500).send('Database update failed');
+//                         }
+
+//                         res.status(200).send({ message: 'Product edited successfully' });
+//                     });
+//                 } catch (error) {
+//                     connection.release();
+//                     console.error('Error:', error);
+//                     res.status(500).send('An error occurred while processing the request');
+//                 }
+//             });
+//         });
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('An error occurred while processing the request');
+//     }
+// });
+
+
+router.post('/products/delete_product/:id', async (req, res) => {
     try {
         const { id } = req.params;
-       
+
         getConnection((err, connection) => {
             if (err) throw err;
 
@@ -165,7 +271,7 @@ router.post('/products/delete_product', async (req, res) => {
                     console.error(error);
                     return res.status(500).send('Database deletion failed');
                 }
-                console.log('deleted from db')
+
                 res.status(200).send({ message: 'Product deleted successfully' });
             });
         });

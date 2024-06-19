@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../../client/src/components/context/SessionContext';
 import Index from './pages/index';
 import Admin from './pages/admin'; 
-import AdminProducts from './components/admin/Admin_Products_View';
+import AdminProducts from './components/admin/Products_View';
 
 
 const App = () => {
