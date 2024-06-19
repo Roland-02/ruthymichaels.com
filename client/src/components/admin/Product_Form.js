@@ -28,7 +28,7 @@ const Product_Form = ({ }) => {
       try {
         setLoading(true);
 
-        if (id) { // Check if ID is present
+        if (id) {
           const response = await axios.get(`/server/get_product/${id}`);
           const product = response.data;
           setFormData({
@@ -51,6 +51,12 @@ const Product_Form = ({ }) => {
       } catch (error) {
         setEdit(false);
         setMessage({ text: 'Product not found. Create new?', type: 'danger' });
+        setFormData({
+          name: null,
+          type: null,
+          description: null,
+          price: null,
+        })
         setTimeout(() => { setMessage({ text: '', type: '' }); }, 2000);
 
       } finally {
@@ -64,6 +70,10 @@ const Product_Form = ({ }) => {
 
   }, [id]);
 
+  const extractDriveId = (url) => {
+    const match = url.match(/id=([^&]+)/);
+    return match ? match[1] : null;
+  };
 
   const handleSubmit = async (e) => {
 
@@ -74,9 +84,14 @@ const Product_Form = ({ }) => {
     form.append('type', formData.type);
     form.append('description', formData.description);
     form.append('price', formData.price);
-    images.forEach((image) => {if (image) form.append(`images`, image.file)});
-  
-    console.log(form)
+    images.forEach((image, index) => {
+      if (image && image.file) {
+        form.append(`images`, image.file);
+      } else if (image && image.url) {
+        form.append(`existingImages[${index}]`, extractDriveId(image.url));
+
+      }
+    });
 
     if (id) {
       try {
