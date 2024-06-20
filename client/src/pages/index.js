@@ -60,6 +60,7 @@ const Index = ({ session }) => {
             {showCreateAccount && <CreateAccount onClose={handleClose} />}
           </div>
         )}
+        
         <Banner />
         <Products/>
       

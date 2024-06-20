@@ -34,13 +34,11 @@ const Products = () => {
                     <div className="col-3" key={product.name}>
                         <div className="card product-card">
                             <div className="card-body">
-
                                 <img
-                                    src={product.firstImageUrl}  // Render only the first image
+                                    src={product.firstImageUrl}
                                     className="product-image"
                                     alt="Product"
                                 />
-
                                 <h4 className="card-title">{product.name}</h4>
                                 <p className="card-text">{product.description}</p>
                             </div>

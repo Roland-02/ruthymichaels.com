@@ -8,8 +8,7 @@ import { SessionContext } from '../context/SessionContext';
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
-// import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
-import axios from 'axios';
+import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
 
 
@@ -134,31 +133,31 @@ const CreateAccount = () => {
         <button type="submit" className="btn btn-primary btn-block mb-4">Sign up</button>
         <p>or continue with</p>
 
-        {/* <div className="m-3">
-          <div className="d-flex justify-content-center">
-            <FacebookLogin
-              appId="417605231226749"
-              autoLoad={false}
-              fields="name,email,picture"
-              callback={responseFacebook}
-              icon="fa-facebook"
-              cssClass="btn btn-primary m-2"
-              textButton="Login with Facebook"
-            />
-          </div>
-          <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
-            <div className="d-flex justify-content-center">
-              <GoogleLogin
-                onSuccess={responseGoogle}
-                onError={() => {
-                  setError('Login Failed');
-                }}
-                className="btn btn-danger m-2"
-              />
-            </div>
-          </GoogleOAuthProvider>
-          <div id="status"></div>
-        </div> */}
+        <div className="m-3">
+
+                    <div className="d-flex justify-content-center mb-2">
+                        <FacebookLogin
+                            appId="417605231226749"
+                            autoLoad={false}
+                            fields="name"
+                            callback={responseFacebook}
+                            cssClass="loginBtn"
+                        />
+                    </div>
+
+                    { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
+                        <div className="d-flex justify-content-center">
+                            <GoogleLogin
+                                cssClass="loginBtn"
+                                onSuccess={responseGoogle}
+                                onError={() => {
+                                    console.log('Login Failed');
+                                }}
+                            />
+                        </div>
+                    </GoogleOAuthProvider> }
+                    <div id="status"></div>
+                </div>
 
         <div className="text-center">
           <p>Already have an account? <a href="/login">Sign in</a></p>

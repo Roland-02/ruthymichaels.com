@@ -90,69 +90,6 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
     }
 });
 
-// handle product edit
-// router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
-//     try {
-//         const { id } = req.params;
-//         const { name, type, description, price } = req.body;
-//         const files = req.files;
-//         const existingImages = req.body.existingImages || [];
-        
-//         if (!name || !price || (files.length === 0 && existingImages.length === 0)) {
-//             return res.status(400).send({ message: 'Name, price and at least 1 image are required' });
-//         }
-
-//         console.log(existingImages)
-//         const imageUrls = [];
-//         for (const file of files) {
-//             const { buffer, originalname } = file;
-//             const driveResponse = await drive.files.create({
-//                 requestBody: {
-//                     name: originalname,
-//                     mimeType: file.mimetype
-//                 },
-//                 media: {
-//                     mimeType: file.mimetype,
-//                     body: Readable.from(buffer)
-//                 }
-//             });
-//             await drive.permissions.create({
-//                 fileId: driveResponse.data.id,
-//                 requestBody: {
-//                     role: 'reader',
-//                     type: 'anyone'
-//                 }
-//             });
-//             imageUrls.push(`${driveResponse.data.id}`);
-//         }
-//         const allImageUrls = existingImages.concat(imageUrls).filter(url => url && url !== 'null');
-
-//         // const allImageUrls = existingImages.concat(imageUrls);
-//         console.log(allImageUrls)
-//         const imageUrlsString = allImageUrls.join(',');
-
-//         getConnection((err, connection) => {
-//             if (err) throw err;
-
-//             let query = 'UPDATE products SET name = ?, type = ?, description = ?, price = ?, image_URLs = ? WHERE id = ?';
-//             connection.query(query, [name, type, description, price, imageUrlsString, id], (error, results) => {
-//                 connection.release();
-
-//                 if (error) {
-//                     console.error(error);
-//                     return res.status(500).send('Database update failed');
-//                 }
-
-//                 res.status(200).send({ message: 'Product edited successfully' });
-//             });
-//         });
-
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).send('An error occurred while processing the request');
-//     }
-// });
-
 router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
     try {
         const { id } = req.params;

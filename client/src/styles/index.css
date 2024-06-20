@@ -18,12 +18,10 @@
     position: relative;
   }
   
-
   #products {
     position: relative;
     margin-top: 65vh;
-    margin-bottom: 15vh;
-    height: 100vh;
+    height: 100%;
   }
   
   .product-card {
