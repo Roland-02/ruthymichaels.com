@@ -27,87 +27,90 @@ const Products = () => {
             }
         };
 
-        // setProducts([{
-        //     name: 'black girl book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        // },
-        // {
-        //     name: 'black girl colouring book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        setProducts([
+            {
+                id: 1,
+                name: 'black girl book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 2,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 3,
+                name: 'black girl colouring',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 4,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 5,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 6,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 7,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 8,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 9,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            },
+            {
+                id: 10,
+                name: 'black girl colouring book',
+                type: 'book',
+                description: 'positive affirmations',
+                price: '4.99',
+                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+            }
+        ]);
 
-        // },
-        // {
-        //     name: 'black girl colouring',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colouring book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colouring book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colourinb book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colourinb book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colourinb book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colouring book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // },
-        // {
-        //     name: 'black girl colouring book',
-        //     type: 'book',
-        //     description: 'positive affirmations',
-        //     price: '4.99',
-        //     firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-
-        // }]);
-
-        fetchProducts();
+        // fetchProducts();
 
     }, []);
 
@@ -129,8 +132,8 @@ const Products = () => {
         <section id="products" className="container">
             <div className="row" id="products_section">
                 {products.map((product) => (
-                    <div className="col-3" key={product.id}>
-                        <div className="product-card">
+                    <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
+                        <div className="product-card"  key={product.id}>
                             <div className="card-body">
                                 <img
                                     src={product.firstImageUrl}
@@ -140,7 +143,6 @@ const Products = () => {
                                 <div className='product-details'>
                                     <h2 className="card-title">{product.name}</h2>
                                     <h5 className="card-price">£{product.price}</h5>
-                                    <h4 className="card-type">{product.type}</h4>
                                 </div>
                             </div>
                     
