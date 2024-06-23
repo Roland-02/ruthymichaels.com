@@ -1,5 +1,6 @@
 // src/components/common/Products.js
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/common.css';
 import '../../styles/index.css';
@@ -9,8 +10,8 @@ const Products = () => {
     const [products, setProducts] = useState([]);
     const [lovedProducts, setLovedProducts] = useState({});
     const [cartProducts, setCartedProducts] = useState({});
-
-
+    const navigate = useNavigate();
+    
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -27,90 +28,90 @@ const Products = () => {
             }
         };
 
-        setProducts([
-            {
-                id: 1,
-                name: 'black girl book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 2,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 3,
-                name: 'black girl colouring',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 4,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 5,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 6,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 7,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 8,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 9,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            },
-            {
-                id: 10,
-                name: 'black girl colouring book',
-                type: 'book',
-                description: 'positive affirmations',
-                price: '4.99',
-                firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-            }
-        ]);
+        // setProducts([
+        //     {
+        //         id: 1,
+        //         name: 'black girl book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 2,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 3,
+        //         name: 'black girl colouring',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 4,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 5,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 6,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 7,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 8,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 9,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     },
+        //     {
+        //         id: 10,
+        //         name: 'black girl colouring book',
+        //         type: 'book',
+        //         description: 'positive affirmations',
+        //         price: '4.99',
+        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
+        //     }
+        // ]);
 
-        // fetchProducts();
+        fetchProducts();
 
     }, []);
 
@@ -128,12 +129,16 @@ const Products = () => {
         }));
     };
 
+    const handleProductClick = (name) => {
+        navigate(`/product/${name}`);
+    };
+
     return (
         <section id="products" className="container">
             <div className="row" id="products_section">
                 {products.map((product) => (
                     <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
-                        <div className="product-card"  key={product.id}>
+                        <div className="product-card" onClick={() => handleProductClick(product.name)}>
                             <div className="card-body">
                                 <img
                                     src={product.firstImageUrl}
@@ -170,6 +175,7 @@ const Products = () => {
                                     )}
                                 </div>
                             </div>
+                            
                         </div>
                     </div>
                 ))}

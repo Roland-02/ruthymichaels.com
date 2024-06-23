@@ -35,8 +35,6 @@
 
   justify-content: center;
   text-align: center;
-  border: 1px solid rgb(156, 156, 156);
-  border-radius: 5px;
 }
 
 .product-image {
@@ -56,7 +54,7 @@
 }
 
 .product-details{
-  height: 11vh;
+  height: 13vh;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
