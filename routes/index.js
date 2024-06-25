@@ -30,60 +30,62 @@ router.get('/get_products', async (req, res) => {
     });
 });
 
+// Get product by ID
+router.get('/get_product', async (req, res) => {
+    const { id, name } = req.query;
 
-// Get products endpoint
-router.get('/get_product/:id', async (req, res) => {
-    const { id } = req.params;
-    getConnection((err, connection) => {
-        if (err) {
-            console.error('Database connection failed:', err);
-            return res.status(500).send('Database connection failed');
-        }
-
-        const query = 'SELECT id, name, type, description, price, image_URLs FROM products WHERE id = ?';
-        connection.query(query, [id], (error, results) => {
-            connection.release();
-
-            if (error) {
-                console.error('Database query failed:', error);
-                return res.status(500).send('Database query failed');
+    if (id) {
+        getConnection((err, connection) => {
+            if (err) {
+                console.error('Database connection failed:', err);
+                return res.status(500).send('Database connection failed');
             }
 
-            if (results.length === 0) {
-                return res.status(404).send('Product not found');
-            }
+            const query = 'SELECT id, name, type, description, price, image_URLs FROM products WHERE id = ?';
+            connection.query(query, [id], (error, results) => {
+                connection.release();
 
-            res.status(200).json(results[0]);
+                if (error) {
+                    console.error('Database query failed:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                if (results.length === 0) {
+                    return res.status(404).send('Product not found');
+                }
+
+                res.status(200).json(results[0]);
+            });
         });
-    });
+    } else if (name) {
+        getConnection((err, connection) => {
+            if (err) {
+                console.error('Database connection failed:', err);
+                return res.status(500).send('Database connection failed');
+            }
+
+            const query = 'SELECT id, name, type, description, price, image_URLs FROM products WHERE name = ?';
+            connection.query(query, [name], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Database query failed:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                if (results.length === 0) {
+                    return res.status(404).send('Product not found');
+                }
+
+                res.status(200).json(results[0]);
+            });
+        });
+    } else {
+        res.status(400).send('Either id or name query parameter is required');
+    }
 });
 
-
-router.get('/get_product/:name', async (req, res) => {
-    const { name } = req.params;
-    getConnection((err, connection) => {
-        if (err) {
-            console.error('Database connection failed:', err);
-            return res.status(500).send('Database connection failed');
-        }
-
-        const query = 'SELECT * FROM products WHERE name = ?';
-        connection.query(query, [name], (error, results) => {
-            connection.release();
-
-            if (error) {
-                console.error('Database query failed:', error);
-                return res.status(500).send('Database query failed');
-            }
-
-            if (results.length === 0) {
-                return res.status(404).send('Product not found');
-            }
-
-            res.status(200).json(results[0]);
-        });
-    });
-});
+module.exports = router;
 
 
 module.exports = router;

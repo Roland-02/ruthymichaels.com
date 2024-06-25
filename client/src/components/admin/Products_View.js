@@ -66,13 +66,11 @@ const Products_View = ({ session }) => {
     };
 
     const handleEdit = (product) => {
-        // setSelectedProduct(product);
         setShowAddForm(true);
         navigate(`/admin/products/edit_product/${product.id}`);
     };
 
     const handleNew = () => {
-        // setSelectedProduct(null);
         setShowAddForm(true);
         navigate(`/admin/products/add_product`);
     };

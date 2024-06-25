@@ -11,50 +11,107 @@ import Footer from '../components/common/Footer';
 
 const View_Product = ({ session }) => {
     const { name } = useParams();
-    const [product, setProduct] = useState([]);
+    const [product, setProduct] = useState({
+        id: null,
+        name: '',
+        type: '',
+        description: '',
+        price: '',
+        imageUrls: []
+    });
+    const [selectedImage, setSelectedImage] = useState(null);
     const navigate = useNavigate();
-    
+
     useEffect(() => {
+
         const fetchProduct = async () => {
             try {
-                const response = await axios.get(`/products/get_product/${name}`);
-                const productWithImages = response.data.map(product => {
-                    const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-                    return { ...product, imageUrls };
+                const response = await axios.get(`/server/get_product`, {
+                    params: { name }
                 });
-                setProduct(productWithImages);
+                if (response.status == 200) {
+                    const productData = response.data;
+                    const imageIds = productData.image_URLs ? productData.image_URLs.split(',') : [];
+                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                    setProduct({ ...productData, imageUrls });
+                    setSelectedImage(imageUrls[0]);
+                } else {
+                    navigate('/')
+                }
             } catch (error) {
-                console.error('Error fetching products:', error);
+                console.error('Error fetching product:', error);
             }
         };
 
         fetchProduct();
-        console.log(name)
+
+        const exampleProduct = {
+            id: 1,
+            name: 'black girl book',
+            type: 'book',
+            description: 'positive affirmations',
+            price: '4.99',
+            imageUrls: [
+                "https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw",
+                "https://drive.google.com/thumbnail?id=1P6l05c0EdW052ZTm-48Kob-tKkrLRgkQ"
+            ]
+        };
+
+        // setProduct(exampleProduct);
+        // setSelectedImage(exampleProduct.imageUrls[0]);
 
     }, [name]);
+
+    console.log(product);
 
     return (
         <div>
             <Navbar session={session} />
             <main>
+                <div className="container view-container">
 
-                <section id='product_images'>
+                    <div className='product-image-side'>
 
-                </section>
+                        <div className="thumbnail-container">
 
-                <section id='dialog_box'>
+                            {product.imageUrls.map((url, index) => (
+                                <img
+                                    key={index}
+                                    src={url}
+                                    alt={`Product Image ${index + 1}`}
+                                    className={`thumbnail ${url === selectedImage ? 'selected' : ''}`}
+                                    onClick={() => setSelectedImage(url)}
+                                />
 
-                </section>
+                            ))}
+                        </div>
 
-                <section id='similar_items'>
+                        <div className="selected-image">
+                            <img
+                                src={selectedImage}
+                                alt="Selected"
+                                className="selected-image"
+                            />
+                        </div>
 
-                </section>
+                    </div>
 
+                    <div className='product-details-side'>
+                        <h2>{product.name}</h2>
+                        <p>{product.description}</p>
+                        <p>£{product.price}</p>
+                    </div>
+
+                    <div id='similar_items' className="similar-items">
+                        {/* Similar items content */}
+                    </div>
+
+                </div>
             </main>
             <Footer />
         </div>
     );
 };
+
 
 export default View_Product;

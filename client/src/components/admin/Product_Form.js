@@ -13,8 +13,6 @@ const Product_Form = ({ }) => {
     description: '',
     price: ''
   });
-
-  // const [images, setImages] = useState(Array(6).fill(null)); 
   const [images, setImages] = useState(Array(6).fill({ file: null, url: null }));
   const [message, setMessage] = useState({ text: '', type: '' });
   const [loading, setLoading] = useState(false);
@@ -29,7 +27,9 @@ const Product_Form = ({ }) => {
         setLoading(true);
 
         if (id) {
-          const response = await axios.get(`/server/get_product/${id}`);
+          const response = await axios.get(`/server/get_product`, {
+            params: { id }
+          });
           const product = response.data;
           setFormData({
             name: product.name,

@@ -130,7 +130,7 @@ const Products = () => {
     };
 
     const handleProductClick = (name) => {
-        navigate(`/product/${name}`);
+        navigate(`/${name}`);
     };
 
     return (
