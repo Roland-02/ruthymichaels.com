@@ -4,6 +4,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
 import '../styles/view_product.css'
+import '../styles/index.css'
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -20,7 +21,9 @@ const View_Product = ({ session }) => {
         imageUrls: []
     });
     const [selectedImage, setSelectedImage] = useState(null);
+    const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
+
 
     useEffect(() => {
 
@@ -43,13 +46,13 @@ const View_Product = ({ session }) => {
             }
         };
 
-        fetchProduct();
+        // fetchProduct();
 
         const exampleProduct = {
             id: 1,
             name: 'black girl book',
             type: 'book',
-            description: 'positive affirmations',
+            description: 'positive affirmations positive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmationspositive affirmations',
             price: '4.99',
             imageUrls: [
                 "https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw",
@@ -57,10 +60,26 @@ const View_Product = ({ session }) => {
             ]
         };
 
-        // setProduct(exampleProduct);
-        // setSelectedImage(exampleProduct.imageUrls[0]);
+        setProduct(exampleProduct);
+        setSelectedImage(exampleProduct.imageUrls[0]);
 
     }, [name]);
+
+    const increaseQuantity = () => setQuantity(quantity + 1);
+    const decreaseQuantity = () => {
+        if (quantity > 1) {
+            setQuantity(quantity - 1);
+        }
+    };
+    const handleQuantityChange = (e) => {
+        const value = parseInt(e.target.value);
+        if (!isNaN(value) && value > 0) {
+            setQuantity(value);
+        } else {
+            setQuantity(1);
+        }
+    };
+
 
     console.log(product);
 
@@ -82,11 +101,10 @@ const View_Product = ({ session }) => {
                                     className={`thumbnail ${url === selectedImage ? 'selected' : ''}`}
                                     onClick={() => setSelectedImage(url)}
                                 />
-
                             ))}
                         </div>
 
-                        <div className="selected-image">
+                        <div className="selected-image-container">
                             <img
                                 src={selectedImage}
                                 alt="Selected"
@@ -96,17 +114,31 @@ const View_Product = ({ session }) => {
 
                     </div>
 
-                    <div className='product-details-side'>
-                        <h2>{product.name}</h2>
-                        <p>{product.description}</p>
-                        <p>£{product.price}</p>
-                    </div>
 
-                    <div id='similar_items' className="similar-items">
-                        {/* Similar items content */}
+                    <div className="product-details-side">
+                        <h2 className='product-name'>{product.name}</h2>
+                        <p className='product-description'>{product.description}</p>
+                        <p className='product-price'>£{product.price}</p>
+                        <div className="quantity-container">
+                            <button onClick={decreaseQuantity}>-</button>
+                            <input
+                                type="number"
+                                value={quantity}
+                                onChange={handleQuantityChange}
+                            />                            
+                            <button onClick={increaseQuantity}>+</button>
+                        </div>
+                        <p style={{ marginTop: '5px' }}>Total: £{(product.price * quantity).toFixed(2)}</p>
+                        <button className="add-to-cart">
+                            Add to Cart
+                        </button>
+
+                            
                     </div>
 
                 </div>
+
+
             </main>
             <Footer />
         </div>
