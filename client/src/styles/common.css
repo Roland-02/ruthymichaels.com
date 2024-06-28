@@ -102,3 +102,21 @@ body {
     transform: scale(1.1);
     filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
+
+/* 
+@media (max-width: 480px) {
+    .menu-item svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    .loginBtn {
+        padding: 0 8px 0 30px;
+        font-size: 10px;
+    }
+
+    .loginBtn:before {
+        width: 50%;
+    }
+
+} */
