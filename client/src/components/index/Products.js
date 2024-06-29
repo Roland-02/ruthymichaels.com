@@ -11,7 +11,7 @@ const Products = () => {
     const [lovedProducts, setLovedProducts] = useState({});
     const [cartProducts, setCartedProducts] = useState({});
     const navigate = useNavigate();
-    
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -27,89 +27,6 @@ const Products = () => {
                 console.error('Error fetching products:', error);
             }
         };
-
-        // setProducts([
-        //     {
-        //         id: 1,
-        //         name: 'black girl book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 2,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 3,
-        //         name: 'black girl colouring',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 4,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 5,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 6,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 7,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 8,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 9,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     },
-        //     {
-        //         id: 10,
-        //         name: 'black girl colouring book',
-        //         type: 'book',
-        //         description: 'positive affirmations',
-        //         price: '4.99',
-        //         firstImageUrl: 'https://drive.google.com/thumbnail?id=1tUmLqgo5tHJGvhWJ_N6KCPHcZl9VN9hw'
-        //     }
-        // ]);
 
         fetchProducts();
 
@@ -138,7 +55,10 @@ const Products = () => {
             <div className="row" id="products_section">
                 {products.map((product) => (
                     <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
-                        <div className="product-card" onClick={() => handleProductClick(product.name)}>
+                        <div className="product-card" onClick={(e) => {
+                            e.stopPropagation();
+                            handleProductClick(product.name);
+                        }}>
                             <div className="card-body">
                                 <img
                                     src={product.firstImageUrl}
@@ -150,9 +70,12 @@ const Products = () => {
                                     <h5 className="card-price">£{product.price}</h5>
                                 </div>
                             </div>
-                    
+
                             <div className="card-footer">
-                                <div className="menu-item shop-btn" onClick={() => handleLoveClick(product.id)}>
+                                <div className="menu-item shop-btn" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleLoveClick(product.id);
+                                }}>
                                     {lovedProducts[product.id] ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                                             <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1" />
@@ -163,8 +86,11 @@ const Products = () => {
                                         </svg>
                                     )}
                                 </div>
-                                <div className="menu-item shop-btn" onClick={() => handleCartClick(product.id)}>
-                                    {cartProducts[product.id] ? (                                        
+                                <div className="menu-item shop-btn" onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleCartClick(product.id);
+                                }}>
+                                    {cartProducts[product.id] ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" class="bi bi-cart-fill" viewBox="0 0 16 16">
                                             <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                                         </svg>
@@ -175,7 +101,7 @@ const Products = () => {
                                     )}
                                 </div>
                             </div>
-                            
+
                         </div>
                     </div>
                 ))}
