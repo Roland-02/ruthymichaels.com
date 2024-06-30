@@ -93,6 +93,10 @@
     margin-bottom: 20px;
 }
 
+.cart-container{
+    margin-top: 30px;
+}
+
 .quantity-container {
     display: flex;
     align-items: center;
@@ -119,7 +123,7 @@
 }
 
 .product-total {
-    margin-top: 5px;
+    margin-top: 10px;
     margin-bottom: 15px;
     font-size: 18px;
 }

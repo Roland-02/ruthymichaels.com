@@ -158,7 +158,7 @@ const View_Product = ({ session }) => {
 
                                 <p className='product-total'>Total: £{(product.price * quantity).toFixed(2)}</p>
 
-                                <div>
+                                <div className='cart-container'>
                                     <button className="add-to-cart expand">
                                         Add to Cart
                                     </button>
