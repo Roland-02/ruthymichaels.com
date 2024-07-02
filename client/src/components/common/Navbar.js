@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
@@ -10,6 +10,8 @@ import '../../bootstrap/css/mdb.min.css';
 
 const Navbar = () => {
   const { session, setSession } = useContext(SessionContext);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isExpanded, setIsExpanded] = useState(false);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -20,20 +22,34 @@ const Navbar = () => {
     } catch (error) {
       console.error('Error signing out:', error);
     }
-  }
+
+  };
 
   const handleTitleClick = async () => {
-    navigate('/')
-  }
+    navigate('/');
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSearchSubmit = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const toggleSearch = () => {
+    setIsExpanded(!isExpanded);
+  };
+
 
   return (
     <section>
       <header>
         <div className="nav-bar py-1 bg-white border-bottom">
-          <div className="container d-flex justify-content-center align-items-center text-center"  style={{ marginLeft: '0px', marginRight: '0px'}}>
+          <div className="container d-flex justify-content-center align-items-center text-center" style={{ marginLeft: '0px', marginRight: '0px' }}>
 
             {/* Left elements */}
-            <div className="col-md col-sm text-start login-btns">
+            <div className="col-md col-sm text-start d-flex">
               {session && session.id ? (
                 <div className="menu-item" onClick={handleSignOut}>
                   <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" className="bi bi-box-arrow-in-left" viewBox="0 0 16 16">
@@ -49,6 +65,28 @@ const Navbar = () => {
                   </svg>
                 </Link>
               )}
+
+              {/* Search form */}
+              <div className="search-container menu-item">
+                <input
+                  type="text"
+                  className={`search-input ${isExpanded ? 'expanded' : ''}`}
+                  placeholder="Search..."
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                />
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="25"
+                  height="25"
+                  className={`search-icon ${isExpanded ? 'expanded' : ''}`}
+                  viewBox="0 0 16 16"
+                  onClick={toggleSearch}
+                >
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                </svg>
+              </div>
+              
             </div>
 
             {/* Centered title */}
@@ -58,6 +96,7 @@ const Navbar = () => {
 
             {/* Right elements */}
             <div className="col-md col-sm text-end nav-btns">
+
               <Link to="/basket" className="m-2 menu-item">
                 <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" className="bi bi-cart" viewBox="0 0 16 16">
                   <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />

@@ -179,7 +179,7 @@
 
 .similar-product {
     height: 280px;
-    width: 190px;
+    width: 210px;
     text-align: center;
     border: 1px solid #ccc;
     padding: 10px;
@@ -213,7 +213,7 @@
     font-weight: 550;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 991px) {
 
     .view-container, .product-top-container {
         flex-direction: column;
@@ -256,6 +256,7 @@
         overflow-y: hidden;
         justify-content: center;
         align-items: center;
+        margin-bottom: 10px;
     }
 
     .thumbnail {
