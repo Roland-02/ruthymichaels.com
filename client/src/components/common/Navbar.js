@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -13,7 +13,40 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const searchContainerRef = useRef(null);
   const navigate = useNavigate();
+
+  const mockProducts = [
+    {
+      id: 1,
+      name: 'Product 1',
+      type: 'Type A',
+      description: 'Description of Product 1',
+      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
+    },
+    {
+      id: 2,
+      name: 'Product 2',
+      type: 'Type B',
+      description: 'Description of Product 2',
+      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
+    },
+    {
+      id: 3,
+      name: 'Product 3',
+      type: 'Type A',
+      description: 'Description of Product 3',
+      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
+    },
+    {
+      id: 4,
+      name: 'Product 4',
+      type: 'Type C',
+      description: 'Description of Product 4',
+      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
+    }
+  ];
+
 
   const handleSignOut = async () => {
     try {
@@ -26,15 +59,26 @@ const Navbar = () => {
 
   };
 
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (searchQuery) {
         try {
-          const response = await axios.get('/server/search', {
-            params: { query: searchQuery },
-          });
-          setSearchResults(response.data);
-          console.log(searchResults)
+          // const response = await axios.get('/server/search', {
+          //   params: { query: searchQuery }
+          // });
+          // const productData = response.data;
+
+          // const formattedResults = productData.map(product => {
+          //   const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
+          //   const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+          //   return { ...product, imageUrls };
+          // });
+  
+          // setSearchResults(formattedResults);
+
+          setSearchResults(mockProducts);
+
         } catch (err) {
           console.error('Error fetching search results', err);
         }
@@ -44,16 +88,45 @@ const Navbar = () => {
     fetchSearchResults();
   }, [searchQuery]);
 
+    console.log(searchResults)
+
+
+  const handleClickOutside = (event) => {
+    if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+      setIsExpanded(false);
+      setSearchQuery('');
+      setSearchResults([]);
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   const handleTitleClick = async () => {
     navigate('/');
   };
+
+  const highlightText = (text, query) => {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? <strong key={index}>{part}</strong> : part
+    );
+  };
+
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
-
   const toggleSearch = () => {
+    setSearchResults([]);
+    setSearchQuery('');
     setIsExpanded(!isExpanded);
   };
 
@@ -83,7 +156,7 @@ const Navbar = () => {
               )}
 
               {/* Search form */}
-              <div className="search-container menu-item">
+              <div className="search-container menu-item" ref={searchContainerRef}>
                 <input
                   type="text"
                   className={`search-input ${isExpanded ? 'expanded' : ''}`}
@@ -101,8 +174,23 @@ const Navbar = () => {
                 >
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                 </svg>
+
+
               </div>
-              
+
+              {searchResults.length > 0 && (
+                <div className="results-container visible" ref={searchContainerRef}>
+                  {searchResults.map(result => (
+                    <div className="result-item" key={result.id}>
+                      <img src={result.image} alt={result.name} />
+                      <span>{highlightText(result.name, searchQuery)}</span><br />
+                <span>{highlightText(result.type, searchQuery)}</span><br />
+                <span>{highlightText(result.description, searchQuery)}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+
             </div>
 
             {/* Centered title */}
