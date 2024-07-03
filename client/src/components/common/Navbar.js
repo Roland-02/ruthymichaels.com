@@ -12,6 +12,7 @@ const Navbar = () => {
   const { session, setSession } = useContext(SessionContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -25,6 +26,24 @@ const Navbar = () => {
 
   };
 
+  useEffect(() => {
+    const fetchSearchResults = async () => {
+      if (searchQuery) {
+        try {
+          const response = await axios.get('/server/search', {
+            params: { query: searchQuery },
+          });
+          setSearchResults(response.data);
+          console.log(searchResults)
+        } catch (err) {
+          console.error('Error fetching search results', err);
+        }
+      }
+    };
+
+    fetchSearchResults();
+  }, [searchQuery]);
+
   const handleTitleClick = async () => {
     navigate('/');
   };
@@ -33,9 +52,6 @@ const Navbar = () => {
     setSearchQuery(e.target.value);
   };
 
-  const handleSearchSubmit = (e) => {
-    setSearchQuery(e.target.value);
-  };
 
   const toggleSearch = () => {
     setIsExpanded(!isExpanded);

@@ -21,7 +21,7 @@ router.get('/get_products', async (req, res) => {
                 return res.status(500).send('Database query failed');
             }
 
-            if (results.length == 0){
+            if (results.length == 0) {
                 return res.status(404).send('No products not found');
             }
 
@@ -83,6 +83,31 @@ router.get('/get_product', async (req, res) => {
     } else {
         res.status(400).send('Either id or name query parameter is required');
     }
+});
+
+// search products
+router.get('/search', async (req, res) => {
+    const { query } = req.query;
+
+    if (!query) {
+        return res.status(400).send('Query parameter is required');
+    }
+
+    getConnection((err, connection) => {
+
+        if (err) throw (err)
+
+        const sqlQuery = `SELECT * FROM products WHERE name LIKE ? OR type LIKE ? OR description LIKE ?`;
+        const searchTerm = `%${query}%`;
+
+        connection.query(sqlQuery, [searchTerm, searchTerm, searchTerm], (err, results) => {
+            if (err) {
+                return res.status(500).send('Server error');
+            }
+            res.json(results);
+        });
+    });
+
 });
 
 module.exports = router;
