@@ -16,12 +16,13 @@ const Products = () => {
         const fetchProducts = async () => {
             try {
                 const response = await axios.get('/server/get_products');
-                const productsWithImages = response.data.map(product => {
-                    const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
-                    const firstImageUrl = imageIds.length > 0 ? `https://drive.google.com/thumbnail?id=${imageIds[0]}` : null;
-                    return { ...product, firstImageUrl };
+                const allProducts = response.data;
+                const formattedProducts = allProducts.map(prod => {
+                    const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                    const imageUrls = imageIds.map(id => `https://drive.google.com/file/d/${id}/view?usp=sharing`);
+                    return { ...prod, imageUrls };
                 });
-                setProducts(productsWithImages);
+                setProducts(formattedProducts);
 
             } catch (error) {
                 console.error('Error fetching products:', error);
@@ -53,6 +54,7 @@ const Products = () => {
     return (
         <section id="products" className="container">
             <div className="row" id="products_section">
+          
                 {products.map((product) => (
                     <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
                         <div className="product-card" onClick={(e) => {
@@ -61,9 +63,17 @@ const Products = () => {
                         }}>
                             <div className="card-body">
                                 <img
-                                    src={product.firstImageUrl}
+                                    src={product.imageUrls[0]}
                                     className="product-image"
                                     alt="Product"
+                                    onMouseEnter={(e) => {
+                                        if (product.imageUrls[1]) {
+                                            e.currentTarget.src = product.imageUrls[1];
+                                        }
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.src = product.imageUrls[0];
+                                    }}
                                 />
                                 <div className='product-details'>
                                     <h2 className="card-title">{product.name}</h2>

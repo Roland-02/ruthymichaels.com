@@ -120,6 +120,10 @@ const Navbar = () => {
     );
   };
 
+  const handleProductClick = (name) => {
+    navigate(`/${name}`);
+};
+
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
@@ -177,9 +181,9 @@ const Navbar = () => {
               </div>
 
               {searchResults.length > 0 && (
-                <div className="results-container visible" ref={resultsContainerRef}>
+                <div className="results-container visible" ref={resultsContainerRef} >
                   {searchResults.map(result => (
-                    <div className="result-item" key={result.id}>
+                    <div className="result-item" key={result.id} onClick={(e) => {handleProductClick(result.name)}}>
                       <div className="result-image">
                         <img src={result.image} alt={result.name} />
                       </div>

@@ -163,7 +163,6 @@ router.post('/products/edit_product/:id', upload.array('images', 6), async (req,
     }
 });
 
-
 router.post('/products/delete_product/:id', async (req, res) => {
     try {
         const { id } = req.params;
@@ -171,23 +170,69 @@ router.post('/products/delete_product/:id', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            let query = 'DELETE FROM products WHERE id = ?';
-            connection.query(query, [id], (error, results) => {
-                connection.release();
-
+            let getImageUrlsQuery = 'SELECT image_URLs FROM products WHERE id = ?';
+            connection.query(getImageUrlsQuery, [id], async (error, results) => {
                 if (error) {
+                    connection.release();
                     console.error(error);
-                    return res.status(500).send('Database deletion failed');
+                    return res.status(500).send('Database retrieval failed');
                 }
 
-                res.status(200).send({ message: 'Product deleted successfully' });
+                const imageUrls = results[0].image_URLs.split(',');
+
+                // Delete files from Google Drive
+                for (const fileId of imageUrls) {
+                    try {
+                        await drive.files.delete({ fileId });
+                    } catch (driveError) {
+                        console.error('Error deleting file from Google Drive:', driveError);
+                    }
+                }
+
+                // Delete the product from the database
+                let deleteProductQuery = 'DELETE FROM products WHERE id = ?';
+                connection.query(deleteProductQuery, [id], (deleteError, deleteResults) => {
+                    connection.release();
+
+                    if (deleteError) {
+                        console.error(deleteError);
+                        return res.status(500).send('Database deletion failed');
+                    }
+
+                    res.status(200).send({ message: 'Product deleted successfully' });
+                });
             });
         });
-
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');
     }
 });
+
+// router.post('/products/delete_product/:id', async (req, res) => {
+//     try {
+//         const { id } = req.params;
+
+//         getConnection((err, connection) => {
+//             if (err) throw err;
+
+//             let query = 'DELETE FROM products WHERE id = ?';
+//             connection.query(query, [id], (error, results) => {
+//                 connection.release();
+
+//                 if (error) {
+//                     console.error(error);
+//                     return res.status(500).send('Database deletion failed');
+//                 }
+
+//                 res.status(200).send({ message: 'Product deleted successfully' });
+//             });
+//         });
+
+//     } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('An error occurred while processing the request');
+//     }
+// });
 
 module.exports = router;
