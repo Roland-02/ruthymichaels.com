@@ -159,41 +159,75 @@ body {
 /* Results Container Styles */
 .results-container {
     position: absolute;
-    top: 75px; /* Adjust based on your navbar height */
+    top: 75px;
     left: 50%;
     transform: translateX(-50%);
-    width: 80%; 
-    z-index: 100;
+    width: 80%;
     display: none;
     background-color: rgba(255, 255, 255, 0.9);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
 }
-  
-  .results-container.visible {
+
+.results-container.visible {
     display: block;
     max-height: 450px;
     overflow: scroll;
-  }
-  
-  .result-item {
+    border-radius: 5px;
+}
+
+
+.result-item {
     display: flex;
-    align-items: center;
-    margin: 15px;
-  }
-  
-  .result-item img {
-    width: 100px;
-    height: 130px;
+    flex-direction: row;
+    border: 1px solid rgb(202, 202, 202);
+    padding: 5px;
+    cursor: pointer;
+}
+
+.result-image {
+    display: flex;
+    align-items: flex-start;
+}
+
+.result-image img {
+    width: 140px;
+    height: 190px;
     border-radius: 5px;
     object-fit: cover;
-    margin-right: 10px;
-  }
+    margin: 15px;
+}
 
-  span{
-    margin-left: 25px;
-  }
+.result-details {
+    display: flex;
+    align-self: flex-start;
+    flex-direction: column;
+    text-align: left;
+    position: relative;
+    max-height: 190px;
+    flex-grow: 1;
+    margin-top: 15px;
 
+    
+}
+
+.result-details .name {
+    font-size: 21px;
+    margin: 0px;
+}
+
+.result-details .type {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.result-details .description {
+    font-size: 13px;
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-wrap: break-word;
+}
 
 
 @media (max-width: 1189px) {
@@ -212,7 +246,6 @@ body {
     .search-container {
         display: none;
     }
-
 }
 
 @media (max-width: 576px) {

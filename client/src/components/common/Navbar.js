@@ -14,14 +14,15 @@ const Navbar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const searchContainerRef = useRef(null);
+  const resultsContainerRef = useRef(null)
   const navigate = useNavigate();
 
   const mockProducts = [
     {
       id: 1,
-      name: 'Product 1',
-      type: 'Type A',
-      description: 'Description of Product 1',
+      name: 'ProductProductProductProductProducthvjhvbjhbjhb',
+      type: 'Type AType AType A',
+      description: 'You are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love i are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p positivity and self-love in the coloring pn the coloring pages. This coloring book celebrates the Strength and Beauty in you as a Black Woman or Black Girl. It will nurture self-care and positivity. This book is a good companion on your journey of empowerment and self-discovery. 8.5x11 inches Glossy 64 pages with 30 illustrations with vibrant pictures and intricate designs Single-sided illustration to prevent a bleed-through',
       image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
     },
     {
@@ -47,7 +48,6 @@ const Navbar = () => {
     }
   ];
 
-
   const handleSignOut = async () => {
     try {
       await axios.post('/signout');
@@ -59,25 +59,24 @@ const Navbar = () => {
 
   };
 
-
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (searchQuery) {
         try {
-          // const response = await axios.get('/server/search', {
-          //   params: { query: searchQuery }
-          // });
-          // const productData = response.data;
+          const response = await axios.get('/server/search', {
+            params: { query: searchQuery }
+          });
+          const productData = response.data;
 
-          // const formattedResults = productData.map(product => {
-          //   const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
-          //   const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-          //   return { ...product, imageUrls };
-          // });
-  
-          // setSearchResults(formattedResults);
+          const formattedResults = productData.map(product => {
+            const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
+            const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+            return { ...product, imageUrls };
+          });
 
-          setSearchResults(mockProducts);
+          setSearchResults(formattedResults);
+
+          // setSearchResults(mockProducts);
 
         } catch (err) {
           console.error('Error fetching search results', err);
@@ -88,11 +87,13 @@ const Navbar = () => {
     fetchSearchResults();
   }, [searchQuery]);
 
-    console.log(searchResults)
-
-
   const handleClickOutside = (event) => {
-    if (searchContainerRef.current && !searchContainerRef.current.contains(event.target)) {
+    if (
+      searchContainerRef.current &&
+      !searchContainerRef.current.contains(event.target) &&
+      resultsContainerRef.current &&
+      !resultsContainerRef.current.contains(event.target)
+    ) {
       setIsExpanded(false);
       setSearchQuery('');
       setSearchResults([]);
@@ -119,14 +120,12 @@ const Navbar = () => {
     );
   };
 
-
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
   };
 
   const toggleSearch = () => {
     setSearchResults([]);
-    setSearchQuery('');
     setIsExpanded(!isExpanded);
   };
 
@@ -175,17 +174,20 @@ const Navbar = () => {
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
                 </svg>
 
-
               </div>
 
               {searchResults.length > 0 && (
-                <div className="results-container visible" ref={searchContainerRef}>
+                <div className="results-container visible" ref={resultsContainerRef}>
                   {searchResults.map(result => (
                     <div className="result-item" key={result.id}>
-                      <img src={result.image} alt={result.name} />
-                      <span>{highlightText(result.name, searchQuery)}</span><br />
-                <span>{highlightText(result.type, searchQuery)}</span><br />
-                <span>{highlightText(result.description, searchQuery)}</span>
+                      <div className="result-image">
+                        <img src={result.image} alt={result.name} />
+                      </div>
+                      <div className="result-details">
+                        <p className="name">{highlightText(result.name, searchQuery)}</p>
+                        <p className="type">{highlightText(result.type, searchQuery)}</p>
+                        <p className="description">{highlightText(result.description, searchQuery)}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
