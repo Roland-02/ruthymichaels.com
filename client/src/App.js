@@ -5,6 +5,7 @@ import Index from './pages/index';
 import View_Product from './pages/view_product'
 import Admin from './pages/admin'; 
 import AdminProducts from './components/admin/Products_View';
+import Basket from './pages/basket';
 
 
 const App = () => {
@@ -17,6 +18,9 @@ const App = () => {
                 <Route path="/login" element={<Index />} />
                 <Route path="/createAccount" element={<Index />} />
                 <Route path="/:name" element={<View_Product />} />
+
+                <Route path="/basket" element={<Basket />} />
+                <Route path="/cart" element={<Basket />} />
 
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />

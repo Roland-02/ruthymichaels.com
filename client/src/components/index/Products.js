@@ -19,7 +19,7 @@ const Products = () => {
                 const allProducts = response.data;
                 const formattedProducts = allProducts.map(prod => {
                     const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(id => `https://drive.google.com/file/d/${id}/view?usp=sharing`);
+                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                     return { ...prod, imageUrls };
                 });
                 setProducts(formattedProducts);
@@ -54,7 +54,7 @@ const Products = () => {
     return (
         <section id="products" className="container">
             <div className="row" id="products_section">
-          
+
                 {products.map((product) => (
                     <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
                         <div className="product-card" onClick={(e) => {

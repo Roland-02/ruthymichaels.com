@@ -185,7 +185,7 @@ const Navbar = () => {
                   {searchResults.map(result => (
                     <div className="result-item" key={result.id} onClick={(e) => {handleProductClick(result.name)}}>
                       <div className="result-image">
-                        <img src={result.image} alt={result.name} />
+                        <img src={result.imageUrls[0]} alt={result.name} />
                       </div>
                       <div className="result-details">
                         <p className="name">{highlightText(result.name, searchQuery)}</p>

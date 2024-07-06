@@ -206,23 +206,21 @@ body {
     position: relative;
     max-height: 190px;
     flex-grow: 1;
-    margin-top: 15px;
-
-    
+    margin-top: 15px;   
 }
 
 .result-details .name {
-    font-size: 21px;
+    font-size: 22px;
     margin: 0px;
 }
 
 .result-details .type {
-    font-size: 16px;
+    font-size: 17px;
     margin-bottom: 10px;
 }
 
 .result-details .description {
-    font-size: 13px;
+    font-size: 14px;
     text-align: left;
     overflow: hidden;
     text-overflow: ellipsis;
