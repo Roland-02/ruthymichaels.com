@@ -1,17 +1,19 @@
-// src/components/common/Products.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/common.css';
 import '../../styles/index.css';
 import '../../bootstrap/css/mdb.min.css';
+import { SessionContext } from '../context/SessionContext';
 
 const Products = () => {
+    const { session} = useContext(SessionContext);
     const [products, setProducts] = useState([]);
     const [lovedProducts, setLovedProducts] = useState({});
     const [cartProducts, setCartedProducts] = useState({});
     const navigate = useNavigate();
 
+    // load products from db on page render
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -34,10 +36,18 @@ const Products = () => {
     }, []);
 
     const handleLoveClick = (productID) => {
-        setLovedProducts((prev) => ({
-            ...prev,
-            [productID]: !prev[productID],
-        }));
+
+        if (session && session.id != null) {
+            setLovedProducts((prev) => ({
+                ...prev,
+                [productID]: !prev[productID],
+            }));
+
+        } else {
+            console.log(session)
+            navigate('/login')
+        }
+
     };
 
     const handleCartClick = (productID) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 
@@ -8,9 +8,12 @@ import '../styles/index.css'
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
+import SimilarProducts from '../components/common/SimilarProducts';
+import { SessionContext } from '../components/context/SessionContext';
 
 
-const View_Product = ({ session }) => {
+const View_Product = () => {
+    const { session} = useContext(SessionContext);
     const { name } = useParams();
     const [product, setProduct] = useState({
         id: null,
@@ -20,7 +23,6 @@ const View_Product = ({ session }) => {
         price: '',
         imageUrls: []
     });
-    const [similar, setSimilar] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [quantity, setQuantity] = useState(1);
     const navigate = useNavigate();
@@ -37,45 +39,12 @@ const View_Product = ({ session }) => {
                 const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                 setProduct({ ...productData, imageUrls });
                 setSelectedImage(imageUrls[0]);
+
             } else {
                 navigate('/')
             }
         } catch (error) {
             console.error('Error fetching product: ', error);
-        }
-    };
-
-    const fetchSimilar = async () => {
-        try {
-            const response = await axios.get('/server/get_products');
-            if (response.status == 200) {
-                const allProducts = response.data;
-
-                // Format imageUrls for each product
-                const formattedProducts = allProducts.map(prod => {
-                    const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-                    return { ...prod, imageUrls };
-                });
-
-                // Remove the selected product
-                const filteredProducts = formattedProducts.filter(x => x.id !== product.id);
-
-                // Order the products, putting those with the same type first
-                const orderedSimilar = filteredProducts.sort((a, b) => {
-                    if (a.type === product.type && b.type !== product.type) return -1;
-                    if (a.type !== product.type && b.type === product.type) return 1;
-                    return 0;
-                });
-
-                setSimilar(orderedSimilar);
-
-            } else {
-                console.log('error')
-            }
-
-        } catch (error) {
-            console.error('Error fetching products: ', error);
         }
     };
 
@@ -86,11 +55,6 @@ const View_Product = ({ session }) => {
         initialize();
     }, [name]);
 
-    useEffect(() => {
-        if (product.id) {
-            fetchSimilar(product);
-        }
-    }, [product]);
 
     const increaseQuantity = () => setQuantity(quantity + 1);
     const decreaseQuantity = () => {
@@ -108,13 +72,9 @@ const View_Product = ({ session }) => {
         }
     };
 
-    const handleProductClick = (name) => {
-        navigate(`/${name}`)
-    };
-
     return (
         <div>
-            <Navbar session={session} />
+            <Navbar />
             <main>
                 <div className="container view-container">
                     <div className="product-top-container">
@@ -172,24 +132,7 @@ const View_Product = ({ session }) => {
                         </div>
                     </div>
 
-                    <div className='similar-products-wrapper'>
-                        <h2 className="similar-products-title">Similar Items</h2>
-                        <div className='similar-products-container'>
-                            {similar.map((prod, index) => (
-                                <div
-                                    key={prod.id}
-                                    className="similar-product"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        handleProductClick(prod.name);
-                                    }}
-                                >
-                                    <img src={prod.imageUrls[0]} alt={prod.name} className="similar-product-image" />
-                                    <p className="similar-product-name">{prod.name}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                    <SimilarProducts product={product} />
 
                 </div>
 

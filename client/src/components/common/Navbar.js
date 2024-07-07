@@ -17,36 +17,6 @@ const Navbar = () => {
   const resultsContainerRef = useRef(null)
   const navigate = useNavigate();
 
-  const mockProducts = [
-    {
-      id: 1,
-      name: 'ProductProductProductProductProducthvjhvbjhbjhb',
-      type: 'Type AType AType A',
-      description: 'You are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love i are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p are invited on this therapeutic journey as you immerse yourself in coloring this book and imbibing the positivity and self-love in the coloring p positivity and self-love in the coloring pn the coloring pages. This coloring book celebrates the Strength and Beauty in you as a Black Woman or Black Girl. It will nurture self-care and positivity. This book is a good companion on your journey of empowerment and self-discovery. 8.5x11 inches Glossy 64 pages with 30 illustrations with vibrant pictures and intricate designs Single-sided illustration to prevent a bleed-through',
-      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
-    },
-    {
-      id: 2,
-      name: 'Product 2',
-      type: 'Type B',
-      description: 'Description of Product 2',
-      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
-    },
-    {
-      id: 3,
-      name: 'Product 3',
-      type: 'Type A',
-      description: 'Description of Product 3',
-      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
-    },
-    {
-      id: 4,
-      name: 'Product 4',
-      type: 'Type C',
-      description: 'Description of Product 4',
-      image: 'https://drive.google.com/thumbnail?id=1MVk_t8SXeIYb1HWbK9bxUrfDUmq0AcxW'
-    }
-  ];
 
   const handleSignOut = async () => {
     try {

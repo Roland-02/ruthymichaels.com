@@ -1,7 +1,8 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { SessionContext } from '../components/context/SessionContext';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -11,28 +12,21 @@ import Banner from '../components/common/Banner';
 import Products from '../components/index/Products';
 
 
-const Index = ({ session }) => {
+const Index = () => {
+  const { session} = useContext(SessionContext);
   const [showLogin, setShowLogin] = useState(false);
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+  // check session, open login forms
   useEffect(() => {
-    // Check session on component mount
-    const checkSession = async () => {
-      try {
-        const response = await axios.get('/session');
-        if (response.data && response.data.userId) {
-          // If session is active, redirect to home
-          navigate('/');
-        }
-      } catch (error) {
-        console.error('Error checking session:', error);
-      }
-    };
 
-    checkSession();
+    if(session && session.id){
+      navigate('/')
+    }
 
+    // open login forms if in url
     if (location.pathname === '/login') {
       setShowLogin(true);
       setShowCreateAccount(false);
@@ -51,7 +45,7 @@ const Index = ({ session }) => {
 
   return (
     <div>
-      <Navbar session={session} />
+      <Navbar />
           <main>
         {(showLogin || showCreateAccount) && (
           <div>
@@ -62,7 +56,7 @@ const Index = ({ session }) => {
         )}
         
         <Banner />
-        <Products/>
+        <Products />
       
       </main>
       <Footer />
