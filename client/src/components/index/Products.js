@@ -1,55 +1,114 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
 import '../../styles/common.css';
 import '../../styles/index.css';
 import '../../bootstrap/css/mdb.min.css';
-import { SessionContext } from '../context/SessionContext';
 
 const Products = () => {
-    const { session} = useContext(SessionContext);
+    const { session } = useContext(SessionContext);
     const [products, setProducts] = useState([]);
     const [lovedProducts, setLovedProducts] = useState({});
     const [cartProducts, setCartedProducts] = useState({});
     const navigate = useNavigate();
 
     // load products from db on page render
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const response = await axios.get('/server/get_products');
-                const allProducts = response.data;
-                const formattedProducts = allProducts.map(prod => {
-                    const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-                    return { ...prod, imageUrls };
-                });
-                setProducts(formattedProducts);
+    const fetchProducts = async () => {
+        try {
+            const response = await axios.get('/server/get_products');
+            const allProducts = response.data;
+            const formattedProducts = allProducts.map(prod => {
+                const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                return { ...prod, imageUrls };
+            });
+            setProducts(formattedProducts);
 
-            } catch (error) {
-                console.error('Error fetching products:', error);
-            }
-        };
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    const fetchLovedProducts = async () => {
+        try {
+            const response = await axios.get(`/server/get_loved_products/${session.id}`);
+            const allLoved = response.data;
+            setLovedProducts(allLoved);
+        } catch (error) {
+            console.error('Error fetching loved products:', error);
+
+        }
+    };
+
+    useEffect(() => {
 
         fetchProducts();
 
-    }, []);
-
-    const handleLoveClick = (productID) => {
-
-        if (session && session.id != null) {
-            setLovedProducts((prev) => ({
-                ...prev,
-                [productID]: !prev[productID],
-            }));
-
-        } else {
-            console.log(session)
-            navigate('/login')
+        if (session && session.id) {
+            fetchLovedProducts();
         }
 
-    };
+    }, []);
 
+    const handleLoveClick = async (productID) => {
+        if (session && session.id != null) {
+
+
+            setLovedProducts((prev) => {
+                const newLovedProducts = { ...prev };
+                if (newLovedProducts[productID]) {
+                    delete newLovedProducts[productID]; // Remove product
+                } else {
+                    newLovedProducts[productID] = true; // Add product
+                }
+                return newLovedProducts;
+            });
+
+            // Check if the product is already loved
+            const isLoved = lovedProducts[productID];
+
+            try {
+                let response;
+                if (isLoved) {
+                    // If the product is already loved, make a request to remove it
+                    response = await axios.post('/server/remove_loved_product', {
+                        user_id: session.id,
+                        product_id: productID
+                    });
+
+                    if (response.status === 200) {
+                        console.log('Product unloved successfully');
+                    } else {
+                        console.error('Failed to unlove product:', response.data);
+                    }
+                } else {
+
+                    // If the product is not loved, make a request to love it
+                    response = await axios.post('/server/love_product', {
+                        user_id: session.id,
+                        product_id: productID
+                    });
+
+                    if (response.status === 200) {
+                        console.log('Product loved successfully');
+                    } else {
+                        console.error('Failed to love product:', response.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling love state:', error);
+                // Revert the state if the request fails
+                setLovedProducts((prev) => ({
+                    ...prev,
+                    [productID]: isLoved,
+                }));
+            }
+        } else {
+            console.log(session);
+            navigate('/login');
+        }
+    };
     const handleCartClick = (productID) => {
         setCartedProducts((prev) => ({
             ...prev,

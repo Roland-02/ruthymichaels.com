@@ -110,5 +110,94 @@ router.get('/search', async (req, res) => {
 
 });
 
+// Route to get loved products for a user
+router.get('/get_loved_products/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const query = `SELECT product_id FROM user_loved WHERE user_id = ?`;
+
+            connection.query(query, [user_id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Error fetching loved products:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                res.status(200).json(results);
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
+
+
+router.post('/love_product', async (req, res) => {
+    try {
+        const { user_id, product_id } = req.body;
+
+        if (!user_id || !product_id) {
+            return res.status(400).send('User ID and Product ID are required');
+        }
+
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const query = 'INSERT INTO user_loved (user_id, product_id) VALUES (?, ?)';
+            connection.query(query, [user_id, product_id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Error inserting into user_loved:', error);
+                    return res.status(500).send('Database insertion failed');
+                }
+
+                res.status(200).send({ message: 'Product loved successfully' });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+
+});
+
+router.post('/remove_loved_product', async (req, res) => {
+    try {
+        const { user_id, product_id } = req.body;
+
+        if (!user_id || !product_id) {
+            return res.status(400).send('User ID and Product ID are required');
+        }
+
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const query = 'DELETE FROM user_loved WHERE user_id = ? AND product_id = ?';
+            connection.query(query, [user_id, product_id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Error deleting loved product', error);
+                    return res.status(500).send('Database deletion failed');
+                }
+
+                res.status(200).send({ message: 'Product deleted successfully' });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+
+});
+
+
 
 module.exports = router;
