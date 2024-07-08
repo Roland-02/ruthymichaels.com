@@ -111,8 +111,8 @@ router.get('/search', async (req, res) => {
 });
 
 // Route to get loved products for a user
-router.get('/get_loved_products/:user_id', async (req, res) => {
-    const { user_id } = req.params;
+router.get('/get_loved_products/:id', async (req, res) => {
+    const { id } = req.params;
 
     try {
         getConnection((err, connection) => {
@@ -120,7 +120,7 @@ router.get('/get_loved_products/:user_id', async (req, res) => {
 
             const query = `SELECT product_id FROM user_loved WHERE user_id = ?`;
 
-            connection.query(query, [user_id], (error, results) => {
+            connection.query(query, [id], (error, results) => {
                 connection.release();
 
                 if (error) {
@@ -128,6 +128,7 @@ router.get('/get_loved_products/:user_id', async (req, res) => {
                     return res.status(500).send('Database query failed');
                 }
 
+                console.log(results)
                 res.status(200).json(results);
             });
         });
@@ -135,6 +136,7 @@ router.get('/get_loved_products/:user_id', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');
     }
+
 });
 
 router.post('/love_product', async (req, res) => {

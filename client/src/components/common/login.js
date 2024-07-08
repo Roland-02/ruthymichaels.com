@@ -16,7 +16,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const { setSession } = useContext(SessionContext);
+    const { session, setSession } = useContext(SessionContext);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,7 +24,7 @@ const Login = () => {
         if (userId) {
             console.log('Logged in User ID:', userId);
         }
-    }, []);
+    }, [session]);
 
     useEffect(() => {
         window.scrollTo(0, 0);

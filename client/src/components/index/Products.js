@@ -9,7 +9,7 @@ import '../../bootstrap/css/mdb.min.css';
 const Products = () => {
     const { session } = useContext(SessionContext);
     const [products, setProducts] = useState([]);
-    const [lovedProducts, setLovedProducts] = useState({});
+    const [lovedProducts, setLovedProducts] = useState([]);
     const [cartProducts, setCartedProducts] = useState({});
     const navigate = useNavigate();
 
@@ -30,14 +30,14 @@ const Products = () => {
         }
     };
 
-    const fetchLovedProducts = async (session) => {
+    const fetchLovedProducts = async () => {
         try {
-            // console.log(session)
             if (session && session.id) {
                 const response = await axios.get(`/server/get_loved_products/${session.id}`);
-                const allLoved = response.data;
+                const allLoved = response.data.map(x => x.product_id);
                 setLovedProducts(allLoved);
-            }else{
+
+            } else {
                 setLovedProducts([])
             }
 
@@ -49,31 +49,26 @@ const Products = () => {
 
     useEffect(() => {
 
-
         const initialize = async () => {
             await fetchProducts();
-            await fetchLovedProducts(session);
+            await fetchLovedProducts();
         };
         initialize();
 
-    }, []);
+    }, [session]);
 
 
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
 
+            const isLoved = lovedProducts.includes(productID);
             setLovedProducts((prev) => {
-                const newLovedProducts = { ...prev };
-                if (newLovedProducts[productID]) {
-                    delete newLovedProducts[productID]; // Remove product
+                if (isLoved) {
+                    return prev.filter(id => id !== productID); // Remove product
                 } else {
-                    newLovedProducts[productID] = true; // Add product
+                    return [...prev, productID]; // Add product
                 }
-                return newLovedProducts;
             });
-
-            // Check if the product is already loved
-            const isLoved = lovedProducts[productID];
 
             try {
                 let response;
@@ -112,10 +107,10 @@ const Products = () => {
                 }));
             }
         } else {
-            console.log(session);
             navigate('/login');
         }
     };
+
     const handleCartClick = (productID) => {
         setCartedProducts((prev) => ({
             ...prev,
@@ -162,7 +157,7 @@ const Products = () => {
                                     e.stopPropagation();
                                     handleLoveClick(product.id);
                                 }}>
-                                    {lovedProducts[product.id] ? (
+                                    {lovedProducts.includes(product.id) ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                                             <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1" />
                                         </svg>
@@ -172,6 +167,7 @@ const Products = () => {
                                         </svg>
                                     )}
                                 </div>
+
                                 <div className="menu-item shop-btn" onClick={(e) => {
                                     e.stopPropagation();
                                     handleCartClick(product.id);
