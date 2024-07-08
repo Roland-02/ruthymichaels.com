@@ -137,7 +137,6 @@ router.get('/get_loved_products/:user_id', async (req, res) => {
     }
 });
 
-
 router.post('/love_product', async (req, res) => {
     try {
         const { user_id, product_id } = req.body;

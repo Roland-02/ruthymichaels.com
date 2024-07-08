@@ -9,6 +9,7 @@ import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
+import {jwtDecode} from 'jwt-decode';
 
 
 const Login = () => {
@@ -27,9 +28,13 @@ const Login = () => {
 
     useEffect(() => {
         window.scrollTo(0, 0);
-      }, []);
+    }, []);
 
- 
+    const togglePassword = () => {
+        const passwordInput = document.getElementById('password_login');
+        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -45,7 +50,7 @@ const Login = () => {
 
             if (result.id) {
                 setSession({ id: result.id, email: result.email });
-                navigate('/'); 
+                navigate('/');
             } else {
                 setErrorMessage('Password or email incorrect');
             }
@@ -64,23 +69,19 @@ const Login = () => {
             console.log('User cancelled login or did not fully authorize.');
             setErrorMessage('Please log into this app.');
         }
-    }
+    };
 
     const responseGoogle = (response) => {
-        if (response.accessToken) {
-            Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
-            Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
-            setSession({ id: response.userID, email: response.email, });
+        if (response.credential) {
+            const decodedToken = jwtDecode(response.credential);
+            Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
+            Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
+            setSession({ id: decodedToken.sub, email: decodedToken.email, });
             navigate('/');
         } else {
             console.log('User cancelled login or did not fully authorize.');
             setErrorMessage('Please log into this app.');
         }
-    };
-    
-    const togglePassword = () => {
-        const passwordInput = document.getElementById('password_login');
-        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
     };
 
     return (
@@ -142,18 +143,18 @@ const Login = () => {
                         />
                     </div>
 
-                    { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
+                    {<GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
                         <div className="d-flex justify-content-center">
                             <GoogleLogin
                                 cssClass="loginBtn"
                                 onSuccess={responseGoogle}
-                                onError={() => {
-                                    console.log('Login Failed');
+                                onError={(error) => {
+                                    console.log('Login Failed', error);
                                 }}
                             />
                         </div>
-                    </GoogleOAuthProvider> }
-                    <div id="status"></div>
+                    </GoogleOAuthProvider>}
+
                 </div>
                 <div className="text-center">
                     <p>Don't have an account? <a href="/createAccount">Sign up</a></p>

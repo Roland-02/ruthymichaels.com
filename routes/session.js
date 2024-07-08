@@ -9,7 +9,7 @@ var crypto = require('crypto');
 // Function to hash email
 function hashEmail(email) {
     return crypto.createHash('sha256').update(email).digest('hex');
-}
+};
 
 router.get('/session', (req, res) => {
     const session = {

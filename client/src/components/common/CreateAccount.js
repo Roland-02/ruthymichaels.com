@@ -1,4 +1,3 @@
-// src/pages/CreateAccount.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
@@ -10,6 +9,7 @@ import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
+import { jwtDecode } from 'jwt-decode';
 
 
 const CreateAccount = () => {
@@ -59,37 +59,29 @@ const CreateAccount = () => {
 
   const responseFacebook = (response) => {
     if (response.accessToken) {
-      document.cookie = `sessionID=${response.userID}; path=/; secure; samesite=Strict`;
-      document.cookie = `sessionEmail=${response.email}; path=/; secure; samesite=Strict`;
-      window.location.href = '/';
+      Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
+      Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
+      setSession({ id: response.userID, email: response.email, });
+      navigate('/');
     } else {
-      setError('User cancelled login or did not fully authorize.');
+      console.log('User cancelled login or did not fully authorize.');
+      setError('Please log into this app.');
     }
   };
 
   const responseGoogle = (response) => {
     if (response.credential) {
-      const data = parseJwt(response.credential);
-      document.cookie = `sessionID=${data.sub}; path=/; SameSite=None; Secure`;
-      document.cookie = `sessionEmail=${data.email}; path=/; SameSite=None; Secure`;
-      window.location.href = '/';
+      const decodedToken = jwtDecode(response.credential);
+      Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
+      Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
+      setSession({ id: decodedToken.sub, email: decodedToken.email, });
+      navigate('/');
     } else {
-      setError('User cancelled login or did not fully authorize.');
+      console.log('User cancelled login or did not fully authorize.');
+      setError('Please log into this app.');
     }
   };
 
-  const parseJwt = (token) => {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(
-      atob(base64)
-        .split('')
-        .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
-        .join('')
-    );
-
-    return JSON.parse(jsonPayload);
-  };
 
   return (
     <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
@@ -135,29 +127,29 @@ const CreateAccount = () => {
 
         <div className="m-3">
 
-                    <div className="d-flex justify-content-center mb-2">
-                        <FacebookLogin
-                            appId="417605231226749"
-                            autoLoad={false}
-                            fields="name"
-                            callback={responseFacebook}
-                            cssClass="loginBtn"
-                        />
-                    </div>
+          <div className="d-flex justify-content-center mb-2">
+            <FacebookLogin
+              appId="417605231226749"
+              autoLoad={false}
+              fields="name"
+              callback={responseFacebook}
+              cssClass="loginBtn"
+            />
+          </div>
 
-                    { <GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
-                        <div className="d-flex justify-content-center">
-                            <GoogleLogin
-                                cssClass="loginBtn"
-                                onSuccess={responseGoogle}
-                                onError={() => {
-                                    console.log('Login Failed');
-                                }}
-                            />
-                        </div>
-                    </GoogleOAuthProvider> }
-                    <div id="status"></div>
-                </div>
+          {<GoogleOAuthProvider clientId="142386812768-5dfql3hsf32etn4tpdpa7lo9dol09j4q.apps.googleusercontent.com">
+            <div className="d-flex justify-content-center">
+              <GoogleLogin
+                cssClass="loginBtn"
+                onSuccess={responseGoogle}
+                onError={() => {
+                  console.log('Login Failed');
+                }}
+              />
+            </div>
+          </GoogleOAuthProvider>}
+          <div id="status"></div>
+        </div>
 
         <div className="text-center">
           <p>Already have an account? <a href="/login">Sign in</a></p>

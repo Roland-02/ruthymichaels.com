@@ -30,11 +30,17 @@ const Products = () => {
         }
     };
 
-    const fetchLovedProducts = async () => {
+    const fetchLovedProducts = async (session) => {
         try {
-            const response = await axios.get(`/server/get_loved_products/${session.id}`);
-            const allLoved = response.data;
-            setLovedProducts(allLoved);
+            // console.log(session)
+            if (session && session.id) {
+                const response = await axios.get(`/server/get_loved_products/${session.id}`);
+                const allLoved = response.data;
+                setLovedProducts(allLoved);
+            }else{
+                setLovedProducts([])
+            }
+
         } catch (error) {
             console.error('Error fetching loved products:', error);
 
@@ -43,17 +49,18 @@ const Products = () => {
 
     useEffect(() => {
 
-        fetchProducts();
 
-        if (session && session.id) {
-            fetchLovedProducts();
-        }
+        const initialize = async () => {
+            await fetchProducts();
+            await fetchLovedProducts(session);
+        };
+        initialize();
 
     }, []);
 
+
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
-
 
             setLovedProducts((prev) => {
                 const newLovedProducts = { ...prev };
