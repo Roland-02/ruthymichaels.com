@@ -1,16 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../context/SessionContext';
+
 import axios from 'axios';
-import '../../styles/common.css';
+
 import '../../styles/index.css';
+import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 
 
-const Products = () => {
+const Products = ({ setMessage }) => {
     const { session } = useContext(SessionContext);
+    // const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [products, setProducts] = useState([]);
-    const [lovedProducts, setLovedProducts] = useState([]);
+    const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
     const navigate = useNavigate();
 
@@ -31,15 +34,15 @@ const Products = () => {
         }
     };
 
-    const fetchLovedProducts = async () => {
+    const fetchWishlist = async () => {
         try {
             if (session && session.id) {
-                const response = await axios.get(`/server/get_loved_products/${session.id}`);
+                const response = await axios.get(`/server/get_wishlist/${session.id}`);
                 const allLoved = response.data.map(x => x.product_id);
-                setLovedProducts(allLoved);
+                setWishlist(allLoved);
 
             } else {
-                setLovedProducts([])
+                setWishlist([])
             }
 
         } catch (error) {
@@ -63,13 +66,13 @@ const Products = () => {
             console.error('Error fetching loved products:', error);
 
         }
-    }
+    };
 
     useEffect(() => {
 
         const initialize = async () => {
             await fetchProducts();
-            await fetchLovedProducts();
+            await fetchWishlist();
             await fetchCartProducts();
         };
         initialize();
@@ -79,8 +82,8 @@ const Products = () => {
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
 
-            const isLoved = lovedProducts.includes(productID);
-            setLovedProducts((prev) => {
+            const isLoved = wishlist.includes(productID);
+            setWishlist((prev) => {
                 if (isLoved) {
                     return prev.filter(id => id !== productID); // Remove product
                 } else {
@@ -92,37 +95,46 @@ const Products = () => {
                 let response;
                 if (isLoved) {
                     // If the product is already loved, make a request to remove it
-                    response = await axios.post('/server/remove_loved_product', {
+                    response = await axios.post('/server/remove_wishlist', {
                         user_id: session.id,
                         product_id: productID
                     });
 
                     if (response.status === 200) {
                         console.log('Product unloved successfully');
+                        setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
+
                     } else {
                         console.error('Failed to unlove product:', response.data);
+                        setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
                     }
                 } else {
 
                     // If the product is not loved, make a request to love it
-                    response = await axios.post('/server/love_product', {
+                    response = await axios.post('/server/add_wishlist', {
                         user_id: session.id,
                         product_id: productID
                     });
 
                     if (response.status === 200) {
                         console.log('Product loved successfully');
+                        setMessage({ content: 'Added to wishlist', productID, action: 'love' });
+
                     } else {
                         console.error('Failed to love product:', response.data);
+                        setMessage({ content: 'Error adding to wishlist', productID, action: 'love' });
+
                     }
                 }
             } catch (error) {
                 console.error('Error toggling love state:', error);
                 // Revert the state if the request fails
-                setLovedProducts((prev) => ({
+                setWishlist((prev) => ({
                     ...prev,
                     [productID]: isLoved,
                 }));
+                setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'love' });
+
             }
         } else {
             navigate('/login');
@@ -152,8 +164,12 @@ const Products = () => {
 
                     if (response.status === 200) {
                         console.log('Product uncarted successfully');
+                        setMessage({ content: 'Removed from basket', productID, action: 'love' });
+
                     } else {
                         console.error('Failed to uncart product:', response.data);
+                        setMessage({ content: 'Failed to remove from basket', productID, action: 'love' });
+
                     }
                 } else {
 
@@ -166,8 +182,10 @@ const Products = () => {
 
                     if (response.status === 200) {
                         console.log('Product cart successfully');
+                        setMessage({ content: 'Added to basket', productID, action: 'love' });
+
                     } else {
-                        console.error('Failed to add product to cart:', response.data);
+                        console.error('Failed to add to basket', response.data);
                     }
                 }
             } catch (error) {
@@ -177,6 +195,8 @@ const Products = () => {
                     ...prev,
                     [productID]: isCart,
                 }));
+                setMessage({ content: 'Error saving basket', productID, action: 'love' });
+
             }
         } else {
             console.log('store cart in cache')
@@ -223,7 +243,7 @@ const Products = () => {
                                     e.stopPropagation();
                                     handleLoveClick(product.id);
                                 }}>
-                                    {lovedProducts.includes(product.id) ? (
+                                    {wishlist.includes(product.id) ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-suit-heart-fill" viewBox="0 0 16 16">
                                             <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1" />
                                         </svg>

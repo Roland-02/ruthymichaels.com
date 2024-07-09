@@ -128,7 +128,6 @@ router.get('/get_cart_products/:id', async (req, res) => {
                     return res.status(500).send('Database query failed');
                 }
 
-                console.log(results)
                 res.status(200).json(results);
             });
         });
@@ -201,7 +200,7 @@ router.post('/remove_cart_product', async (req, res) => {
 
 
 // Route to get loved products for a user
-router.get('/get_loved_products/:id', async (req, res) => {
+router.get('/get_wishlist/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -229,7 +228,7 @@ router.get('/get_loved_products/:id', async (req, res) => {
 
 });
 
-router.post('/love_product', async (req, res) => {
+router.post('/add_wishlist', async (req, res) => {
     try {
         const { user_id, product_id } = req.body;
 
@@ -259,7 +258,7 @@ router.post('/love_product', async (req, res) => {
 
 });
 
-router.post('/remove_loved_product', async (req, res) => {
+router.post('/remove_wishlist', async (req, res) => {
     try {
         const { user_id, product_id } = req.body;
 

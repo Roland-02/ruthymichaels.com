@@ -45,9 +45,7 @@ const Navbar = () => {
           });
 
           setSearchResults(formattedResults);
-
-          // setSearchResults(mockProducts);
-
+          
         } catch (err) {
           console.error('Error fetching search results', err);
         }

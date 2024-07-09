@@ -1,7 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { SessionContext } from '../components/context/SessionContext';
 
 import Navbar from '../components/common/Navbar';
@@ -10,12 +9,14 @@ import Login from '../components/common/Login';
 import CreateAccount from '../components/common/CreateAccount';
 import Banner from '../components/common/Banner';
 import Products from '../components/index/Products';
+import MessageBanner from '../components/common/MessageBanner'
 
 
 const Index = () => {
   const { session} = useContext(SessionContext);
   const [showLogin, setShowLogin] = useState(false);
   const [showCreateAccount, setShowCreateAccount] = useState(false);
+  const [message, setMessage] = useState({ content: null, product: null, action: null });
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,7 +47,9 @@ const Index = () => {
   return (
     <div>
       <Navbar />
-          <main>
+
+      <MessageBanner message={message} setMessage={setMessage} />
+
         {(showLogin || showCreateAccount) && (
           <div>
             <div id="overlay" onClick={handleClose}></div>
@@ -56,9 +59,7 @@ const Index = () => {
         )}
         
         <Banner />
-        <Products />
-      
-      </main>
+        <Products setMessage={setMessage}/>
       <Footer />
     </div>
   );
