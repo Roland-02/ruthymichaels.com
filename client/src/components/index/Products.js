@@ -6,11 +6,12 @@ import '../../styles/common.css';
 import '../../styles/index.css';
 import '../../bootstrap/css/mdb.min.css';
 
+
 const Products = () => {
     const { session } = useContext(SessionContext);
     const [products, setProducts] = useState([]);
     const [lovedProducts, setLovedProducts] = useState([]);
-    const [cartProducts, setCartedProducts] = useState({});
+    const [cartProducts, setCartedProducts] = useState([]);
     const navigate = useNavigate();
 
     // load products from db on page render
@@ -47,16 +48,33 @@ const Products = () => {
         }
     };
 
+    const fetchCartProducts = async () => {
+        try {
+            if (session && session.id) {
+                const response = await axios.get(`/server/get_cart_products/${session.id}`);
+                const allCart = response.data.map(x => x.product_id);
+                setCartedProducts(allCart);
+
+            } else {
+                console.log('fetch cart from cache')
+            }
+
+        } catch (error) {
+            console.error('Error fetching loved products:', error);
+
+        }
+    }
+
     useEffect(() => {
 
         const initialize = async () => {
             await fetchProducts();
             await fetchLovedProducts();
+            await fetchCartProducts();
         };
         initialize();
 
     }, [session]);
-
 
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
@@ -111,16 +129,64 @@ const Products = () => {
         }
     };
 
-    const handleCartClick = (productID) => {
-        setCartedProducts((prev) => ({
-            ...prev,
-            [productID]: !prev[productID],
-        }));
+    const handleCartClick = async (productID) => {
+        if (session && session.id != null) {
+
+            const isCart = cartProducts.includes(productID);
+            setCartedProducts((prev) => {
+                if (isCart) {
+                    return prev.filter(id => id !== productID); // Remove product
+                } else {
+                    return [...prev, productID]; // Add product
+                }
+            });
+
+            try {
+                let response;
+                if (isCart) {
+                    // If the product is already loved, make a request to remove it
+                    response = await axios.post('/server/remove_cart_product', {
+                        user_id: session.id,
+                        product_id: productID,
+                    });
+
+                    if (response.status === 200) {
+                        console.log('Product uncarted successfully');
+                    } else {
+                        console.error('Failed to uncart product:', response.data);
+                    }
+                } else {
+
+                    // If the product is not loved, make a request to love it
+                    response = await axios.post('/server/cart_product', {
+                        user_id: session.id,
+                        product_id: productID,
+                        qty: 1
+                    });
+
+                    if (response.status === 200) {
+                        console.log('Product cart successfully');
+                    } else {
+                        console.error('Failed to add product to cart:', response.data);
+                    }
+                }
+            } catch (error) {
+                console.error('Error toggling love state:', error);
+                // Revert the state if the request fails
+                setCartedProducts((prev) => ({
+                    ...prev,
+                    [productID]: isCart,
+                }));
+            }
+        } else {
+            console.log('store cart in cache')
+        }
     };
 
     const handleProductClick = (name) => {
         navigate(`/${name}`);
     };
+
 
     return (
         <section id="products" className="container">
@@ -172,7 +238,7 @@ const Products = () => {
                                     e.stopPropagation();
                                     handleCartClick(product.id);
                                 }}>
-                                    {cartProducts[product.id] ? (
+                                    {cartProducts.includes(product.id) ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" class="bi bi-cart-fill" viewBox="0 0 16 16">
                                             <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
                                         </svg>
