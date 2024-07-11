@@ -60,6 +60,7 @@ const Index = () => {
         
         <Banner />
         <Products setMessage={setMessage}/>
+        
       <Footer />
     </div>
   );

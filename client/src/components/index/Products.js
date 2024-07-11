@@ -11,7 +11,6 @@ import '../../bootstrap/css/mdb.min.css';
 
 const Products = ({ setMessage }) => {
     const { session } = useContext(SessionContext);
-    // const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [products, setProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
@@ -164,17 +163,17 @@ const Products = ({ setMessage }) => {
 
                     if (response.status === 200) {
                         console.log('Product uncarted successfully');
-                        setMessage({ content: 'Removed from basket', productID, action: 'love' });
+                        setMessage({ content: 'Removed from basket', productID, action: 'cart' });
 
                     } else {
                         console.error('Failed to uncart product:', response.data);
-                        setMessage({ content: 'Failed to remove from basket', productID, action: 'love' });
+                        setMessage({ content: 'Failed to remove from basket', productID, action: 'cart' });
 
                     }
                 } else {
 
                     // If the product is not loved, make a request to love it
-                    response = await axios.post('/server/cart_product', {
+                    response = await axios.post('/server/update_cart', {
                         user_id: session.id,
                         product_id: productID,
                         qty: 1
@@ -182,7 +181,7 @@ const Products = ({ setMessage }) => {
 
                     if (response.status === 200) {
                         console.log('Product cart successfully');
-                        setMessage({ content: 'Added to basket', productID, action: 'love' });
+                        setMessage({ content: 'Added to basket', productID, action: 'cart' });
 
                     } else {
                         console.error('Failed to add to basket', response.data);
@@ -195,7 +194,7 @@ const Products = ({ setMessage }) => {
                     ...prev,
                     [productID]: isCart,
                 }));
-                setMessage({ content: 'Error saving basket', productID, action: 'love' });
+                setMessage({ content: 'Error saving basket', productID, action: 'cart' });
 
             }
         } else {

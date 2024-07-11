@@ -4,7 +4,7 @@ const { getConnection } = require('../database');
 const router = express.Router();
 
 
-// Get products endpoint
+// get products endpoint
 router.get('/get_products', async (req, res) => {
     getConnection((err, connection) => {
         if (err) {
@@ -30,7 +30,7 @@ router.get('/get_products', async (req, res) => {
     });
 });
 
-// Get product by ID
+// get product by ID
 router.get('/get_product', async (req, res) => {
     const { id, name } = req.query;
 
@@ -138,7 +138,7 @@ router.get('/get_cart_products/:id', async (req, res) => {
 
 });
 
-router.post('/cart_product', async (req, res) => {
+router.post('/update_cart', async (req, res) => {
     try {
         const { user_id, product_id, qty } = req.body;
 
@@ -149,7 +149,7 @@ router.post('/cart_product', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'INSERT INTO user_basket (user_id, product_id, qty) VALUES (?, ?, ?)';
+            const query = 'INSERT INTO user_basket (user_id, product_id, qty) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE qty = VALUES(qty)';
             connection.query(query, [user_id, product_id, qty], (error, results) => {
                 connection.release();
 
@@ -198,8 +198,7 @@ router.post('/remove_cart_product', async (req, res) => {
 
 });
 
-
-// Route to get loved products for a user
+// route to get loved products for a user
 router.get('/get_wishlist/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -217,7 +216,6 @@ router.get('/get_wishlist/:id', async (req, res) => {
                     return res.status(500).send('Database query failed');
                 }
 
-                console.log(results)
                 res.status(200).json(results);
             });
         });
@@ -287,7 +285,6 @@ router.post('/remove_wishlist', async (req, res) => {
     }
 
 });
-
 
 
 module.exports = router;
