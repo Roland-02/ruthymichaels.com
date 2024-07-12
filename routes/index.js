@@ -111,7 +111,7 @@ router.get('/search', async (req, res) => {
 });
 
 // route to get products in cart for a user
-router.get('/get_cart_products/:id', async (req, res) => {
+router.get('/get_cart/:id', async (req, res) => {
     const { id } = req.params;
 
     try {
@@ -198,6 +198,51 @@ router.post('/remove_cart_product', async (req, res) => {
 
 });
 
+// route to get wishlist products for a user
+router.get('/get_wishlist_products/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            // First query to get the product IDs in the wishlist
+            const wishlistQuery = `SELECT product_id FROM user_wishlist WHERE user_id = ?`;
+
+            connection.query(wishlistQuery, [id], (error, wishlistResults) => {
+                if (error) {
+                    connection.release();
+                    console.error('Error fetching wishlist products:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                const productIds = wishlistResults.map(row => row.product_id);
+                if (productIds.length === 0) {
+                    connection.release();
+                    return res.status(200).json([]);
+                }
+
+                // Second query to get product details for the retrieved product IDs
+                const productsQuery = `SELECT * FROM products WHERE id IN (?)`;
+
+                connection.query(productsQuery, [productIds], (error, productsResults) => {
+                    connection.release();
+
+                    if (error) {
+                        console.error('Error fetching product details:', error);
+                        return res.status(500).send('Database query failed');
+                    }
+
+                    res.status(200).json(productsResults);
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
+
 // route to get loved products for a user
 router.get('/get_wishlist/:id', async (req, res) => {
     const { id } = req.params;
@@ -206,7 +251,7 @@ router.get('/get_wishlist/:id', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = `SELECT product_id FROM user_loved WHERE user_id = ?`;
+            const query = `SELECT product_id FROM user_wishlist WHERE user_id = ?`;
 
             connection.query(query, [id], (error, results) => {
                 connection.release();
@@ -237,12 +282,12 @@ router.post('/add_wishlist', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'INSERT INTO user_loved (user_id, product_id) VALUES (?, ?)';
+            const query = 'INSERT INTO user_wishlist (user_id, product_id) VALUES (?, ?)';
             connection.query(query, [user_id, product_id], (error, results) => {
                 connection.release();
 
                 if (error) {
-                    console.error('Error inserting into user_loved:', error);
+                    console.error('Error inserting into user_wishlist:', error);
                     return res.status(500).send('Database insertion failed');
                 }
 
@@ -267,7 +312,7 @@ router.post('/remove_wishlist', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'DELETE FROM user_loved WHERE user_id = ? AND product_id = ?';
+            const query = 'DELETE FROM user_wishlist WHERE user_id = ? AND product_id = ?';
             connection.query(query, [user_id, product_id], (error, results) => {
                 connection.release();
 

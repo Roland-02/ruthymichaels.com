@@ -72,7 +72,7 @@ const View_Product = () => {
     const fetchCartProducts = async () => {
         try {
             if (session && session.id) {
-                const response = await axios.get(`/server/get_cart_products/${session.id}`);
+                const response = await axios.get(`/server/get_cart/${session.id}`);
                 const allCart = response.data.map(x => x.product_id);
                 setCartedProducts(allCart);
 
@@ -206,7 +206,8 @@ const View_Product = () => {
             }
         };
         initialize();
-    }, [session]);
+        
+    }, [session, navigate]);
 
     const increaseQuantity = () => setQuantity(quantity + 1);
     const decreaseQuantity = () => {

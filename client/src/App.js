@@ -6,6 +6,7 @@ import View_Product from './pages/view_product'
 import Admin from './pages/admin'; 
 import AdminProducts from './components/admin/Products_View';
 import Basket from './pages/basket';
+import Wishlist from './pages/wishlist';
 
 
 const App = () => {
@@ -21,6 +22,8 @@ const App = () => {
 
                 <Route path="/basket" element={<Basket />} />
                 <Route path="/cart" element={<Basket />} />
+
+                <Route path="/wishlist" element={<Wishlist />} />
 
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
