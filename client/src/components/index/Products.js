@@ -9,14 +9,80 @@ import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 
 
-const Products = ({ setMessage, products: initialProducts }) => {
+const Products = ({ setMessage, initialProducts }) => {
     const { session } = useContext(SessionContext);
-    const [products, setProducts] = useState(initialProducts || []);
+    const [products, setProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
     const navigate = useNavigate();
 
-    // load products from db on page render
+    useEffect(() => {
+        const initialize = async () => {
+            if (initialProducts) {
+                setProducts(initialProducts)
+            } else {
+                await fetchProducts();
+            }
+            await fetchWishlist();
+            await fetchCartProducts();
+        };
+        initialize();
+
+        const sampleWishlist = [
+            {
+                id: 1,
+                name: 'Proroductroductduct roduct roductroduct',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '10.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 2,
+                name: 'Product 2',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '20.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 3,
+                name: 'Product 3',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '30.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 4,
+                name: 'Product 1',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '10.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 5,
+                name: 'Product 2',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '20.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 6,
+                name: 'Product 3',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '30.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            }
+        ];
+
+        // setProducts(sampleWishlist)
+
+    }, [session, initialProducts]);
+
     const fetchProducts = async () => {
         try {
             const response = await axios.get('/server/get_products');
@@ -67,71 +133,6 @@ const Products = ({ setMessage, products: initialProducts }) => {
         }
     };
 
-    useEffect(() => {
-
-        const initialize = async () => {
-            if (!initialProducts) {
-                await fetchProducts();
-            }
-            await fetchWishlist();
-            await fetchCartProducts();
-        };
-        initialize();
-
-        const sampleWishlist = [
-            {
-                id: 1,
-                name: 'Product 1',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 2,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 3,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 4,
-                name: 'Product 1',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 5,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 6,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            }
-        ];
-
-        // setProducts(sampleWishlist)
-
-    }, [session]);
 
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
@@ -148,6 +149,8 @@ const Products = ({ setMessage, products: initialProducts }) => {
             try {
                 let response;
                 if (isLoved) {
+                    // await updateWishlist(productID);
+
                     // If the product is already loved, make a request to remove it
                     response = await axios.post('/server/remove_wishlist', {
                         user_id: session.id,
@@ -161,6 +164,7 @@ const Products = ({ setMessage, products: initialProducts }) => {
                     } else {
                         console.error('Failed to unlove product:', response.data);
                         setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
+
                     }
                 } else {
 
@@ -263,11 +267,11 @@ const Products = ({ setMessage, products: initialProducts }) => {
 
 
     return (
-        <section id="products" className="container">
+        <section className="container" id="products">
             <div className="row" id="products_section">
 
                 {products.map((product) => (
-                    <div className="col-lg-3 col-md-4 col-md-3 card-container" key={product.id}>
+                    <div className="col-lg-4 col-md-3 card-container" key={product.id}>
                         <div className="product-card" onClick={(e) => {
                             e.stopPropagation();
                             handleProductClick(product.name);

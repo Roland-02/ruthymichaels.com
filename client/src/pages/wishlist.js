@@ -46,61 +46,28 @@ const Wishlist = () => {
         };
         initialize();
 
-        const sampleWishlist = [
-            {
-                id: 1,
-                name: 'Product 1',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 2,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 3,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 4,
-                name: 'Product 1',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 5,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 6,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+    }, [session, navigate]);
+
+    const updateWishlist = async (productID) => {
+        try {
+            const response = await axios.post('/server/remove_wishlist', {
+                user_id: session.id,
+                product_id: productID
+            });
+
+            if (response.status === 200) {
+                console.log('Product removed from wishlist successfully');
+                setWishlist(prevWishlist => prevWishlist.filter(product => product.id !== productID));
+                setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
+            } else {
+                console.error('Failed to remove product from wishlist:', response.data);
+                setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
             }
-        ];
-
-        // setWishlist(sampleWishlist)
-
-    }, [session, navigate, wishlist]);
-
+        } catch (error) {
+            console.error('Error removing product from wishlist:', error);
+            setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'love' });
+        }
+    };
 
     return (
         <div>
@@ -108,10 +75,10 @@ const Wishlist = () => {
 
             <MessageBanner message={message} setMessage={setMessage} />
 
-            <div className="products-container">
-
-                <Products initialProducts={wishlist} setMessage={setMessage} />
-                
+            <div className="view-container">
+                <div className="products-container">
+                    <Products initialProducts={wishlist} setMessage={setMessage}/>
+                </div>
                 <SimilarProducts />
             </div>
 
