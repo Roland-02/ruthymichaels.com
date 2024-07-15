@@ -54,7 +54,9 @@ const SimilarProducts = ({ product }) => {
 
     return (
         <div className="similar-products-wrapper">
-            <h2 className="similar-products-title">Similar Items</h2>
+            <h2 className="similar-products-title">
+            {product ? 'Similar Items' : 'Other Items'}
+                </h2>
             <div className="similar-products-container">
                 {similar.map((prod, index) => (
                     <div

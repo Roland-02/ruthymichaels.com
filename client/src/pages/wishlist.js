@@ -77,7 +77,7 @@ const Wishlist = () => {
 
             <div className="view-container">
                 <div className="products-container">
-                    <Products initialProducts={wishlist} setMessage={setMessage}/>
+                    <Products initialProducts={wishlist} setMessage={setMessage} updateWishlist={updateWishlist} />
                 </div>
                 <SimilarProducts />
             </div>

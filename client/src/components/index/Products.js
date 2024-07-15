@@ -9,7 +9,7 @@ import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 
 
-const Products = ({ setMessage, initialProducts }) => {
+const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const { session } = useContext(SessionContext);
     const [products, setProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
@@ -149,7 +149,7 @@ const Products = ({ setMessage, initialProducts }) => {
             try {
                 let response;
                 if (isLoved) {
-                    // await updateWishlist(productID);
+                    await updateWishlist(productID);
 
                     // If the product is already loved, make a request to remove it
                     response = await axios.post('/server/remove_wishlist', {
