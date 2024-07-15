@@ -1,7 +1,7 @@
 .view-container {
-    position: relative;
-    width: 100%;
-    height: auto;
+    margin-top: 100px;
+    justify-content: center;
+    align-items: center;
     display: flex;
     flex-direction: column;
 }
@@ -9,17 +9,14 @@
 .cart-layout{
     display: flex;
     justify-content: space-between;
-    /* margin-top: 750px; */
     width: 100%;
     padding: auto;
 }
 
 .cart-products {
     width: 95%;
-    border: 1px solid #d4d4d4;
     margin-left: 20px;
     border-radius: 8px;
-    padding: 10px;
     display: flex;
     align-items: center;
     flex-direction: column;
@@ -29,10 +26,9 @@
     width: 100%;
     display: flex;
     align-items: center;
-    padding: 5px;
-    margin: 10px;
+    padding: 15px;
     border: 1px solid #ddd;
-    border-radius: 8px;
+    /* border-radius: 8px; */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     background-color: #fff;
     cursor: pointer;
@@ -41,7 +37,7 @@
 .cart-summary{
     width: 95%;
     height: 500px;
-    border: 1px solid #ddd; 
+    border: 1px solid #d4d4d4; 
     border-radius: 8px;
     margin-right: 20px;
     position: sticky;
@@ -49,29 +45,51 @@
     align-self: flex-start;
 }
 
-
-
-
 .cart-product-image{
     width: 110px;
     height: 140px;
     margin-right: 10px;
-    border-radius: 8px;
+    /* border-radius: 8px; */
 
 }
 
 .cart-product-details {
-    flex: 1;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Allow the details to take the remaining space */
 }
 
-.cart-product-details h2 {
-    font-size: 1.5em;
-    margin: 0 0 10px;
+.cart-product-name {
+    font-size: 18px;
+    font-weight: 500;
+    margin: 0;
 }
 
-.cart-product-details p {
-    font-size: 1.2em;
-    color: #555;
+.cart-product-type {
+    font-size: 14px;
+    font-weight: 400;
+    color: #888;
+    margin: 5px 0;
 }
+
+.cart-product-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+.cart-product-price {
+    font-size: 16px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.cart-product-qty {
+    width: 50px;
+    padding: 5px;
+    font-size: 16px;
+    margin: 0 10px;
+}
+
 

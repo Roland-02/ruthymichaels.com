@@ -118,7 +118,7 @@ router.get('/get_cart/:id', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = `SELECT product_id FROM user_basket WHERE user_id = ?`;
+            const query = `SELECT product_id FROM user_cart WHERE user_id = ?`;
 
             connection.query(query, [id], (error, results) => {
                 connection.release();
@@ -138,6 +138,63 @@ router.get('/get_cart/:id', async (req, res) => {
 
 });
 
+// route to get wishlist products for a user
+router.get('/get_cart_products/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            // First query to get the product IDs in the cart
+            const cartQuery = `SELECT product_id, qty FROM user_cart WHERE user_id = ?`;
+
+            connection.query(cartQuery, [id], (error, cartResults) => {
+                if (error) {
+                    connection.release();
+                    console.error('Error fetching cart products:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                const productIds = cartResults.map(row => row.product_id);
+                const productQtyMap = {};
+                cartResults.forEach(row => {
+                    productQtyMap[row.product_id] = row.qty;
+                });
+
+                if (productIds.length === 0) {
+                    connection.release();
+                    return res.status(200).json([]);
+                }
+
+                // Second query to get product details for the retrieved product IDs
+                const productsQuery = `SELECT * FROM products WHERE id IN (?)`;
+
+                connection.query(productsQuery, [productIds], (error, productsResults) => {
+                    connection.release();
+
+                    if (error) {
+                        console.error('Error fetching product details:', error);
+                        return res.status(500).send('Database query failed');
+                    }
+
+                    // Merge the productQty with productsResults
+                    const finalResults = productsResults.map(product => ({
+                        ...product,
+                        qty: productQtyMap[product.id] || 0
+                    }));
+
+                    console.log(finalResults)
+                    res.status(200).json(finalResults);
+                });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
+
 router.post('/update_cart', async (req, res) => {
     try {
         const { user_id, product_id, qty } = req.body;
@@ -149,12 +206,12 @@ router.post('/update_cart', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'INSERT INTO user_basket (user_id, product_id, qty) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE qty = VALUES(qty)';
+            const query = 'INSERT INTO user_cart (user_id, product_id, qty) VALUES (?, ?, ?) ON DUPLICATE KEY UPDATE qty = VALUES(qty)';
             connection.query(query, [user_id, product_id, qty], (error, results) => {
                 connection.release();
 
                 if (error) {
-                    console.error('Error inserting into user_basket:', error);
+                    console.error('Error inserting into user_cart:', error);
                     return res.status(500).send('Database insertion failed');
                 }
 
@@ -179,7 +236,7 @@ router.post('/remove_cart_product', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'DELETE FROM user_basket WHERE user_id = ? AND product_id = ?';
+            const query = 'DELETE FROM user_cart WHERE user_id = ? AND product_id = ?';
             connection.query(query, [user_id, product_id], (error, results) => {
                 connection.release();
 
@@ -189,6 +246,34 @@ router.post('/remove_cart_product', async (req, res) => {
                 }
 
                 res.status(200).send({ message: 'Product deleted successfully' });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+
+});
+
+// route to get loved products for a user
+router.get('/get_wishlist/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const query = `SELECT product_id FROM user_wishlist WHERE user_id = ?`;
+
+            connection.query(query, [id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Error fetching loved products:', error);
+                    return res.status(500).send('Database query failed');
+                }
+
+                res.status(200).json(results);
             });
         });
     } catch (error) {
@@ -241,34 +326,6 @@ router.get('/get_wishlist_products/:id', async (req, res) => {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');
     }
-});
-
-// route to get loved products for a user
-router.get('/get_wishlist/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        getConnection((err, connection) => {
-            if (err) throw err;
-
-            const query = `SELECT product_id FROM user_wishlist WHERE user_id = ?`;
-
-            connection.query(query, [id], (error, results) => {
-                connection.release();
-
-                if (error) {
-                    console.error('Error fetching loved products:', error);
-                    return res.status(500).send('Database query failed');
-                }
-
-                res.status(200).json(results);
-            });
-        });
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).send('An error occurred while processing the request');
-    }
-
 });
 
 router.post('/add_wishlist', async (req, res) => {

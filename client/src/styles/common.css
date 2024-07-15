@@ -251,6 +251,66 @@ body {
 }
 
 
+.similar-products-title {  
+    margin-top: 12vh;
+    margin-bottom: -30px;
+    margin-left: 10px;
+    font-size: 28px;
+}
+
+.similar-products-container {
+    width: 90vw;
+    height: 320px;
+    margin-top: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    display: flex;
+    overflow-x: auto;
+    padding: 10px;
+    gap: 10px;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.similar-product {
+    height: 100%;
+    width: 210px;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin: 5px;
+    background-color: #f8f8f890;
+    /* border-radius: 5px; */
+    flex: 0 0 auto;
+    cursor: pointer;
+    transition: 0.5s ease;
+}
+
+.similar-product:hover{
+    transform: scale(1.03);
+}
+
+.similar-product-image {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    /* border-radius: 5px; */
+    padding: auto;
+}
+
+.similar-product-name {
+    margin-top: 5px;
+    height: 40px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 1rem;
+    font-weight: 550;
+}
+
+
+
+
 @media (max-width: 1189px) {
     .search-input.expanded {
         width: 20vw;
