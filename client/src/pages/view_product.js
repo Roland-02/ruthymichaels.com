@@ -171,7 +171,7 @@ const View_Product = () => {
 
                 if (response.status === 200) {
                     console.log('Product quantity updated successfully');
-                    setMessage({ content: 'Quantity updated in basket', productID, action: 'cart' });
+                    setMessage({ content: 'Added to basket', productID, action: 'cart' });
                 } else {
                     console.error('Failed to update product quantity in basket:', response.data);
                     setMessage({ content: 'Failed to update quantity in basket', productID, action: 'cart' });

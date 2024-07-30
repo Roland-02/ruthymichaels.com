@@ -13,12 +13,42 @@ body {
     height: 75px;
     z-index: 100;
     display: flex;
-    justify-content: space-evenly;
+    justify-content: space-between;
     align-items: center;
-    text-align: center;
     background-color: white;
-    border-bottom: 2px solid #000000ad;
+    border-bottom: 1px solid #bfbfbf;
     box-sizing: border-box;
+    padding: 0 30px;
+}
+
+.nav-bar .nav-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+
+.nav-left,
+.nav-center,
+.nav-right {
+    display: flex;
+    align-items: center;
+}
+
+.nav-left {
+    justify-content: flex-start;
+}
+
+.nav-center {
+    position: absolute;
+    left: 44%;
+    justify-content: center;
+    text-align: center;
+    flex: 1;
+}
+
+.nav-right {
+    justify-content: flex-end;
 }
 
 .page-title {
@@ -32,15 +62,14 @@ body {
     position: relative;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
-    margin-left: 25px;
+    margin-left: 30px;
 }
 
 .search-input {
     position: absolute;
     left: 0;
     width: 0;
-    margin-left: 45px;
+    margin-left: 25px;
     border: none;
     border-bottom: 2px solid black;
     background-color: transparent;
@@ -251,7 +280,7 @@ body {
 }
 
 
-.similar-products-title {  
+.similar-products-title {
     margin-top: 12vh;
     margin-bottom: -30px;
     margin-left: 10px;
@@ -280,13 +309,12 @@ body {
     padding: 10px;
     margin: 5px;
     background-color: #f8f8f890;
-    /* border-radius: 5px; */
     flex: 0 0 auto;
     cursor: pointer;
     transition: 0.5s ease;
 }
 
-.similar-product:hover{
+.similar-product:hover {
     transform: scale(1.03);
 }
 
@@ -294,7 +322,6 @@ body {
     width: 100%;
     height: 250px;
     object-fit: cover;
-    /* border-radius: 5px; */
     padding: auto;
 }
 
