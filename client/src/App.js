@@ -7,6 +7,8 @@ import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
 import Cart from './pages/cart';
 import Wishlist from './pages/wishlist';
+import Profile from './pages/profile';
+
 
 
 const App = () => {
@@ -24,6 +26,9 @@ const App = () => {
                 <Route path="/cart" element={<Cart />} />
 
                 <Route path="/wishlist" element={<Wishlist />} />
+
+                <Route path="/profile" element={<Profile />} />
+                <Route path="/account" element={<Profile />} />
 
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />
