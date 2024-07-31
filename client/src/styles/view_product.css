@@ -2,6 +2,7 @@
     margin-top: 12.5vh;
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     gap: 10px;
 }
 
@@ -15,7 +16,8 @@
 .product-image-side {
     display: flex;
     width: 100%;
-    justify-content: space-evenly;
+    justify-content: space-between;
+    margin-right: 25px;
 }
 
 .thumbnail-container {
@@ -42,7 +44,7 @@
 .thumbnail:hover,
 .thumbnail.selected {
     opacity: 1;
-    border: 3px solid black;
+    border: 1px solid black;
 }
 
 .selected-image-container {
@@ -63,6 +65,7 @@
 .product-details-side {
     width: 100%;
     justify-content: center;
+    margin-left: 25px;
 }
 
 .product-name {

@@ -103,7 +103,6 @@
     top: 100px;
     border: 1px solid #ddd;
     padding: 10px;
-    /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); */
     background-color: #fff;
     margin-right: 20px;
     position: sticky;
@@ -149,7 +148,7 @@
     display: inline-block;
     width: 75%;
     padding: 12px 0;
-    background-color: #fc95ee;
+    background-color: #f59af1;
     color: #fff;
     font-size: 18px;
     font-weight: 600;

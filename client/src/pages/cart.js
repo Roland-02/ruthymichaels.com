@@ -36,9 +36,9 @@ const Cart = () => {
 
                 setCartProducts(formattedProducts);
 
-                // Calculate total price
-                const total = formattedProducts.reduce((sum, product) => sum + parseFloat(product.price) * parseFloat(product.qty), 0);
-                setTotalPrice(total);
+                const newTotalPrice = calculateTotalPrice(products);
+                setTotalPrice(newTotalPrice);
+                
             } else {
                 console.error('Failed to fetch cart products');
             }
@@ -163,70 +163,95 @@ const Cart = () => {
         window.scrollTo(0, 0);
         initialize();
 
-        setCartProducts([
-            {
-                id: 1,
-                name: 'Proroductroductduct roduct roductroduct',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 2,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 3,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 4,
-                name: 'Product 1',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '10.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 5,
-                name: 'Product 2',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            },
-            {
-                id: 6,
-                name: 'Product 3',
-                type: 'book',
-                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-                price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            }
-        ])
+        // setCartProducts([
+        //     {
+        //         id: 1,
+        //         name: 'Proroductroductduct roduct roductroduct',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '10',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        //     {
+        //         id: 2,
+        //         name: 'Product 2',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '20.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        //     {
+        //         id: 3,
+        //         name: 'Product 3',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '30.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        //     {
+        //         id: 4,
+        //         name: 'Product 1',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '10.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        //     {
+        //         id: 5,
+        //         name: 'Product 2',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '20.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        //     {
+        //         id: 6,
+        //         name: 'Product 3',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '30.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     }
+        // ])
 
     }, [session, navigate]);
 
-    const handleQtyChange = (productId, newQty) => {
+    const calculateTotalPrice = (products) => {
+        return products.reduce((total, product) => total + (product.price * product.qty), 0);
+    };
+
+    const handleQtyChange = async (productId, newQty) => {
         const updatedProducts = cartProducts.map(product =>
             product.id === productId ? { ...product, qty: newQty } : product
         );
         setCartProducts(updatedProducts);
+
+        try {
+            const response = await axios.post('/server/update_cart', {
+                user_id: session.id,
+                product_id: productId,
+                qty: newQty
+            });
+
+            if (response.status === 200) {
+                console.log('Product quantity updated successfully');
+
+                const newTotalPrice = calculateTotalPrice(updatedProducts);
+                setTotalPrice(newTotalPrice);
+
+            } else {
+                console.error('Failed to update product quantity in basket:', response.data);
+            }
+
+        } catch (error) {
+            console.error('Error toggling cart state:', error);
+        }
+
     };
 
     const handleProductClick = (name) => {
         navigate(`/${name}`);
     };
-
 
     const handleCheckout = () => {
         console.log('Proceeding to checkout');
