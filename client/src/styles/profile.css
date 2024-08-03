@@ -1,8 +1,21 @@
-.view-container{
-    position: relative;
-    display: flex;
+.view-container {
+    margin-top: -50px;
     justify-content: center;
+    align-items: center;
+    display: flex;
     flex-direction: column;
+}
+
+.profile-container {
+    width: 80%;
+    gap: 20px;
+}
+
+.profile-left, .profile-right {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 }
 
 .profile-header {
@@ -12,37 +25,104 @@
 
 .profile-info {
     display: flex;
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
     margin-bottom: 40px;
+    gap: 20px;
+    align-items: stretch; /* Ensure both columns stretch to the same height */
 }
 
 .profile-section {
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    flex: 1; /* Allow sections to grow and fill the column height */
+}
+
+.profile-section.email input,
+.profile-section.payment input,
+.profile-section.address input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.profile-section {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+
+.profile-section.email input,
+.profile-section.payment input,
+.profile-section.address input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.profile-section.email input{
+    width: 100%;
+}
+
+
+.profile-section.address{
+    width: 100%;
+}
+
+.address-form-container {
+    display: flex;
+    align-items: end;
+}
+
+.address-form {
+    display: flex;
+    flex-direction: column;
+    width: 75%;
+}
+
+
+.profile-info svg {
+    cursor: pointer;
+    margin-left: 20px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+
+}
+
+.profile-info svg:hover {
+    transform: scale(1.1);
 }
 
 .profile-section h2 {
     margin-bottom: 10px;
 }
 
-.order-history {
-    margin-top: 20px;
+.order-history{
+    margin-top: 50px;
 }
 
-.order-table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
 
-.order-table th, .order-table td {
-    border: 1px solid #ddd;
-    padding: 10px;
+table, th, td {
+    border: 1px solid black;
+}
+
+th, td {
+    padding: 8px;
     text-align: left;
 }
 
-.order-table th {
-    background-color: #f2f2f2;
+th {
+    background-color: #f9f9f9;
 }
+
+
