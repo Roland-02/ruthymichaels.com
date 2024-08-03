@@ -10,7 +10,6 @@ import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
 
 
-
 const App = () => {
     return (
         <SessionProvider>

@@ -28,18 +28,18 @@
     flex-direction: row;
     margin-bottom: 40px;
     gap: 20px;
-    align-items: stretch; /* Ensure both columns stretch to the same height */
+    align-items: stretch;
 }
 
 .profile-section {
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-    flex: 1; /* Allow sections to grow and fill the column height */
+    flex: 1;
+    position: relative; 
 }
 
 .profile-section.email input,
-.profile-section.payment input,
 .profile-section.address input {
     width: 100%;
     padding: 10px;
@@ -53,24 +53,11 @@
     background: #f9f9f9;
     padding: 20px;
     border-radius: 8px;
-}
-
-
-.profile-section.email input,
-.profile-section.payment input,
-.profile-section.address input {
-    width: 100%;
-    padding: 10px;
-    margin-top: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
 .profile-section.email input{
-    width: 100%;
+    width: 90%;
 }
-
 
 .profile-section.address{
     width: 100%;
@@ -87,12 +74,13 @@
     width: 75%;
 }
 
-
 .profile-info svg {
     cursor: pointer;
     margin-left: 20px;
     transition: transform 0.3s ease, filter 0.3s ease;
-
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
 }
 
 .profile-info svg:hover {
@@ -101,6 +89,10 @@
 
 .profile-section h2 {
     margin-bottom: 10px;
+}
+
+.profile-section p {
+    font-size: 18px;
 }
 
 .order-history{
@@ -124,5 +116,3 @@ th, td {
 th {
     background-color: #f9f9f9;
 }
-
-

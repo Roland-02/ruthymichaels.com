@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import { useContext } from 'react';
 import { SessionContext } from '../context/SessionContext';
 
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
+
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
@@ -14,6 +15,7 @@ import { jwtDecode } from 'jwt-decode';
 
 const CreateAccount = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confPassword, setConfPassword] = useState('');
@@ -26,6 +28,7 @@ const CreateAccount = () => {
       console.log('Logged in User ID:', userId);
     }
   }, []);
+
 
   const handleSubmit = async (event) => {
     event.preventDefault();
