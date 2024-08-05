@@ -4,6 +4,7 @@ body {
         sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    min-width: 400px;
 }
 
 .nav-bar {
@@ -13,86 +14,88 @@ body {
     height: 75px;
     z-index: 100;
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     background-color: white;
     border-bottom: 1px solid #bfbfbf;
     box-sizing: border-box;
     padding: 0 30px;
-}
-
-.nav-bar .nav-container {
+  }
+  
+  .nav-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    position: relative;
-}
-
-.nav-left,
-.nav-right {
+  }
+  
+  .nav-left,
+  .nav-right {
     display: flex;
     align-items: center;
-}
-
-.nav-left {
+  }
+  
+  .nav-left {
     justify-content: flex-start;
-}
-
-.nav-right {
+  }
+  
+  .nav-right {
     justify-content: flex-end;
-}
-
-.nav-center {
-    position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
+  }
+  
+  .nav-right .menu-item:not(:last-child) {
+    margin-right: 15px;
+  }
+  
+  .nav-center {
     flex: 1;
-}
-
-.page-title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 45px;
+  }
+  
+  .page-title {
     margin: 0;
     font-size: 2rem;
     cursor: pointer;
     white-space: nowrap;
-}
-
+  }
+  
 .search-container {
-    position: relative;
-    display: flex;
-    align-items: center;
-    margin-left: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-left: 30px;
 }
 
 .search-input {
-    position: absolute;
-    left: 0;
-    width: 0;
-    margin-left: 25px;
-    border: none;
-    border-bottom: 2px solid black;
-    background-color: transparent;
-    outline: none;
-    opacity: 0;
-    transition: width 0.5s ease, opacity 0.5s ease;
-    overflow: hidden;
+  position: absolute;
+  left: 0;
+  width: 0;
+  margin-left: 25px;
+  border: none;
+  border-bottom: 2px solid black;
+  background-color: transparent;
+  outline: none;
+  opacity: 0;
+  transition: width 0.5s ease, opacity 0.5s ease;
+  overflow: hidden;
 }
 
 .search-input.expanded {
-    width: 26vw;
-    opacity: 1;
+  width: 26vw;
+  opacity: 1;
 }
 
 .menu-item svg {
-    cursor: pointer;
-    transition: transform 0.3s ease, filter 0.3s ease;
+  cursor: pointer;
+  transition: transform 0.3s ease, filter 0.3s ease;
 }
 
 .menu-item:hover svg {
-    transform: scale(1.1);
+  transform: scale(1.1);
 }
-
 
 .footer {
     position: sticky;
@@ -166,22 +169,6 @@ body {
 
 .loginBtn:hover {
     box-shadow: 0 0 10px 0 rgba(70, 106, 183, 0.847);
-}
-
-.nav-bar .menu-item {
-    flex: 1 1 auto;
-    max-width: 45px;
-}
-
-.nav-bar .text-end {
-    display: flex;
-    justify-content: flex-end;
-    flex-shrink: 1;
-}
-
-.nav-bar .text-end .menu-item {
-    flex: 1 1 auto;
-    max-width: 45px;
 }
 
 
@@ -332,7 +319,6 @@ body {
 }
 
 
-
 @media (max-width: 1189px) {
     .search-input.expanded {
         width: 20vw;
@@ -349,70 +335,14 @@ body {
     .search-container {
         display: none;
     }
-}
 
-@media (max-width: 628px) {
-    .page-title {
-
+    .page-title{
+        margin-left: 15px;
     }
 }
 
-
-
-/* payment form */
-.payment-form-container {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 100;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.payment-form {
-    background: white;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    width: 400px;
-    max-width: 90%;
-    position: relative;
-}
-
-.payment-form-close {
-    position: absolute;
-    top: 0px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 24px;
-}
-
-.payment-form .form-outline {
-    margin-bottom: 20px;
-}
-
-.payment-form .form-outline input{
-    border: 1px solid black;
-}
-
-.payment-form .form-control {
-    width: 100%;
-    border: 1px solid black;
-}
-
-.payment-form .btn {
-    width: 75%;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #fbb0ff;
-    font-size: 16px;
-    cursor: pointer;
-}
-
-.payment-form .btn:hover {
-    background-color: #f983ff;
-}
+/* @media (max-width: 628px) {
+    .page-title {
+        display: block;
+    }
+} */

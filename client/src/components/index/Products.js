@@ -43,7 +43,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 type: 'book',
                 description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
                 price: '20.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+                imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
             },
             {
                 id: 3,
@@ -51,7 +51,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 type: 'book',
                 description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
                 price: '30.00',
-                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+                imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
             },
             {
                 id: 4,
@@ -267,11 +267,11 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
 
     return (
-        <section className="container" id="products">
-            <div className="row" id="products_section">
+        <section className="container">
+            <div className="row justify-content-center">
 
                 {products.map((product) => (
-                    <div className="col-lg-4 col-md-3 card-container" key={product.id}>
+                    <div className="col-lg-4 col-md-4 card-container" key={product.id}>
                         <div className="product-card" onClick={(e) => {
                             e.stopPropagation();
                             handleProductClick(product.name);
