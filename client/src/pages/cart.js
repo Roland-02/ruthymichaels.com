@@ -1,21 +1,21 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { SessionContext } from '../components/context/SessionContext';
+
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
 import axios from 'axios';
-import { SessionContext } from '../components/context/SessionContext';
 
 import '../styles/cart.css';
-
 
 const Cart = () => {
     const { session } = useContext(SessionContext);
     const [cartProducts, setCartProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [shippingCost, setShippingCost] = useState(5); // Example shipping cost
+    const [shippingCost, setShippingCost] = useState(5);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
 
@@ -137,7 +137,12 @@ const Cart = () => {
 
                 if (response.status === 200) {
                     setMessage({ content: 'Item removed from cart', productID, action: 'cart' });
-                    setCartProducts(prevProducts => prevProducts.filter(product => product.id !== productID));
+                    setCartProducts(prevProducts => {
+                        const updatedProducts = prevProducts.filter(product => product.id !== productID);
+                        const newTotalPrice = calculateTotalPrice(updatedProducts);
+                        setTotalPrice(newTotalPrice);
+                        return updatedProducts;
+                    });
 
                 } else {
                     setMessage({ content: 'Failed to remove item', productID, action: 'cart' });
@@ -318,6 +323,7 @@ const Cart = () => {
                                     </div>
                                 </div>
                             ))}
+                            
                         </div>
                     </div>
 

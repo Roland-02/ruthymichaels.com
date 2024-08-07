@@ -70,7 +70,9 @@ const Profile = () => {
                 // Fetch any required data here
             }
         };
+        window.scrollTo(0, 0);
         initialize();
+        
     }, [session, navigate]);
 
     const handleChange = (e) => {

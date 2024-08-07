@@ -17,11 +17,10 @@ const SimilarProducts = ({ product }) => {
     const fetchSimilar = async () => {
         try {
 
-
             // setSimilar([
             //     {
             //         id: 1,
-            //         name: 'Proroductroductduct roduct roductroduct',
+            //         name: 'Proroductroductduct roduct roduct roduct roductroduct',
             //         type: 'book',
             //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
             //         price: '10',
@@ -68,7 +67,6 @@ const SimilarProducts = ({ product }) => {
             //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
             //     }
             // ])
-
 
             const response = await axios.get('/server/get_products');
             if (response.status === 200) {

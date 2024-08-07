@@ -3,14 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
-import '../styles/wishlist.css';
-
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import Products from '../components/index/Products';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
 
+import '../styles/wishlist.css';
 
 const Wishlist = () => {
     const { session } = useContext(SessionContext);
@@ -18,6 +17,19 @@ const Wishlist = () => {
     const [cartProducts, setCartedProducts] = useState([]);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
+
+   useEffect(() => {
+        const initialize = async () => {
+            if (session && session.id) {
+                await fetchWishlist();
+            }
+        };
+        window.scrollTo(0, 0);
+        initialize();
+    
+
+    }, [session, navigate]);
+
 
     const fetchWishlist = async () => {
         try {
@@ -38,16 +50,6 @@ const Wishlist = () => {
             setMessage({ content: 'Error fetching wishlist', product: null, action: 'error' });
         }
     };
-
-    useEffect(() => {
-        const initialize = async () => {
-            if (session && session.id) {
-                await fetchWishlist();
-            }
-        };
-        initialize();
-
-    }, [session, navigate]);
 
     const updateWishlist = async (productID) => {
         try {

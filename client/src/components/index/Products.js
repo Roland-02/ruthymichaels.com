@@ -81,7 +81,9 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
         // setProducts(sampleWishlist)
 
+
     }, [session, initialProducts]);
+
 
     const fetchProducts = async () => {
         try {
@@ -133,7 +135,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         }
     };
 
-
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
 
@@ -149,7 +150,10 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             try {
                 let response;
                 if (isLoved) {
-                    await updateWishlist(productID);
+
+                    if (updateWishlist) {
+                        await updateWishlist(productID);
+                    }
 
                     // If the product is already loved, make a request to remove it
                     response = await axios.post('/server/remove_wishlist', {

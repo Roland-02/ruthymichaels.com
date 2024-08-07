@@ -5,7 +5,7 @@ import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
 import '../styles/view_product.css'
-import '../styles/index.css'
+// import '../styles/index.css'
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -38,15 +38,17 @@ const View_Product = () => {
                 params: { name }
             });
             if (response.status == 200) {
+                window.scrollTo(0, 0);
                 const productData = response.data;
                 const imageIds = productData.image_URLs ? productData.image_URLs.split(',') : [];
                 const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                 setProduct({ ...productData, imageUrls });
                 setSelectedImage(imageUrls[0]);
-
+                
             } else {
                 navigate('/')
             }
+
         } catch (error) {
             console.error('Error fetching product: ', error);
         }
@@ -232,7 +234,7 @@ const View_Product = () => {
             <MessageBanner message={message} setMessage={setMessage} />
 
             <main>
-                <div className="container view-container">
+                <div className="view-container">
                     <div className="product-top-container">
 
                         <div className='product-image-side'>

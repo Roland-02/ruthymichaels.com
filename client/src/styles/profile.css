@@ -1,13 +1,14 @@
 .view-container {
-    margin-top: -50px;
     justify-content: center;
     align-items: center;
     display: flex;
     flex-direction: column;
+    min-height: 100vh;
+    margin: 0;
 }
 
 .profile-container {
-    width: 80%;
+    width: 90%;
     gap: 20px;
 }
 

@@ -1,14 +1,15 @@
 .view-container {
-    margin-top: 100px;
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: flex;
     flex-direction: column;
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .products-container {
     display: flex;
-    height: 75%;
-    width: 75%;
+    margin-top: 100px;
+    min-height: 50vh;
+    height: 65%;
+    width: 65%;
 }
