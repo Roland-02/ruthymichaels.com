@@ -3,11 +3,11 @@ import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 
+import Login from '../components/login/Login';
+import CreateAccount from '../components/login/CreateAccount';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
-import Login from '../components/common/Login';
-import CreateAccount from '../components/common/CreateAccount';
-import Banner from '../components/common/Banner';
+import Banner from '../components/index/Banner';
 import Products from '../components/index/Products';
 import MessageBanner from '../components/common/MessageBanner'
 

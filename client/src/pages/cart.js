@@ -333,7 +333,7 @@ const Cart = () => {
                             <p><span>Subtotal:</span> <span>£{totalPrice.toFixed(2)}</span></p>
                             <p><span>Shipping:</span> <span>£{shippingCost.toFixed(2)}</span></p>
                             <h4><span>Total:</span> <span>£{(totalPrice + shippingCost).toFixed(2)}</span></h4>
-                            <button className="checkout-button" onClick={handleCheckout}>Proceed to Checkout</button>
+                            <button className="checkout-button" onClick={handleCheckout}>Checkout</button>
                         </div>
                     </div>
 

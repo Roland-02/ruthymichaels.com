@@ -1,22 +1,14 @@
 .view-container {
-    justify-content: center;
-    align-items: center;
-    display: flex;
-    flex-direction: column;
     min-height: 100vh;
-    margin: 0;
 }
 
 .profile-container {
     width: 90%;
     gap: 20px;
-}
-
-.profile-left, .profile-right {
-    flex: 1;
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
-    gap: 20px;
 }
 
 .profile-header {
@@ -26,18 +18,19 @@
 
 .profile-info {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    justify-content: center;
     margin-bottom: 40px;
+    width: 50%;
     gap: 20px;
-    align-items: stretch;
 }
 
 .profile-section {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    flex: 1;
     position: relative; 
+    background: #f9f9f9;
+    border-radius: 8px;
+    padding: 20px;
+    flex: 1;
 }
 
 .profile-section.email input,
@@ -48,12 +41,6 @@
     font-size: 1rem;
     border: 1px solid #ccc;
     border-radius: 4px;
-}
-
-.profile-section {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
 }
 
 .profile-section.email input{
@@ -97,7 +84,7 @@
 }
 
 .order-history{
-    margin-top: 50px;
+    width: 80%;
 }
 
 table {

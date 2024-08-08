@@ -171,8 +171,23 @@
     margin-right: 10px;
 }
 
-@media (max-width: 874px) {
+@media (max-width: 991px) {
+
+    .view-container,
     .cart-layout {
+        min-width: 524px;
         flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
+
+    .cart-products{
+        margin: 0;
+    }
+
+    .cart-summary{
+        min-width: 50vw;
+        margin-top: 3vh;
+    }
+
 }
