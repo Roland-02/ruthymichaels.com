@@ -13,66 +13,69 @@ import MessageBanner from '../components/common/MessageBanner';
 const Profile = () => {
     const { session } = useContext(SessionContext);
     const { name } = useParams();
-    const [showPaymentForm, setShowPaymentForm] = useState(false);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
+    const navigate = useNavigate();
+
     const [User, setUser] = useState({
-        email: 'User@example.com',
+        email: 'name@domain.com',
         address: {
-            number: '123',
-            street: 'Main St',
-            town: 'Anytown',
-            city: 'USA',
-            postcode: '12345'
-        },
-        payment: {
-            last4: '1234'
+            line_1: 'Address line 1',
+            line_2: 'Address line 2',
+            city: 'City',
+            country: 'Country',
+            postcode: 'Postcode'
         }
     });
-    const [orders, setOrders] = useState([
-        {
-            orderNumber: '001',
-            item: 'Product 1',
-            quantity: 2,
-            price: 19.99,
-            date: '2023-06-12'
-        },
-        {
-            orderNumber: '002',
-            item: 'Product 2',
-            quantity: 1,
-            price: 9.99,
-            date: '2023-06-14'
-        },
-        {
-            orderNumber: '003',
-            item: 'Product 3',
-            quantity: 5,
-            price: 49.99,
-            date: '2023-06-16'
-        }
-    ]);
+    const [orders, setOrders] = useState([]);
+
     const [editState, setEditState] = useState({
         email: false,
         address: false,
-        payment: false,
     });
     const [isChanged, setIsChanged] = useState({
         email: false,
         address: false,
-        payment: false,
     });
-    const navigate = useNavigate();
+
+    const fetchAddress = async () => {
+        try {
+            const response = await axios.get(`/server/get_address/${session.id}`);
+            if (response.status === 200) {
+                setUser((prevState) => ({
+                    ...prevState,
+                    address: {
+                        line_1: response.data.line_1,
+                        line_2: response.data.line_2,
+                        city: response.data.city,
+                        country: response.data.country,
+                        postcode: response.data.postcode
+                    }
+                }));
+            } else {
+                console.error('Failed to fetch address');
+            }
+        } catch (error) {
+            console.error('Error fetching address:', error);
+        }
+    }
 
     useEffect(() => {
         const initialize = async () => {
             if (session && session.id) {
-                // Fetch any required data here
+                setUser(prevState => ({
+                    ...prevState,
+                    email: session.email
+                }));
+                await fetchAddress()
+
             }
         };
         window.scrollTo(0, 0);
         initialize();
 
     }, [session, navigate]);
+
+    console.log(User)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -106,17 +109,34 @@ const Profile = () => {
             ...prevState,
             [field]: true
         }));
-        if (field === 'payment') {
-            setShowPaymentForm(true);
-        }
+      
     };
 
-    const handleSave = (field) => {
-        setEditState((prevState) => ({
-            ...prevState,
-            [field]: false
-        }));
-        setShowPaymentForm(false);
+    const handleSave = async (section) => {
+        if (section === 'address') {
+            try {
+                const response = await axios.post('/server/save_address', {
+                    user_id: session.id,
+                    line_1: User.address.line_1,
+                    line_2: User.address.line_2,
+                    city: User.address.city,
+                    country: User.address.country,
+                    postcode: User.address.postcode
+                });
+
+                if (response.status === 200) {
+                    console.log('Address saved successfully');
+                    setEditState((prevState) => ({
+                        ...prevState,
+                        [section]: false
+                    }));
+                } else {
+                    console.error('Failed to save address');
+                }
+            } catch (error) {
+                console.error('Error saving address:', error);
+            }
+        }
     };
 
 
@@ -170,29 +190,29 @@ const Profile = () => {
                                             <input
                                                 type="text"
                                                 placeholder="Address line 1"
-                                                name="number"
-                                                value={User.address.number}
+                                                name="line_1"
+                                                value={User.address.line_1}
                                                 onChange={handleAddressChange}
                                             />
                                             <input
                                                 type="text"
                                                 placeholder="Address line 2"
-                                                name="street"
-                                                value={User.address.street}
+                                                name="line_2"
+                                                value={User.address.line_2}
                                                 onChange={handleAddressChange}
                                             />
                                             <input
                                                 type="text"
                                                 placeholder="Town/City"
-                                                name="town"
-                                                value={User.address.town}
+                                                name="city"
+                                                value={User.address.city}
                                                 onChange={handleAddressChange}
                                             />
                                             <input
                                                 type="text"
                                                 placeholder="Country"
-                                                name="city"
-                                                value={User.address.city}
+                                                name="country"
+                                                value={User.address.country}
                                                 onChange={handleAddressChange}
                                             />
                                             <input
@@ -210,10 +230,10 @@ const Profile = () => {
                                     </div>
                                 ) : (
                                     <div className="address-display">
-                                        <p>{User.address.number}</p>
-                                        <p>{User.address.street}</p>
-                                        <p>{User.address.town}</p>
+                                        <p>{User.address.line_1}</p>
+                                        <p>{User.address.line_2}</p>
                                         <p>{User.address.city}</p>
+                                        <p>{User.address.country}</p>
                                         <p>{User.address.postcode}</p>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" className="bi bi-pencil-square" viewBox="0 0 16 16" onClick={() => handleEdit('address')}>
                                             <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />

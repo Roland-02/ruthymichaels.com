@@ -15,7 +15,7 @@ const Cart = () => {
     const [cartProducts, setCartProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
-    const [shippingCost, setShippingCost] = useState(5);
+    const [shippingCost, setShippingCost] = useState(0);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
 
@@ -38,7 +38,7 @@ const Cart = () => {
 
                 const newTotalPrice = calculateTotalPrice(products);
                 setTotalPrice(newTotalPrice);
-                
+
             } else {
                 console.error('Failed to fetch cart products');
             }
@@ -162,6 +162,10 @@ const Cart = () => {
             if (session && session.id) {
                 await fetchCartProducts();
                 await fetchWishlist();
+
+                if (cartProducts.length > 0) {
+                    setShippingCost(4.99);
+                }
 
             }
         };
@@ -323,7 +327,7 @@ const Cart = () => {
                                     </div>
                                 </div>
                             ))}
-                            
+
                         </div>
                     </div>
 
@@ -333,7 +337,13 @@ const Cart = () => {
                             <p><span>Subtotal:</span> <span>£{totalPrice.toFixed(2)}</span></p>
                             <p><span>Shipping:</span> <span>£{shippingCost.toFixed(2)}</span></p>
                             <h4><span>Total:</span> <span>£{(totalPrice + shippingCost).toFixed(2)}</span></h4>
-                            <button className="checkout-button" onClick={handleCheckout}>Checkout</button>
+                            <button
+                                className="checkout-button"
+                                onClick={handleCheckout}
+                                disabled={cartProducts.length === 0}
+                            >
+                                Checkout
+                            </button>
                         </div>
                     </div>
 

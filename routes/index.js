@@ -1,8 +1,34 @@
 //handle GET request for /home, load film data
 var express = require('express');
 const { getConnection } = require('../database');
+const mysql = require('mysql');
 const router = express.Router();
+var crypto = require('crypto');
 
+const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
+const IV_LENGTH = 16; // AES block size for CBC mode
+
+function encrypt(text) {
+    let iv = crypto.randomBytes(IV_LENGTH);
+    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    let encrypted = cipher.update(text);
+
+    encrypted = Buffer.concat([encrypted, cipher.final()]);
+
+    return iv.toString('hex') + ':' + encrypted.toString('hex');
+}
+
+function decrypt(text) {
+    let textParts = text.split(':');
+    let iv = Buffer.from(textParts.shift(), 'hex');
+    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
+    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
+    let decrypted = decipher.update(encryptedText);
+
+    decrypted = Buffer.concat([decrypted, decipher.final()]);
+
+    return decrypted.toString();
+}
 
 // get products endpoint
 router.get('/get_products', async (req, res) => {
@@ -387,6 +413,99 @@ router.post('/remove_wishlist', async (req, res) => {
     }
 
 });
+
+// POST route to store or update user address
+router.post('/save_address', async (req, res) => {
+    try {
+        const { user_id, line_1, line_2, city, country, postcode } = req.body;
+
+        // Validate required fields
+        if (!user_id || !line_1 || !city || !country || !postcode) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Encrypt the address fields
+        const encryptedLine1 = encrypt(line_1);
+        const encryptedLine2 = line_2 ? encrypt(line_2) : null;
+        const encryptedCity = encrypt(city);
+        const encryptedCountry = encrypt(country);
+        const encryptedPostcode = encrypt(postcode);
+
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            const query = `
+                INSERT INTO myshop.user_address (user_id, line_1, line_2, city, country, postcode)
+                VALUES (?, ?, ?, ?, ?, ?)
+                ON DUPLICATE KEY UPDATE
+                    line_1 = VALUES(line_1),
+                    line_2 = VALUES(line_2),
+                    city = VALUES(city),
+                    country = VALUES(country),
+                    postcode = VALUES(postcode);
+            `;
+
+            connection.query(query, [user_id, encryptedLine1, encryptedLine2, encryptedCity, encryptedCountry, encryptedPostcode], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error(error);
+                    return res.status(500).send('Database update failed');
+                }
+                res.status(200).json({ message: 'Address saved/updated successfully' });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error saving address:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// Route to get the user's address
+router.get('/get_address/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            const query = 'SELECT * FROM user_address WHERE user_id = ?';
+            const search_query = mysql.format(query, [userId]);
+
+            connection.query(search_query, async (err, result) => {
+                if (err) throw err;
+
+                if (result.length === 0) {
+                    return res.status(404).json({ message: 'Address not found' });
+                }
+
+                const address = result[0];
+
+                // Decrypting the address fields
+                const decryptedAddress = {
+                    line_1: decrypt(address.line_1),
+                    line_2: decrypt(address.line_2),
+                    city: decrypt(address.city),
+                    country: decrypt(address.country),
+                    postcode: decrypt(address.postcode)
+                };
+
+                console.log(decryptedAddress)
+
+                res.json(decryptedAddress);
+
+            });
+        });
+
+    } catch (error) {
+        console.error('Error fetching address:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+
 
 
 module.exports = router;
