@@ -435,7 +435,7 @@ router.post('/save_address', async (req, res) => {
             if (err) throw err;
 
             const query = `
-                INSERT INTO myshop.user_address (user_id, line_1, line_2, city, country, postcode)
+                INSERT INTO user_address (user_id, line_1, line_2, city, country, postcode)
                 VALUES (?, ?, ?, ?, ?, ?)
                 ON DUPLICATE KEY UPDATE
                     line_1 = VALUES(line_1),
@@ -491,8 +491,6 @@ router.get('/get_address/:userId', async (req, res) => {
                     postcode: decrypt(address.postcode)
                 };
 
-                console.log(decryptedAddress)
-
                 res.json(decryptedAddress);
 
             });
@@ -503,9 +501,6 @@ router.get('/get_address/:userId', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
-
-
-
 
 
 module.exports = router;

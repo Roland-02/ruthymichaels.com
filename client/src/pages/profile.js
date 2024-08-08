@@ -15,7 +15,6 @@ const Profile = () => {
     const { name } = useParams();
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
-
     const [User, setUser] = useState({
         email: 'name@domain.com',
         address: {
@@ -27,7 +26,6 @@ const Profile = () => {
         }
     });
     const [orders, setOrders] = useState([]);
-
     const [editState, setEditState] = useState({
         email: false,
         address: false,
@@ -98,10 +96,6 @@ const Profile = () => {
                 [name]: value,
             },
         }));
-        setIsChanged((prevState) => ({
-            ...prevState,
-            address: true,
-        }));
     };
 
     const handleEdit = (field) => {
@@ -136,6 +130,28 @@ const Profile = () => {
             } catch (error) {
                 console.error('Error saving address:', error);
             }
+
+        }else if(section === 'email'){
+            try {
+                const newEmail = User.email; // Assuming User.email is updated with the new email
+    
+                const response = await axios.post(`/change_email/${session.id}`, {
+                    newEmail,
+                });
+    
+                if (response.status === 200) {
+                    console.log('Email updated successfully');
+                    setEditState((prevState) => ({
+                        ...prevState,
+                        [section]: false,
+                    }));
+                } else {
+                    console.error('Failed to update email');
+                }
+            } catch (error) {
+                console.error('Error saving email:', error);
+            }
+
         }
     };
 

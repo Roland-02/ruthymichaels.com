@@ -122,6 +122,48 @@ router.post('/createAccount', async (req, res) => {
     });
 });
 
+// POST route to update user email
+router.post('/change_email/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId; // Get userId from request parameters
+        const { newEmail } = req.body; // Get newEmail from request body
+
+        // Validate input
+        if (!userId || !newEmail) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Hash the new email
+        const hashedEmail = hashEmail(newEmail);
+
+        // Update email in user_login table
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            const query = `UPDATE user_login SET email = ? WHERE user_id = ?`;
+
+            connection.query(query, [hashedEmail, userId], (error, results) => {
+                connection.release(); // Release connection before checking for errors
+
+                if (error) {
+                    console.error(error);
+                    return res.status(500).json({ error: 'Database update failed' });
+                }
+
+                // Update session email
+                res.cookie('sessionEmail', newEmail, { httpOnly: true, secure: true });
+
+                res.status(200).json({ message: 'Email updated successfully' });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error updating email:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+
 //user logs out
 router.post('/signout', function (req, res) {
     // Destroy the session
