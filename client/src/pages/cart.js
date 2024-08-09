@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
+import { loadStripe } from '@stripe/stripe-js';
+
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -225,6 +227,14 @@ const Cart = () => {
 
     }, [session, navigate]);
 
+    useEffect(() => {
+        if (cartProducts.length > 0) {
+            setShippingCost(4.99);
+        } else {
+            setShippingCost(0);
+        }
+    }, [cartProducts]);
+
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
     };
@@ -262,9 +272,30 @@ const Cart = () => {
         navigate(`/${name}`);
     };
 
-    const handleCheckout = () => {
-        console.log('Proceeding to checkout');
+    const handleCheckout = async () => {
+        try {
+            const response = await axios.post(`/checkout/create_checkout_session`, {
+                cartItems: cartProducts,
+            });
+
+            if (response.status === 200) {
+                const { sessionId } = response.data;
+    
+                // public key
+                const stripe = await loadStripe('pk_live_51PlctuBPrf3ZwXpUBl8bTM4jqf54PUPghK2VVfqeyI1fQ9z0RM8BXFi3BtyS2XsVnYB4pGz1Dthu5GulpuRdYsMF00lrA5QIK7');
+    
+                // Redirect to the Stripe Checkout page
+                await stripe.redirectToCheckout({ sessionId });
+    
+                console.log('Proceeding to checkout');
+            } else {
+                console.error('Failed to create checkout session');
+            }
+        } catch (error) {
+            console.error('Error during checkout:', error);
+        }
     };
+    
 
     return (
         <div>
@@ -289,7 +320,7 @@ const Cart = () => {
                                             <p className="cart-product-type">{product.type}</p>
                                         </div>
                                         <div className="cart-product-bottom">
-                                            <p className="cart-product-price">${product.price}</p>
+                                            <p className="cart-product-price">£{product.price}</p>
 
                                             <input
                                                 type="number"
@@ -327,7 +358,6 @@ const Cart = () => {
                                     </div>
                                 </div>
                             ))}
-
                         </div>
                     </div>
 
@@ -344,6 +374,7 @@ const Cart = () => {
                             >
                                 Checkout
                             </button>
+                            
                         </div>
                     </div>
 

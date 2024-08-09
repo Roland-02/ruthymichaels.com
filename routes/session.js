@@ -163,7 +163,6 @@ router.post('/change_email/:userId', async (req, res) => {
     }
 });
 
-
 //user logs out
 router.post('/signout', function (req, res) {
     // Destroy the session

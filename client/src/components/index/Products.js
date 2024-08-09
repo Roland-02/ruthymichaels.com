@@ -272,10 +272,10 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
     return (
         <section className="container">
-            <div className="row justify-content-center">
+            <div className="row justify-content-center card-container">
 
                 {products.map((product) => (
-                    <div className="col-lg-4 col-md-4 card-container" key={product.id}>
+                    <div className="col-lg-4 col-md-4" key={product.id}>
                         <div className="product-card" onClick={(e) => {
                             e.stopPropagation();
                             handleProductClick(product.name);

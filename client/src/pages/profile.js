@@ -73,8 +73,6 @@ const Profile = () => {
 
     }, [session, navigate]);
 
-    console.log(User)
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser((prevState) => ({
@@ -164,10 +162,6 @@ const Profile = () => {
 
             <main>
                 <div className="view-container">
-
-                    <div className="profile-header">
-                        <h1>Profile</h1>
-                    </div>
 
                     <div className="profile-container">
                         <div className="profile-info">

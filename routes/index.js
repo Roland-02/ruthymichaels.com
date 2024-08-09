@@ -210,7 +210,6 @@ router.get('/get_cart_products/:id', async (req, res) => {
                         qty: productQtyMap[product.id] || 0
                     }));
 
-                    console.log(finalResults)
                     res.status(200).json(finalResults);
                 });
             });

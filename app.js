@@ -44,6 +44,9 @@ app.use('/server', indexRoute);
 const sessionRoute = require('./routes/session');
 app.use('/', sessionRoute);
 
+const checkoutRoute = require('./routes/checkout');
+app.use('/checkout', checkoutRoute);
+
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
 

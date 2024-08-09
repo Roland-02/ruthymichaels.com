@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@react-oauth/google": "^0.12.1",
+    "@stripe/stripe-js": "^4.2.0",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -15,7 +16,8 @@
     "react-google-login": "^5.2.2",
     "react-hook-form": "^7.51.5",
     "react-router-dom": "^6.23.1",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^5.0.1",
+    "stripe": "^16.6.0"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -45,4 +47,5 @@
     "concurrently": "^8.2.2",
     "node-polyfill-webpack-plugin": "^4.0.0"
   }
+  
 }

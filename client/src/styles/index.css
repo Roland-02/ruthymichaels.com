@@ -19,6 +19,7 @@
 
 .card-container{
   margin-bottom: 20px;
+  min-height: 50vh;
 }
 
 .product-card {
