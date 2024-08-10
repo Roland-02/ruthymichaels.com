@@ -285,6 +285,7 @@ const Cart = () => {
         try {
             const response = await axios.post(`/checkout/create_checkout_session`, {
                 cartItems: cartProducts,
+                user_id: session.id
             });
 
             if (response.status === 200) {

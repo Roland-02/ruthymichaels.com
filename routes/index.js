@@ -290,7 +290,7 @@ router.post('/delete_cart', async (req, res) => {
 
         getConnection((err, connection) => {
             if (err) throw err;
-
+            console.log('hello')
             const query = 'DELETE FROM user_cart WHERE user_id = ?';
             connection.query(query, [user_id], (error, results) => {
                 connection.release();
