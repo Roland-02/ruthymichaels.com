@@ -282,6 +282,7 @@ body {
     border: 1px solid #ccc;
     display: flex;
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 10px;
     align-items: center;
     justify-content: flex-start;

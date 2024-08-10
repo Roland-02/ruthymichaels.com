@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const Stripe = require('stripe');
 // secret key
-const stripe = Stripe('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') 
+const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') 
+
+// const stripe = Stripe('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') 
+
 
 router.post('/create_checkout_session', async (req, res) => {
     const { cartItems } = req.body;
@@ -24,7 +27,10 @@ router.post('/create_checkout_session', async (req, res) => {
             payment_method_types: ['card'],
             line_items: line_items,
             mode: 'payment',
-            success_url: `https://localhost:8080/index`,
+            shipping_address_collection: {
+                allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
+            },
+            success_url: `https://localhost:8080/index?order_success=true`,
             cancel_url: `https://localhost:8080/cart`,
         });
 
@@ -35,5 +41,6 @@ router.post('/create_checkout_session', async (req, res) => {
     }
 
 });
+
 
 module.exports = router;

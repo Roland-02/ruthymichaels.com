@@ -66,6 +66,15 @@ const Cart = () => {
         }
     };
 
+    const deleteCart = async () => {
+        try{
+            await axios.post(`/server/delete_cart/${session.id}`);
+
+        }catch (error) {
+            console.error('Error deleting cart', error);
+        }
+    }
+
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
 
@@ -229,7 +238,7 @@ const Cart = () => {
 
     useEffect(() => {
         if (cartProducts.length > 0) {
-            setShippingCost(4.99);
+            setShippingCost(3.99);
         } else {
             setShippingCost(0);
         }
@@ -282,8 +291,9 @@ const Cart = () => {
                 const { sessionId } = response.data;
     
                 // public key
-                const stripe = await loadStripe('pk_live_51PlctuBPrf3ZwXpUBl8bTM4jqf54PUPghK2VVfqeyI1fQ9z0RM8BXFi3BtyS2XsVnYB4pGz1Dthu5GulpuRdYsMF00lrA5QIK7');
-    
+                // const stripe = await loadStripe('pk_live_51PlctuBPrf3ZwXpUBl8bTM4jqf54PUPghK2VVfqeyI1fQ9z0RM8BXFi3BtyS2XsVnYB4pGz1Dthu5GulpuRdYsMF00lrA5QIK7');
+                const stripe = await loadStripe('pk_test_51PlctuBPrf3ZwXpUkfK0s9oTqyQ5GgKKfSRcCjPytuBNCV2voy9e9AQg7F9TlJ4Sr6uGJhNOqF8HhCXirKZlSzt600tWDo1C85');
+
                 // Redirect to the Stripe Checkout page
                 await stripe.redirectToCheckout({ sessionId });
     
@@ -367,18 +377,11 @@ const Cart = () => {
                             <p><span>Subtotal:</span> <span>£{totalPrice.toFixed(2)}</span></p>
                             <p><span>Shipping:</span> <span>£{shippingCost.toFixed(2)}</span></p>
                             <h4><span>Total:</span> <span>£{(totalPrice + shippingCost).toFixed(2)}</span></h4>
-                            <button
-                                className="checkout-button"
-                                onClick={handleCheckout}
-                                disabled={cartProducts.length === 0}
-                            >
+                            <button className="checkout-button" onClick={handleCheckout} disabled={cartProducts.length === 0}>
                                 Checkout
                             </button>
-                            
                         </div>
                     </div>
-
-
 
                 </div>
 

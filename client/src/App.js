@@ -8,7 +8,7 @@ import AdminProducts from './components/admin/Products_View';
 import Cart from './pages/cart';
 import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
-import CheckoutForm from './components/checkout/CheckoutForm';
+// import CheckoutForm from './components/checkout/CheckoutForm';
 
 
 const App = () => {
@@ -18,8 +18,11 @@ const App = () => {
                 <Routes>
                     
                 <Route path="/" element={<Index />} />
+                <Route path="/home" element={<Index />} />
+                <Route path="/index" element={<Index />} />
                 <Route path="/login" element={<Index />} />
                 <Route path="/createAccount" element={<Index />} />
+                
                 <Route path="/:name" element={<View_Product />} />
 
                 <Route path="/basket" element={<Cart />} />
@@ -29,9 +32,6 @@ const App = () => {
 
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/account" element={<Profile />} />
-
-                <Route path="/checkout" element={<CheckoutForm />} />
-                <Route path="/return" element={<Index />} />
 
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />

@@ -280,6 +280,36 @@ router.post('/remove_cart_product', async (req, res) => {
 
 });
 
+router.post('/delete_cart', async (req, res) => {
+    try {
+        const { user_id } = req.body;
+
+        if (!user_id) {
+            return res.status(400).send('User ID and Product ID are required');
+        }
+
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const query = 'DELETE FROM user_cart WHERE user_id = ?';
+            connection.query(query, [user_id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    console.error('Error deleting cart', error);
+                    return res.status(500).send('Database deletion failed');
+                }
+
+                res.status(200).send({ message: 'Product deleted successfully' });
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+
+});
+
 // route to get loved products for a user
 router.get('/get_wishlist/:id', async (req, res) => {
     const { id } = req.params;
