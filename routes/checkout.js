@@ -1,17 +1,30 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const rawBody = require('raw-body');
+var crypto = require('crypto');
 const axios = require('axios');
 const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') // secret key
+const tokenStore = {};
 
 // const stripe = Stripe('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') 
 
+const generateToken = () => {
+    return crypto.randomBytes(16).toString('hex');
+};
 
+const validateOrderToken = (token, user_id) => {
+    // Check if the token exists in the store and matches the user_id
+    if (tokenStore[user_id] && tokenStore[user_id] === token) {
+        return true;
+    }
+    return false;
+};
 
 router.post('/create_checkout_session', async (req, res) => {
-    const { cartItems, user_id } = req.body;
+    const { cartItems, user_id, user_email } = req.body;
+    const generatedToken = generateToken();
+    tokenStore[user_id] = generatedToken;
 
     // transform cartItems into the format required by Stripe
     const line_items = cartItems.map(item => ({
@@ -33,11 +46,12 @@ router.post('/create_checkout_session', async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
             },
-            success_url: `http://localhost:8080/cart?order_success=true`,
+            success_url: `http://localhost:8080/cart?order_success=true&token=${generatedToken}&email=${encodeURIComponent(user_email)}`,
             cancel_url: `http://localhost:8080/cart`,
             metadata: {
                 user_id: user_id
-            }
+            },
+            ...(user_email && { customer_email: user_email })
         });
 
         res.status(200).json({ sessionId: session.id });
@@ -49,6 +63,7 @@ router.post('/create_checkout_session', async (req, res) => {
 
 });
 
+// only called over http or valid https
 router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     const event = req.body;
 
@@ -57,10 +72,14 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
         case 'checkout.session.completed':
             const session = event.data.object;
             const user_id = session.metadata.user_id;
+            const customer_email = session.customer_details.email;
+
+            console.log(customer_email)
 
             try {
                 // Call the delete_cart endpoint to clear the user's cart
-                const response = await axios.post('http://localhost:8080/server/delete_cart', { user_id });
+                if(user_id){
+                     const response = await axios.post('/server/delete_cart', { user_id });
 
                 if (response.status === 200) {
                     console.log('Cart cleared successfully after payment');
@@ -68,6 +87,8 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                 } else {
                     console.log('Cart deletion failed with status:', response.status);
                 }
+                }
+               
 
             } catch (error) {
                 console.log('Error clearing cart', error);
@@ -81,6 +102,27 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
 
     res.send();
 });
+
+router.post('/verify_order', async (req, res) => {
+    const { token, user_id } = req.body;
+
+    try {
+        // Check if the token is valid for the given user_id
+        const isValid = validateOrderToken(token, user_id);
+        if (isValid) {
+            // Clear the token from the store after successful validation
+            delete tokenStore[user_id];
+            res.status(200).json({ isValid: true });
+        } else {
+            res.status(400).json({ isValid: false });
+        }
+    } catch (error) {
+        console.error('Error verifying order token:', error);
+        res.status(500).json({ error: 'Server error' });
+    }
+    
+});
+
 
 
 module.exports = router;

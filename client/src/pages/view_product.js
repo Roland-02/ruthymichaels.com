@@ -156,7 +156,7 @@ const View_Product = () => {
     const handleCartClick = async (productID, quantity) => {
         if (session && session.id != null) {
             const isCart = cartProducts.some(item => item.productID === productID);
-
+    
             setCartedProducts((prev) => {
                 if (isCart) {
                     return prev.map(item =>
@@ -166,14 +166,14 @@ const View_Product = () => {
                     return [...prev, { productID, qty: quantity }];
                 }
             });
-
+    
             try {
                 const response = await axios.post('/server/update_cart', {
                     user_id: session.id,
                     product_id: productID,
-                    qty: quantity
+                    qty: quantity  // This should correctly update the quantity on the server
                 });
-
+    
                 if (response.status === 200) {
                     console.log('Product quantity updated successfully');
                     setMessage({ content: 'Added to basket', productID, action: 'cart' });
@@ -181,7 +181,7 @@ const View_Product = () => {
                     console.error('Failed to update product quantity in basket:', response.data);
                     setMessage({ content: 'Failed to update quantity in basket', productID, action: 'cart' });
                 }
-
+    
             } catch (error) {
                 console.error('Error toggling cart state:', error);
                 setCartedProducts((prev) => {
@@ -198,21 +198,33 @@ const View_Product = () => {
         } else {
             // Logic for when the user is not signed in (store in cache)
             console.log('Store cart in cache');
-
+    
             // Retrieve the current cart from localStorage
             let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
-            cachedCart.push({ productID, qty: quantity });
-
+    
+            // Check if the product is already in the cached cart
+            const isCart = cachedCart.some(item => item.productID === productID);
+    
+            // Add or update the product in the cached cart
+            if (isCart) {
+                cachedCart = cachedCart.map(item =>
+                    item.productID === productID ? { ...item, qty: item.qty + quantity } : item
+                );
+            } else {
+                cachedCart.push({ productID, qty: quantity });
+            }
+    
             // Update the cart in localStorage
             localStorage.setItem('cartProducts', JSON.stringify(cachedCart));
-
+    
             // Update the state with only product IDs
             const cartProductIDs = cachedCart.map(item => item.productID);
             setCartedProducts(cartProductIDs);
-
+    
             setMessage({ content: 'Added to basket', productID, action: 'cart' });
         }
     };
+    
 
     useEffect(() => {
         const initialize = async () => {

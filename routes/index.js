@@ -147,6 +147,7 @@ router.get('/get_products_by_ids', async (req, res) => {
                 return res.status(404).send('No products found for the provided IDs');
             }
 
+
             res.status(200).json(results);
         });
     });

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import { loadStripe } from '@stripe/stripe-js';
 
@@ -19,6 +19,7 @@ const Cart = () => {
     const [shippingCost, setShippingCost] = useState(0);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
+    const location = useLocation();
 
 
     const fetchCartProducts = async () => {
@@ -222,10 +223,6 @@ const Cart = () => {
                 await fetchWishlist();
             }
 
-            if (cartProducts.length > 0) {
-                setShippingCost(4.99);
-            }
-
         };
         window.scrollTo(0, 0);
         initialize();
@@ -291,6 +288,34 @@ const Cart = () => {
         }
     }, [cartProducts]);
 
+    useEffect(() => {
+        const handleOrderSuccess = async () => {
+            localStorage.clear('cartProducts')
+            setCartedProducts([])
+            const params = new URLSearchParams(location.search);
+            const orderSuccess = params.get('order_success');
+            const token = params.get('token');
+            const email = params.get('email') || null;
+    
+            if (orderSuccess && token) {
+                if (session && session.id) { // User signed in
+                    console.log('real user');
+                } else { // Guest checkout
+                    console.log('guest user');
+                    if (email) {
+                        console.log('Guest email:', email);
+                        // You can store the email in the state or do something else with it
+                    }
+                }
+            }
+        };
+    
+        if (session !== undefined) {
+            handleOrderSuccess();
+        }
+    }, [location, session]);
+    
+
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
     };
@@ -346,7 +371,8 @@ const Cart = () => {
         try {
             const response = await axios.post(`/checkout/create_checkout_session`, {
                 cartItems: cartProducts,
-                user_id: session.id
+                user_id: session.id || null,
+                user_email: session.email || ''
             });
 
             if (response.status === 200) {
@@ -360,6 +386,7 @@ const Cart = () => {
                 await stripe.redirectToCheckout({ sessionId });
 
                 console.log('Proceeding to checkout');
+
             } else {
                 console.error('Failed to create checkout session');
             }
@@ -434,6 +461,7 @@ const Cart = () => {
                                 </div>
                             ))}
                         </div>
+
                     </div>
 
                     <div className="col-lg-4">
@@ -447,6 +475,7 @@ const Cart = () => {
                             </button>
                         </div>
                     </div>
+
                 </div>
 
                 <SimilarProducts />
