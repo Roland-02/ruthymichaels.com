@@ -44,7 +44,7 @@ const View_Product = () => {
                 const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                 setProduct({ ...productData, imageUrls });
                 setSelectedImage(imageUrls[0]);
-                
+
             } else {
                 navigate('/')
             }
@@ -77,9 +77,12 @@ const View_Product = () => {
                 const response = await axios.get(`/server/get_cart/${session.id}`);
                 const allCart = response.data.map(x => x.product_id);
                 setCartedProducts(allCart);
-
             } else {
-                console.log('fetch cart from cache')
+                // fetch cart from cache
+                console.log('fetch from cache')
+                const cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+                const cartProductIDs = cachedCart.map(item => item.productID);
+                setCartedProducts(cartProductIDs);
             }
 
         } catch (error) {
@@ -152,7 +155,7 @@ const View_Product = () => {
 
     const handleCartClick = async (productID, quantity) => {
         if (session && session.id != null) {
-            const isCart = cartProducts.some(item => item.product_id === productID);
+            const isCart = cartProducts.some(item => item.productID === productID);
 
             setCartedProducts((prev) => {
                 if (isCart) {
@@ -193,9 +196,22 @@ const View_Product = () => {
                 setMessage({ content: 'Error saving basket', productID, action: 'cart' });
             }
         } else {
-            console.log('store cart in cache');
-        }
+            // Logic for when the user is not signed in (store in cache)
+            console.log('Store cart in cache');
 
+            // Retrieve the current cart from localStorage
+            let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+            cachedCart.push({ productID, qty: quantity });
+
+            // Update the cart in localStorage
+            localStorage.setItem('cartProducts', JSON.stringify(cachedCart));
+
+            // Update the state with only product IDs
+            const cartProductIDs = cachedCart.map(item => item.productID);
+            setCartedProducts(cartProductIDs);
+
+            setMessage({ content: 'Added to basket', productID, action: 'cart' });
+        }
     };
 
     useEffect(() => {
@@ -208,7 +224,7 @@ const View_Product = () => {
             }
         };
         initialize();
-        
+
     }, [session, navigate]);
 
     const increaseQuantity = () => setQuantity(quantity + 1);

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import { loadStripe } from '@stripe/stripe-js';
 
-
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SimilarProducts from '../components/common/SimilarProducts';
@@ -14,7 +13,7 @@ import '../styles/cart.css';
 
 const Cart = () => {
     const { session } = useContext(SessionContext);
-    const [cartProducts, setCartProducts] = useState([]);
+    const [cartProducts, setCartedProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [shippingCost, setShippingCost] = useState(0);
@@ -23,29 +22,69 @@ const Cart = () => {
 
 
     const fetchCartProducts = async () => {
-        try {
-            const response = await axios.get(`/server/get_cart_products/${session.id}`);
-            if (response.status === 200) {
+        if (session && session.id) {
+            try {
+                const response = await axios.get(`/server/get_cart_products/${session.id}`);
+                if (response.status === 200) {
 
-                const products = response.data;
+                    const products = response.data;
 
-                // Format imageUrls for each product
-                const formattedProducts = products.map(prod => {
-                    const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-                    return { ...prod, imageUrls };
-                });
+                    // Format imageUrls for each product
+                    const formattedProducts = products.map(prod => {
+                        const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                        const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                        return { ...prod, imageUrls };
+                    });
 
-                setCartProducts(formattedProducts);
+                    setCartedProducts(formattedProducts);
 
-                const newTotalPrice = calculateTotalPrice(products);
-                setTotalPrice(newTotalPrice);
+                    const newTotalPrice = calculateTotalPrice(products);
+                    setTotalPrice(newTotalPrice);
 
-            } else {
-                console.error('Failed to fetch cart products');
+                } else {
+                    console.error('Failed to fetch cart products');
+                }
+            } catch (error) {
+                console.error('Error fetching cart products:', error);
             }
-        } catch (error) {
-            console.error('Error fetching cart products:', error);
+
+        } else {
+            // Fetch cart from cache
+
+            let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+
+            if (cachedCart.length > 0) {
+                try {
+                    // Construct the query string with product IDs
+                    const queryString = cachedCart.map(item => item.productID).join(',');
+
+                    // Make a GET request to get the products by their IDs
+                    const response = await axios.get(`/server/get_products_by_ids?ids=${queryString}`);
+                    const products = response.data;
+
+                    // Format image URLs and ensure each product has a qty
+                    const formattedProducts = products.map(prod => {
+                        const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                        const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+
+                        // Find the corresponding cart item to get the qty
+                        const cartItem = cachedCart.find(item => item.productID === prod.id);
+                        const qty = cartItem ? cartItem.qty : 1;  // Default to 1 if qty not found
+
+                        return { ...prod, imageUrls, qty };
+                    });
+
+                    setCartedProducts(formattedProducts);
+
+                    // Calculate the total price after setting cart products
+                    const totalPrice = calculateTotalPrice(formattedProducts);
+                    setTotalPrice(totalPrice);
+
+                } catch (error) {
+                    console.error('Failed to fetch products from cache:', error);
+                }
+
+            }
         }
     };
 
@@ -65,15 +104,6 @@ const Cart = () => {
 
         }
     };
-
-    const deleteCart = async () => {
-        try{
-            await axios.post(`/server/delete_cart/${session.id}`);
-
-        }catch (error) {
-            console.error('Error deleting cart', error);
-        }
-    }
 
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
@@ -140,7 +170,6 @@ const Cart = () => {
     const handleRemoveClick = async (productID) => {
         if (session && session.id != null) {
             try {
-
                 const response = await axios.post('/server/remove_cart_product', {
                     user_id: session.id,
                     product_id: productID
@@ -148,7 +177,7 @@ const Cart = () => {
 
                 if (response.status === 200) {
                     setMessage({ content: 'Item removed from cart', productID, action: 'cart' });
-                    setCartProducts(prevProducts => {
+                    setCartedProducts(prevProducts => {
                         const updatedProducts = prevProducts.filter(product => product.id !== productID);
                         const newTotalPrice = calculateTotalPrice(updatedProducts);
                         setTotalPrice(newTotalPrice);
@@ -162,23 +191,41 @@ const Cart = () => {
             } catch (error) {
                 setMessage({ content: 'Error removing item', productID, action: 'cart' });
             }
+
         } else {
-            console.log('store cart in cache');
+
+            // Retrieve the current cart from localStorage
+            let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+
+            // Remove the product from the cached cart
+            cachedCart = cachedCart.filter(item => item.productID !== productID);
+
+            // Update the cart in localStorage
+            localStorage.setItem('cartProducts', JSON.stringify(cachedCart));
+
+            setMessage({ content: 'Item removed from cart', productID, action: 'cart' });
+            setCartedProducts(prevProducts => {
+                const updatedProducts = prevProducts.filter(product => product.id !== productID);
+                const newTotalPrice = calculateTotalPrice(updatedProducts);
+                setTotalPrice(newTotalPrice);
+                return updatedProducts;
+            });
         }
 
     };
 
     useEffect(() => {
         const initialize = async () => {
+            await fetchCartProducts();
+
             if (session && session.id) {
-                await fetchCartProducts();
                 await fetchWishlist();
-
-                if (cartProducts.length > 0) {
-                    setShippingCost(4.99);
-                }
-
             }
+
+            if (cartProducts.length > 0) {
+                setShippingCost(4.99);
+            }
+
         };
         window.scrollTo(0, 0);
         initialize();
@@ -249,32 +296,46 @@ const Cart = () => {
     };
 
     const handleQtyChange = async (productId, newQty) => {
+        // Update the products in the state
         const updatedProducts = cartProducts.map(product =>
             product.id === productId ? { ...product, qty: newQty } : product
         );
-        setCartProducts(updatedProducts);
+        setCartedProducts(updatedProducts);
 
-        try {
-            const response = await axios.post('/server/update_cart', {
-                user_id: session.id,
-                product_id: productId,
-                qty: newQty
-            });
+        // Recalculate the total price
+        const newTotalPrice = calculateTotalPrice(updatedProducts);
+        setTotalPrice(newTotalPrice);
 
-            if (response.status === 200) {
-                console.log('Product quantity updated successfully');
+        if (session && session.id) {
+            try {
+                const response = await axios.post('/server/update_cart', {
+                    user_id: session.id,
+                    product_id: productId,
+                    qty: newQty
+                });
 
-                const newTotalPrice = calculateTotalPrice(updatedProducts);
-                setTotalPrice(newTotalPrice);
+                if (response.status === 200) {
+                    console.log('Product quantity updated successfully on the server');
+                } else {
+                    console.error('Failed to update product quantity on the server');
+                }
 
-            } else {
-                console.error('Failed to update product quantity in basket:', response.data);
+            } catch (error) {
+                console.error('Error updating product quantity on the server:', error);
             }
 
-        } catch (error) {
-            console.error('Error toggling cart state:', error);
-        }
+        } else {
+            // Update the cart in localStorage when the user is not logged in
+            let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
 
+            // Find the product in the cache and update its quantity
+            cachedCart = cachedCart.map(item =>
+                item.productID === productId ? { ...item, qty: newQty } : item
+            );
+
+            // Save the updated cart back to localStorage
+            localStorage.setItem('cartProducts', JSON.stringify(cachedCart));
+        }
     };
 
     const handleProductClick = (name) => {
@@ -290,14 +351,14 @@ const Cart = () => {
 
             if (response.status === 200) {
                 const { sessionId } = response.data;
-    
+
                 // public key
                 // const stripe = await loadStripe('pk_live_51PlctuBPrf3ZwXpUBl8bTM4jqf54PUPghK2VVfqeyI1fQ9z0RM8BXFi3BtyS2XsVnYB4pGz1Dthu5GulpuRdYsMF00lrA5QIK7');
                 const stripe = await loadStripe('pk_test_51PlctuBPrf3ZwXpUkfK0s9oTqyQ5GgKKfSRcCjPytuBNCV2voy9e9AQg7F9TlJ4Sr6uGJhNOqF8HhCXirKZlSzt600tWDo1C85');
 
                 // Redirect to the Stripe Checkout page
                 await stripe.redirectToCheckout({ sessionId });
-    
+
                 console.log('Proceeding to checkout');
             } else {
                 console.error('Failed to create checkout session');
@@ -306,7 +367,7 @@ const Cart = () => {
             console.error('Error during checkout:', error);
         }
     };
-    
+
 
     return (
         <div>
@@ -318,6 +379,9 @@ const Cart = () => {
                 <div className="cart-layout">
 
                     <div className="col-lg-8">
+
+
+
                         <div className="cart-products">
                             {cartProducts.map((product) => (
                                 <div key={product.id} className="cart-product" onClick={(e) => {
@@ -383,11 +447,9 @@ const Cart = () => {
                             </button>
                         </div>
                     </div>
-
                 </div>
 
                 <SimilarProducts />
-
             </div>
 
             <Footer />

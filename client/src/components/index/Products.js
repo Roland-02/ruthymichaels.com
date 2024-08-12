@@ -126,7 +126,11 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 setCartedProducts(allCart);
 
             } else {
-                console.log('fetch cart from cache')
+                // fetch cart from cache
+                console.log('fetch from cache')
+                const cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+                const cartProductIDs = cachedCart.map(item => item.productID);
+                setCartedProducts(cartProductIDs);
             }
 
         } catch (error) {
@@ -134,6 +138,8 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
         }
     };
+
+    console.log(cartProducts)
 
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
@@ -261,7 +267,30 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
             }
         } else {
-            console.log('store cart in cache')
+            // Logic for when the user is not signed in (store in cache)
+            console.log('Store cart in cache');
+        
+            // Retrieve the current cart from localStorage
+            let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
+        
+            // Check if the product is already in the cached cart
+            const isCart = cachedCart.some(item => item.productID === productID);
+        
+            // Add or update the product in the cached cart
+            if (isCart) {
+                cachedCart = cachedCart.filter(item => item.productID !== productID);
+            } else {
+                cachedCart.push({ productID, qty: 1 });
+            }
+        
+            // Update the cart in localStorage
+            localStorage.setItem('cartProducts', JSON.stringify(cachedCart));
+        
+            // Update the state with only product IDs
+            const cartProductIDs = cachedCart.map(item => item.productID);
+            setCartedProducts(cartProductIDs);
+        
+            setMessage({ content: 'Added to basket', productID, action: 'cart' });
         }
     };
 
@@ -333,7 +362,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
                                 </div>
                             </div>
-
                         </div>
                     </div>
                 ))}

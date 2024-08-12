@@ -111,6 +111,47 @@ router.get('/get_product', async (req, res) => {
     }
 });
 
+// Get products by an array of IDs
+router.get('/get_products_by_ids', async (req, res) => {
+    const ids = req.query.ids;
+
+    if (!ids) {
+        return res.status(400).send('A list of product IDs is required');
+    }
+
+    const idArray = ids.split(',');
+
+    if (idArray.length === 0) {
+        return res.status(400).send('An array of product IDs is required');
+    }
+
+    getConnection((err, connection) => {
+        if (err) {
+            console.error('Database connection failed:', err);
+            return res.status(500).send('Database connection failed');
+        }
+
+        // Generate placeholders for the query
+        const placeholders = idArray.map(() => '?').join(',');
+
+        const query = `SELECT id, name, type, description, price, image_URLs FROM products WHERE id IN (${placeholders})`;
+        connection.query(query, idArray, (error, results) => {
+            connection.release();
+
+            if (error) {
+                console.error('Database query failed:', error);
+                return res.status(500).send('Database query failed');
+            }
+
+            if (results.length === 0) {
+                return res.status(404).send('No products found for the provided IDs');
+            }
+
+            res.status(200).json(results);
+        });
+    });
+});
+
 // search products
 router.get('/search', async (req, res) => {
     const { query } = req.query;
@@ -164,7 +205,7 @@ router.get('/get_cart/:id', async (req, res) => {
 
 });
 
-// route to get wishlist products for a user
+// route to get cart products for a user
 router.get('/get_cart_products/:id', async (req, res) => {
     const { id } = req.params;
 
@@ -290,7 +331,7 @@ router.post('/delete_cart', async (req, res) => {
 
         getConnection((err, connection) => {
             if (err) throw err;
-            console.log('hello')
+
             const query = 'DELETE FROM user_cart WHERE user_id = ?';
             connection.query(query, [user_id], (error, results) => {
                 connection.release();

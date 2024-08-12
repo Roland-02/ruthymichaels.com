@@ -170,9 +170,10 @@ router.post('/signout', function (req, res) {
         if (err) {
             return res.status(500).send('Failed to destroy session');
         }
-        // Clear cookies
+        // Clear cookies        
         res.clearCookie('sessionEmail');
         res.clearCookie('sessionID');
+
         console.log("--------> User signed out");
         // Redirect to home or login page
         res.redirect('/');

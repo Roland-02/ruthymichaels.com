@@ -8,7 +8,6 @@ const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8u
 
 // const stripe = Stripe('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') 
 
-const endpointSecret = 'whsec_8917d1ea703c0101e6ac2fe358ce2d59bd2d504c596696cb5c8ff5ea18af24ea';
 
 
 router.post('/create_checkout_session', async (req, res) => {
@@ -34,7 +33,7 @@ router.post('/create_checkout_session', async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
             },
-            success_url: `http://localhost:8080/index?order_success=true`,
+            success_url: `http://localhost:8080/cart?order_success=true`,
             cancel_url: `http://localhost:8080/cart`,
             metadata: {
                 user_id: user_id
@@ -50,9 +49,7 @@ router.post('/create_checkout_session', async (req, res) => {
 
 });
 
-
 router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
-    // const sig = req.headers['stripe-signature'];
     const event = req.body;
 
     // Handle the event
@@ -67,7 +64,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
 
                 if (response.status === 200) {
                     console.log('Cart cleared successfully after payment');
-                    // Continue with any other post-payment logic here, if necessary
                     break;
                 } else {
                     console.log('Cart deletion failed with status:', response.status);
@@ -77,7 +73,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                 console.log('Error clearing cart', error);
             }
 
-            // If the cart is not cleared successfully, this point will not be reached
             break;
 
         default:
