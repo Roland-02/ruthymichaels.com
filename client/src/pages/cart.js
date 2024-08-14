@@ -308,34 +308,26 @@ const Cart = () => {
             const params = new URLSearchParams(location.search);
             const orderSuccess = params.get('order_success');
             const token = params.get('token');
-            const sessionId = params.get('session_id');
+            const checkoutID = params.get('session_id');
 
             if (orderSuccess && token) {
                 setOrderSuccess(true);
                 localStorage.removeItem('cartProducts');
                 setCartedProducts([]);
-                setTotalPrice(0)
+                setTotalPrice(0);
 
-                // get guest email address
-                if (!session && sessionId) {
+                if (!session && checkoutID) {
                     try {
-                        // Fetch the customer email from the server
-                        const response = await axios.get(`/checkout/get_customer_email?session_id=${sessionId}`);
-                        setEmail(response.data.email);
+                        const response = await axios.get(`/checkout/get_customer_email?session_id=${checkoutID}`);
+                        setEmail(response.data.email || ""); // Set email to empty string if null
                     } catch (error) {
                         console.error('Error fetching customer email:', error);
+                        setEmail("");
                     }
                 }
 
                 if (session && session.id) {
-                    setEmail(session.email)
-                    console.log('Real user');
-
-                } else {
-                    console.log('Guest user');
-                    if (email) {
-                        console.log('Guest email:', email);
-                    }
+                    setEmail(session.email || "");
                 }
 
             }
@@ -443,7 +435,7 @@ const Cart = () => {
                                 <h2>Thank you for your order!</h2>
                                 <p>Your order confirmation has been sent to {email}</p>
                                 <button className='continue-shopping' onClick={() => navigate('/')}>Continue Shopping</button>
-                                {!session && (
+                                {!(session && session.id) && (
                                     <button className='create-account' onClick={() => navigate('/createAccount')}>Create an Account</button>
                                 )}
                             </div>

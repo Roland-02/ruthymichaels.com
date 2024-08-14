@@ -179,8 +179,7 @@
     border: 1px solid #ddd; 
     padding: 20px; 
     text-align: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    margin: 40px auto; 
+    margin: 40px auto;
 }
 
 .order-confirmation h2 {
@@ -221,7 +220,6 @@
 .create-account:hover {
     background-color: #f96cf2;
 }
-
 
 @media (max-width: 991px) {
 

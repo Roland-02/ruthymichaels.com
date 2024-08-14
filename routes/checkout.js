@@ -110,21 +110,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
     res.send();
 });
 
-router.get('/get_customer_email', async (req, res) => {
-    const { session_id } = req.query;
-
-    // console.log(session_id)
-    // console.log(customerEmails)
-
-    if (customerEmails[session_id]) {
-        res.status(200).json({ email: customerEmails[session_id] });
-        // delete customerEmails[session_id];
-    } else {
-        res.status(404).json({ error: 'Email not found' });
-    }
-
-});
-
 router.post('/verify_order', async (req, res) => {
     const { token, user_id } = req.body;
 
@@ -141,6 +126,21 @@ router.post('/verify_order', async (req, res) => {
     } catch (error) {
         console.error('Error verifying order token:', error);
         res.status(500).json({ error: 'Server error' });
+    }
+
+});
+
+router.get('/get_customer_email', async (req, res) => {
+    const { session_id } = req.query;
+
+    // console.log(session_id)
+    // console.log(customerEmails)
+
+    if (customerEmails[session_id]) {
+        res.status(200).json({ email: customerEmails[session_id] });
+        // delete customerEmails[session_id];
+    } else {
+        res.status(404).json({ error: 'Email not found' });
     }
 
 });
