@@ -5,7 +5,9 @@ var crypto = require('crypto');
 const axios = require('axios');
 const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') // secret key
+
 const tokenStore = {};
+const customerEmails = {};
 
 // const stripe = Stripe('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') 
 
@@ -46,7 +48,7 @@ router.post('/create_checkout_session', async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
             },
-            success_url: `http://localhost:8080/cart?order_success=true&token=${generatedToken}&email=${encodeURIComponent(user_email)}`,
+            success_url: `http://localhost:8080/cart?order_success=true&token=${generatedToken}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `http://localhost:8080/cart`,
             metadata: {
                 user_id: user_id
@@ -73,23 +75,28 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             const session = event.data.object;
             const user_id = session.metadata.user_id;
             const customer_email = session.customer_details.email;
+            const session_id = session.id;
 
-            console.log(customer_email)
-
+            // console.log(session.id)
+            
             try {
-                // Call the delete_cart endpoint to clear the user's cart
-                if(user_id){
-                     const response = await axios.post('/server/delete_cart', { user_id });
+                customerEmails[session_id] = customer_email;
 
-                if (response.status === 200) {
-                    console.log('Cart cleared successfully after payment');
-                    break;
-                } else {
-                    console.log('Cart deletion failed with status:', response.status);
-                }
-                }
-               
+                if (user_id) {
 
+                    // Call the delete_cart endpoint to clear the user's cart
+                    const response = await axios.post('/server/delete_cart', { user_id });
+
+                    if (response.status === 200) {
+                        console.log('Cart cleared successfully after payment');
+                        break;
+
+                    } else {
+                        console.log('Cart deletion failed with status:', response.status);
+                    }
+                }
+
+                res.sendStatus(200);
             } catch (error) {
                 console.log('Error clearing cart', error);
             }
@@ -101,6 +108,21 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
     }
 
     res.send();
+});
+
+router.get('/get_customer_email', async (req, res) => {
+    const { session_id } = req.query;
+
+    // console.log(session_id)
+    // console.log(customerEmails)
+
+    if (customerEmails[session_id]) {
+        res.status(200).json({ email: customerEmails[session_id] });
+        // delete customerEmails[session_id];
+    } else {
+        res.status(404).json({ error: 'Email not found' });
+    }
+
 });
 
 router.post('/verify_order', async (req, res) => {
@@ -120,9 +142,8 @@ router.post('/verify_order', async (req, res) => {
         console.error('Error verifying order token:', error);
         res.status(500).json({ error: 'Server error' });
     }
-    
-});
 
+});
 
 
 module.exports = router;

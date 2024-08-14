@@ -31,24 +31,6 @@
     cursor: pointer;
 }
 
-.cart-summary {
-    width: 95%;
-    height: 300px;
-    top: 100px;
-    border: 1px solid #ddd;
-    padding: 10px;
-    background-color: #fff;
-    margin-right: 20px;
-    position: sticky;
-    align-self: flex-start;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
 .cart-product-image {
     width: 115px;
     height: 150px;
@@ -115,7 +97,23 @@
     justify-content: flex-end;
 }
 
-
+.cart-summary {
+    width: 95%;
+    height: 300px;
+    top: 100px;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #fff;
+    margin-right: 20px;
+    position: sticky;
+    align-self: flex-start;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 
 .cart-summary h3 {
     font-size: 24px;
@@ -176,6 +174,55 @@
     margin-right: 10px;
 }
 
+.order-confirmation {
+    width: 95%;
+    border: 1px solid #ddd; 
+    padding: 20px; 
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 40px auto; 
+}
+
+.order-confirmation h2 {
+    color: #4CAF50;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+.order-confirmation p {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 25px;
+}
+
+.order-confirmation button {
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px; 
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: background-color 0.3s ease;
+}
+
+.continue-shopping {
+    background-color: #74a6f7;
+}
+
+.continue-shopping:hover {
+    background-color: #4b8df8;
+}
+
+.create-account {
+    background-color: #fd9ef8;
+}
+
+.create-account:hover {
+    background-color: #f96cf2;
+}
+
+
 @media (max-width: 991px) {
 
     .view-container,
@@ -193,6 +240,14 @@
     .cart-summary{
         min-width: 50vw;
         margin-top: 3vh;
+        margin-left: 0;
+        margin-right: 0;
     }
+
+    .cart-layout .col-lg-8{
+        margin-top: 10vh;
+        margin-left: 0;
+        margin-right: 0;
+    } 
 
 }
