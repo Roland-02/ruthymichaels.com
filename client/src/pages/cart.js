@@ -292,40 +292,18 @@ const Cart = () => {
 
     useEffect(() => {
 
-        const handleOrderSuccess = async () => {
-            const params = new URLSearchParams(location.search);
-            const orderSuccess = params.get('order_success');
-            const token = params.get('token');
-            const checkoutID = params.get('session_id');
+        const params = new URLSearchParams(location.search);
+        const orderSuccess = params.get('order_success');
+        const token = params.get('token');
 
-            if (orderSuccess && token) {
-                setOrderSuccess(true);
-                localStorage.removeItem('cartProducts');
-                setCartedProducts([]);
-                setTotalPrice(0);
-
-                if (!session && checkoutID) {
-                    try {
-                        const response = await axios.get(`/checkout/get_customer_email?session_id=${checkoutID}`);
-                        setEmail(response.data.email || ""); // Set email to empty string if null
-                    } catch (error) {
-                        console.error('Error fetching customer email:', error);
-                        setEmail("");
-                    }
-                }
-
-                if (session && session.id) {
-                    setEmail(session.email || "");
-                }
-
-            }
-        };
-
-        if (session !== undefined) {
-            handleOrderSuccess();
+        if (orderSuccess && token) {
+            setOrderSuccess(true);
+            localStorage.removeItem('cartProducts');
+            setCartedProducts([]);
+            setTotalPrice(0);
         }
 
-    }, [location, session, setCartedProducts, setTotalPrice, email, navigate]);
+    }, [location, session, cartProducts, totalPrice, navigate]);
 
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
@@ -421,7 +399,7 @@ const Cart = () => {
                         {orderSuccess ? (
                             <div className="order-confirmation">
                                 <h2>Thank you for your order!</h2>
-                                <p>Your order confirmation has been sent to {email ? email : 'to your email'}</p>
+                                <p>An order confirmation has been sent to your email</p>
                                 <button className='continue-shopping' onClick={() => navigate('/')}>Continue Shopping</button>
                                 {!(session && session.id) && (
                                     <button className='create-account' onClick={() => navigate('/createAccount')}>Create an Account</button>
