@@ -108,19 +108,6 @@ const Cart = () => {
         }
     };
 
-    const fetchSessionDetails = async (sessionId) => {
-        try {
-            const response = await fetch(`/get_checkout_session?session_id=${sessionId}`);
-            const session = await response.json();
-
-            if (session && session.customer_email) {
-                setEmail(session.customer_email);
-            }
-        } catch (error) {
-            console.error('Error fetching session details:', error);
-        }
-    };
-
     const handleLoveClick = async (productID) => {
         if (session && session.id != null) {
 
@@ -305,7 +292,6 @@ const Cart = () => {
 
     useEffect(() => {
 
-
         const handleOrderSuccess = async () => {
             const params = new URLSearchParams(location.search);
             const orderSuccess = params.get('order_success');
@@ -339,7 +325,7 @@ const Cart = () => {
             handleOrderSuccess();
         }
 
-    }, [location, session, setCartedProducts, setTotalPrice, email]);
+    }, [location, session, setCartedProducts, setTotalPrice, email, navigate]);
 
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
@@ -435,7 +421,7 @@ const Cart = () => {
                         {orderSuccess ? (
                             <div className="order-confirmation">
                                 <h2>Thank you for your order!</h2>
-                                <p>Your order confirmation has been sent to {email}</p>
+                                <p>Your order confirmation has been sent to {email ? email : 'to your email'}</p>
                                 <button className='continue-shopping' onClick={() => navigate('/')}>Continue Shopping</button>
                                 {!(session && session.id) && (
                                     <button className='create-account' onClick={() => navigate('/createAccount')}>Create an Account</button>

@@ -85,57 +85,64 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             const session_id = session.id;
             const user_id = session.metadata.user_id;
             const customer_email = session.customer_details.email;
+            const customer_name = session.customer_details.name;
             const shipping_address = session.customer_details.address;
-            const line_items = session.display_items || [];
-            const orderDetails = line_items.map(item => `${item.quantity} x ${item.custom.name} (${item.amount_total / 100} GBP)`).join('\n');
 
-            const paymentIntentId = session.payment_intent;
-            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
-            const last4 = paymentIntent.charges
+            // fetch line items
+            const lineItems = await stripe.checkout.sessions.listLineItems(session_id);
+            const orderDetails = lineItems.data.map(item => {
+                return `${item.quantity} x ${item.description} (£${item.amount_total / 100} GBP)`;
+            }).join('\n');
 
-            console.log(paymentIntent);
-
-            // console.log(event)
+            // get card details
+            const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
+            const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method);
+            const brand = paymentMethod.card.display_brand;
+            const funding = paymentMethod.card.funding;
+            const last4 = paymentMethod.card.last4
 
             // Try to send the confirmation email
-            // try {
+            try {
 
-            //     // Create the email content
-            //     const emailContent = `
-            //     Dear Customer,
+                // Create the email content
+                const emailContent = `
+Dear ${customer_name},
 
-            //     Thank you for your order! Here are your order details:
+Thank you for your order!
 
-            //     Order ID: ${session.id}
-            //     Payment Status: ${session.payment_status}
+Order ID: ${session.id}
 
-            //     Items Ordered:
-            //     ${orderDetails}
+Items Ordered:
+${orderDetails}
 
-            //     Shipping Address:
-            //     ${shipping_address.line1}, 
-            //     ${shipping_address.line2 ? `${shipping_address.line2},` : ''}
-            //     ${shipping_address.city}, 
-            //     ${shipping_address.postal_code}, 
-            //     ${shipping_address.country}
+Shipping Address:
+${shipping_address.line1}, 
+${shipping_address.line2 ? `${shipping_address.line2},` : ''}
+${shipping_address.city}, 
+${shipping_address.postal_code}, 
+${shipping_address.country}
 
-            //     We hope you enjoy your purchase!
+Payment Details:
+${brand} ${funding}
+**** **** **** ${last4}
 
-            //     Regards,
-            //     Ruthy Michaels
-            //     `;
+I hope you enjoy your purchase!
 
-            //     await transporter.sendMail({
-            //         from: 'RuthyMichaels@gmail.com', // Sender address
-            //         to: customer_email, // Receiver address
-            //         subject: 'Order Confirmation - Thank you for your purchase!',
-            //         text: emailContent,
-            //     });
-            //     console.log(`Confirmation email sent to ${customer_email}`);
+Regards,
 
-            // } catch (error) {
-            //     console.log('Error sending confirmation email:', error);
-            // }
+Ruthy Michaels`;
+
+                await transporter.sendMail({
+                    from: 'RuthyMichaels@gmail.com', // Sender address
+                    to: customer_email, // Receiver address
+                    subject: 'Order Confirmation - Thank you for your purchase!',
+                    text: emailContent,
+                });
+                console.log(`Confirmation email sent to ${customer_email}`);
+
+            } catch (error) {
+                console.log('Error sending confirmation email:', error);
+            }
 
             // Process cache clearing and cart deletion
             try {
@@ -165,7 +172,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             res.sendStatus(400); // Optional: Send a bad request status for unhandled event types
     }
 });
-
 
 router.post('/verify_order', async (req, res) => {
     const { token, user_id } = req.body;
