@@ -30,14 +30,14 @@ const View_Product = () => {
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
     const navigate = useNavigate();
-
+    
 
     const fetchProduct = async () => {
         try {
             const response = await axios.get(`/server/get_product`, {
                 params: { name }
             });
-            if (response.status == 200) {
+            if (response.status === 200) {
                 window.scrollTo(0, 0);
                 const productData = response.data;
                 const imageIds = productData.image_URLs ? productData.image_URLs.split(',') : [];
@@ -224,7 +224,6 @@ const View_Product = () => {
             setMessage({ content: 'Added to basket', productID, action: 'cart' });
         }
     };
-    
 
     useEffect(() => {
         const initialize = async () => {

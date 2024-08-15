@@ -1,15 +1,24 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-var crypto = require('crypto');
 const axios = require('axios');
+const crypto = require('crypto');
 const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') // secret key
-
+const nodemailer = require('nodemailer');
 const tokenStore = {};
 const customerEmails = {};
 
 // const stripe = Stripe('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') 
+
+
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // or another email service
+    auth: {
+        user: `${process.env.myEmail}`,
+        pass: `${process.env.myEmailPassword}`,
+    },
+});
 
 const generateToken = () => {
     return crypto.randomBytes(16).toString('hex');
@@ -73,24 +82,71 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
     switch (event.type) {
         case 'checkout.session.completed':
             const session = event.data.object;
+            const session_id = session.id;
             const user_id = session.metadata.user_id;
             const customer_email = session.customer_details.email;
-            const session_id = session.id;
+            const shipping_address = session.customer_details.address;
+            const line_items = session.display_items || [];
+            const orderDetails = line_items.map(item => `${item.quantity} x ${item.custom.name} (${item.amount_total / 100} GBP)`).join('\n');
 
-            // console.log(session.id)
-            
+            const paymentIntentId = session.payment_intent;
+            const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+            const last4 = paymentIntent.charges
+
+            console.log(paymentIntent);
+
+            // console.log(event)
+
+            // Try to send the confirmation email
+            // try {
+
+            //     // Create the email content
+            //     const emailContent = `
+            //     Dear Customer,
+
+            //     Thank you for your order! Here are your order details:
+
+            //     Order ID: ${session.id}
+            //     Payment Status: ${session.payment_status}
+
+            //     Items Ordered:
+            //     ${orderDetails}
+
+            //     Shipping Address:
+            //     ${shipping_address.line1}, 
+            //     ${shipping_address.line2 ? `${shipping_address.line2},` : ''}
+            //     ${shipping_address.city}, 
+            //     ${shipping_address.postal_code}, 
+            //     ${shipping_address.country}
+
+            //     We hope you enjoy your purchase!
+
+            //     Regards,
+            //     Ruthy Michaels
+            //     `;
+
+            //     await transporter.sendMail({
+            //         from: 'RuthyMichaels@gmail.com', // Sender address
+            //         to: customer_email, // Receiver address
+            //         subject: 'Order Confirmation - Thank you for your purchase!',
+            //         text: emailContent,
+            //     });
+            //     console.log(`Confirmation email sent to ${customer_email}`);
+
+            // } catch (error) {
+            //     console.log('Error sending confirmation email:', error);
+            // }
+
+            // Process cache clearing and cart deletion
             try {
                 customerEmails[session_id] = customer_email;
 
                 if (user_id) {
-
                     // Call the delete_cart endpoint to clear the user's cart
                     const response = await axios.post('/server/delete_cart', { user_id });
 
                     if (response.status === 200) {
                         console.log('Cart cleared successfully after payment');
-                        break;
-
                     } else {
                         console.log('Cart deletion failed with status:', response.status);
                     }
@@ -98,17 +154,18 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
 
                 res.sendStatus(200);
             } catch (error) {
-                console.log('Error clearing cart', error);
+                console.log('Error clearing cart:', error);
+                res.sendStatus(500); // Optional: Send an error status if you want to notify the client
             }
 
             break;
 
         default:
             console.log(`Unhandled event type ${event.type}`);
+            res.sendStatus(400); // Optional: Send a bad request status for unhandled event types
     }
-
-    res.send();
 });
+
 
 router.post('/verify_order', async (req, res) => {
     const { token, user_id } = req.body;
@@ -133,12 +190,8 @@ router.post('/verify_order', async (req, res) => {
 router.get('/get_customer_email', async (req, res) => {
     const { session_id } = req.query;
 
-    // console.log(session_id)
-    // console.log(customerEmails)
-
     if (customerEmails[session_id]) {
         res.status(200).json({ email: customerEmails[session_id] });
-        // delete customerEmails[session_id];
     } else {
         res.status(404).json({ error: 'Email not found' });
     }

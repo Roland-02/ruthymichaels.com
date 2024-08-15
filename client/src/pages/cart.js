@@ -304,6 +304,8 @@ const Cart = () => {
     }, [cartProducts]);
 
     useEffect(() => {
+
+
         const handleOrderSuccess = async () => {
             const params = new URLSearchParams(location.search);
             const orderSuccess = params.get('order_success');
@@ -337,7 +339,7 @@ const Cart = () => {
             handleOrderSuccess();
         }
 
-    }, [location, session, setCartedProducts, email]);
+    }, [location, session, setCartedProducts, setTotalPrice, email]);
 
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
