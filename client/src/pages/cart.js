@@ -17,7 +17,6 @@ const Cart = () => {
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [shippingCost, setShippingCost] = useState(0);
-    const [email, setEmail] = useState(null);
     const [orderSuccess, setOrderSuccess] = useState(false);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
@@ -406,7 +405,6 @@ const Cart = () => {
                                 )}
                             </div>
                         ) : (
-
                             <div className="cart-products">
                                 {cartProducts.map((product) => (
                                     <div key={product.id} className="cart-product" onClick={(e) => {
@@ -478,6 +476,7 @@ const Cart = () => {
                 </div>
 
                 <SimilarProducts />
+
             </div>
 
             <Footer />
@@ -487,4 +486,3 @@ const Cart = () => {
 };
 
 export default Cart;
-

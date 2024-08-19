@@ -21,7 +21,7 @@ const transporter = nodemailer.createTransport({
 
 function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1);
-}
+};
 
 const generateToken = () => {
     return crypto.randomBytes(16).toString('hex');
