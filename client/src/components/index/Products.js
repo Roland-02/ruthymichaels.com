@@ -5,6 +5,8 @@ import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
 
 import '../../styles/index.css';
+import '../../styles/common.css'
+
 import '../../bootstrap/css/mdb.min.css';
 
 
@@ -454,10 +456,10 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 </div>
 
                 {/* Products Container */}
-                <div className="col-lg-10 col-md-10">
+                <div className="col-lg-10 col-md-10 col-sm-10 col-10">
                     <div className="card-container">
                         {products.map((product) => (
-                            <div className="col-lg-4 col-md-4" key={product.id}>
+                            <div className="col-lg-3 col-md-4 col-sm-9" key={product.id}>
                                 <div className="product-card" onClick={(e) => {
                                     e.stopPropagation();
                                     handleProductClick(product.name);
@@ -465,7 +467,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                     <div className="card-body">
                                         <img
                                             src={product.imageUrls[0]}
-                                            className="product-image"
+                                            className='product-image'
                                             alt="Product"
                                             onMouseEnter={(e) => {
                                                 if (product.imageUrls[1]) {
@@ -521,7 +523,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     </div>
                 </div>
             </div>
-
         </section>
     );
 
