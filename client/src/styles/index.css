@@ -17,6 +17,7 @@
   position: relative;
 }
 
+/* products display */
 .view-container .row {
   display: flex;
   position: relative;
@@ -114,7 +115,6 @@
   margin-bottom: 5px;
 }
 
-
 /* filter box */
 .filter-box {
   position: sticky;
@@ -122,7 +122,6 @@
   height: fit-content;
   width: 100%;
   padding: 10px;
-  margin-top: 15px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
 }
@@ -168,4 +167,34 @@
 .price-filter input {
   width: 100%; 
   max-width: 175px;
+}
+
+/* sort by */
+.sort-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-right: 2vw;
+}
+
+.sort-container label {
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.sort-container select {
+  padding: 5px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+}
+
+
+@media (max-width: 768px) {
+  
+  .sort-container {
+    justify-content: center;
+    margin: 0;
+    margin-bottom: 10px;
+  }
+
 }
