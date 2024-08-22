@@ -32,8 +32,17 @@
   flex-wrap: wrap;
   min-height: 50vh;
   height: auto;
-  align-items: start;
   max-width: 80vw;
+}
+
+.card-container.default-layout {
+  justify-content: flex-start;
+  align-items: start;
+}
+
+.card-container.center-layout {
+  justify-content: center;
+  align-items: center;
 }
 
 .product-card {
@@ -159,5 +168,4 @@
 .price-filter input {
   width: 100%; 
   max-width: 175px;
-  /* margin: 10px 0; */
 }

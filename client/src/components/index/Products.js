@@ -16,28 +16,23 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [allProducts, setAllProducts] = useState([products]);
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
-
     const [productTypes, setProductTypes] = useState([]);
     const [selectedType, setSelectedType] = useState("");
-
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(1000);
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
-
-    const [filteredProducts, setFilteredProducts] = useState();
-
     const navigate = useNavigate();
 
 
     const fetchProducts = async () => {
         try {
-            // const response = await axios.get('/server/get_products');
-            // const allProducts = response.data;
-            // const formattedProducts = allProducts.map(prod => {
-            //     const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-            //     const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-            //     return { ...prod, imageUrls };
-            // });
+            const response = await axios.get('/server/get_products');
+            const allProducts = response.data;
+            const formattedProducts = allProducts.map(prod => {
+                const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                return { ...prod, imageUrls };
+            });
             // setProducts(formattedProducts);
 
             const sampleWishlist = [
@@ -139,16 +134,16 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 }
             ];
 
-            setProducts(sampleWishlist)
-            setAllProducts(sampleWishlist)
+            setProducts(formattedProducts)
+            setAllProducts(formattedProducts)
 
-            const types = [...new Set(sampleWishlist.map(product => product.type))];
+            const types = [...new Set(formattedProducts.map(product => product.type))];
+            const prices = formattedProducts.map(product => product.price);
+            const maxPriceRounded = Math.ceil(Math.max(...prices));
             setProductTypes(types);
-
-            const prices = sampleWishlist.map(product => product.price);
-            setMinPrice(Math.min(...prices));
-            setMaxPrice(Math.max(...prices));
-            setSelectedPrice(Math.max(...prices));
+            setMinPrice(Math.floor(Math.min(...prices)));
+            setMaxPrice(maxPriceRounded);
+            setSelectedPrice(maxPriceRounded);
 
         } catch (error) {
             console.error('Error fetching products:', error);
@@ -314,8 +309,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
             }
         } else {
-            // Logic for when the user is not signed in (store in cache)
-            console.log('Store cart in cache');
 
             // Retrieve the current cart from localStorage
             let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
@@ -348,6 +341,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     useEffect(() => {
         const initialize = async () => {
             if (initialProducts) {
+                console.log('initial:', initialProducts)
                 setProducts(initialProducts)
             } else {
                 await fetchProducts();
@@ -355,6 +349,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             await fetchWishlist();
             await fetchCartProducts();
         };
+        
         initialize();
 
         const sampleWishlist = [
@@ -416,85 +411,83 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     useEffect(() => {
         const filterProducts = () => {
             let filtered = allProducts;
-    
-            // Filter by selected type
             if (selectedType) {
                 filtered = filtered.filter(product => product.type === selectedType);
             }
+            const roundedSelectedPrice = Math.ceil(parseFloat(selectedPrice));
+            filtered = filtered.filter(product => product.price <= roundedSelectedPrice);
 
-            filtered = filtered.filter(product => product.price <= selectedPrice + 1);
-    
             setProducts(filtered);
         };
-    
+
         filterProducts();
     }, [selectedType, selectedPrice]);
-    
 
 
     return (
         <section className="view-container">
             <div className="row">
 
-                {/* Filter Box */}
-                <div className="col-lg-2 col-md-2">
-                    <div className="filter-box">
-                        <div className='type-filter'>
-                            <h4>Type</h4>
-                            <div>
-                                <input
-                                    type="radio"
-                                    id="all"
-                                    name="product-type"
-                                    value=""
-                                    checked={selectedType === ''}
-                                    onChange={() => setSelectedType("")}
-                                />
-                                <label htmlFor="all" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
-                            </div>
-
-                            {productTypes.map((type) => (
-                                <div key={type}>
+                {!initialProducts && (
+                    <div className="col-lg-2 col-md-2">
+                        <div className="filter-box">
+                            {/* Type Filter */}
+                            <div className="type-filter">
+                                <h4>Type</h4>
+                                <div>
                                     <input
                                         type="radio"
-                                        id={type}
+                                        id="all"
                                         name="product-type"
-                                        value={type}
-                                        checked={selectedType === type}
-                                        onChange={(e) => setSelectedType(e.target.value)}
+                                        value=""
+                                        checked={selectedType === ''}
+                                        onChange={() => setSelectedType("")}
                                     />
-                                    <label htmlFor={type}>{type}</label>
+                                    <label htmlFor="all" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
                                 </div>
-                            ))}
-                        </div>
 
-                        {/* Price Filter */}
-                        <div className="price-filter">
-                            <h4>Price</h4>
-                            <input
-                                type="range"
-                                id="price-range"
-                                name="product-price"
-                                min={minPrice}
-                                max={maxPrice}
-                                value={selectedPrice}
-                                onChange={(e) => setSelectedPrice(e.target.value)}
-                                step="1"
-                            />
-                             <div className="price-label">
-        <label htmlFor="price-range">
-            up to <strong>${selectedPrice}</strong>
-        </label>
-    </div>
-                        </div>
+                                {productTypes.map((type) => (
+                                    <div key={type}>
+                                        <input
+                                            type="radio"
+                                            id={type}
+                                            name="product-type"
+                                            value={type}
+                                            checked={selectedType === type}
+                                            onChange={(e) => setSelectedType(e.target.value)}
+                                        />
+                                        <label htmlFor={type}>{type}</label>
+                                    </div>
+                                ))}
+                            </div>
 
+                            {/* Price Filter */}
+                            <div className="price-filter">
+                                <h4>Price</h4>
+                                <input
+                                    type="range"
+                                    id="price-range"
+                                    name="product-price"
+                                    min={minPrice}
+                                    max={maxPrice}
+                                    value={selectedPrice}
+                                    onChange={(e) => setSelectedPrice(e.target.value)}
+                                    step="1"
+                                />
+                                <div className="price-label">
+                                    <label htmlFor="price-range">
+                                        up to <strong>£{selectedPrice}</strong>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
+                )}
+
 
                 {/* Products Container */}
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">
-                    <div className="card-container">
-                        {products.map((product) => (
+                <div className={`card-container ${initialProducts ? 'center-layout' : 'default-layout'}`}>                        {products.map((product) => (
                             <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.id}>
                                 <div className="product-card" onClick={(e) => {
                                     e.stopPropagation();
