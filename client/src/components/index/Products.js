@@ -19,6 +19,11 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
     const [productTypes, setProductTypes] = useState([]);
     const [selectedType, setSelectedType] = useState("");
+
+    const [minPrice, setMinPrice] = useState(0);
+    const [maxPrice, setMaxPrice] = useState(1000);
+    const [selectedPrice, setSelectedPrice] = useState(maxPrice);
+
     const [filteredProducts, setFilteredProducts] = useState();
 
     const navigate = useNavigate();
@@ -140,6 +145,11 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             const types = [...new Set(sampleWishlist.map(product => product.type))];
             setProductTypes(types);
 
+            const prices = sampleWishlist.map(product => product.price);
+            setMinPrice(Math.min(...prices));
+            setMaxPrice(Math.max(...prices));
+            setSelectedPrice(Math.max(...prices));
+
         } catch (error) {
             console.error('Error fetching products:', error);
         }
@@ -171,7 +181,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
             } else {
                 // fetch cart from cache
-                console.log('fetch from cache')
                 const cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
                 const cartProductIDs = cachedCart.map(item => item.productID);
                 setCartedProducts(cartProductIDs);
@@ -210,7 +219,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product unloved successfully');
                         setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
 
                     } else {
@@ -227,7 +235,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product loved successfully');
                         setMessage({ content: 'Added to wishlist', productID, action: 'love' });
 
                     } else {
@@ -273,7 +280,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product uncarted successfully');
                         setMessage({ content: 'Removed from basket', productID, action: 'cart' });
 
                     } else {
@@ -291,7 +297,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product cart successfully');
                         setMessage({ content: 'Added to basket', productID, action: 'cart' });
 
                     } else {
@@ -409,13 +414,22 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
 
     useEffect(() => {
-        if (selectedType) {
-            const filtered = allProducts.filter(product => product.type === selectedType);
+        const filterProducts = () => {
+            let filtered = allProducts;
+    
+            // Filter by selected type
+            if (selectedType) {
+                filtered = filtered.filter(product => product.type === selectedType);
+            }
+
+            filtered = filtered.filter(product => product.price <= selectedPrice + 1);
+    
             setProducts(filtered);
-        } else {
-            fetchProducts()
-        }
-    }, [selectedType]);
+        };
+    
+        filterProducts();
+    }, [selectedType, selectedPrice]);
+    
 
 
     return (
@@ -425,32 +439,54 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 {/* Filter Box */}
                 <div className="col-lg-2 col-md-2">
                     <div className="filter-box">
-                        <h4>Type</h4>
-                        <div>
-                            <input
-                                type="radio"
-                                id="all"
-                                name="product-type"
-                                value=""
-                                checked={selectedType === ''}
-                                onChange={() => setSelectedType("")}
-                            />
-                            <label htmlFor="all" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
-                        </div>
-
-                        {productTypes.map((type) => (
-                            <div key={type}>
+                        <div className='type-filter'>
+                            <h4>Type</h4>
+                            <div>
                                 <input
                                     type="radio"
-                                    id={type}
+                                    id="all"
                                     name="product-type"
-                                    value={type}
-                                    checked={selectedType === type}
-                                    onChange={(e) => setSelectedType(e.target.value)}
+                                    value=""
+                                    checked={selectedType === ''}
+                                    onChange={() => setSelectedType("")}
                                 />
-                                <label htmlFor={type}>{type}</label>
+                                <label htmlFor="all" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
                             </div>
-                        ))}
+
+                            {productTypes.map((type) => (
+                                <div key={type}>
+                                    <input
+                                        type="radio"
+                                        id={type}
+                                        name="product-type"
+                                        value={type}
+                                        checked={selectedType === type}
+                                        onChange={(e) => setSelectedType(e.target.value)}
+                                    />
+                                    <label htmlFor={type}>{type}</label>
+                                </div>
+                            ))}
+                        </div>
+
+                        {/* Price Filter */}
+                        <div className="price-filter">
+                            <h4>Price</h4>
+                            <input
+                                type="range"
+                                id="price-range"
+                                name="product-price"
+                                min={minPrice}
+                                max={maxPrice}
+                                value={selectedPrice}
+                                onChange={(e) => setSelectedPrice(e.target.value)}
+                                step="1"
+                            />
+                             <div className="price-label">
+        <label htmlFor="price-range">
+            up to <strong>${selectedPrice}</strong>
+        </label>
+    </div>
+                        </div>
 
                     </div>
                 </div>
@@ -459,7 +495,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">
                     <div className="card-container">
                         {products.map((product) => (
-                            <div className="col-lg-3 col-md-4 col-sm-9" key={product.id}>
+                            <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.id}>
                                 <div className="product-card" onClick={(e) => {
                                     e.stopPropagation();
                                     handleProductClick(product.name);
@@ -522,6 +558,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         ))}
                     </div>
                 </div>
+
             </div>
         </section>
     );

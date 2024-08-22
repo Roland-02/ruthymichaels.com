@@ -49,7 +49,7 @@ const Index = () => {
       <Navbar />
 
       <MessageBanner message={message} setMessage={setMessage} />
-
+      
         {(showLogin || showCreateAccount) && (
           <div>
             <div id="overlay" onClick={handleClose}></div>
