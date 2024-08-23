@@ -5,6 +5,9 @@ import { useEffect, useState } from 'react';
 
 import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
+
+import logo from '../../images/Ruthy_Michaels_logo.png';
+
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
 
@@ -166,7 +169,11 @@ const Navbar = () => {
 
           {/* Centered title */}
           <div className="nav-center" onClick={handleTitleClick}>
-            <h1 className="page-title">Ruthy Michaels</h1>
+            <img
+              src={logo}
+              alt="Ruthy Michaels Logo"
+              className="logo-image"
+            />
           </div>
 
           {/* Right elements */}

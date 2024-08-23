@@ -11,9 +11,12 @@ import Banner from '../components/index/Banner';
 import Products from '../components/index/Products';
 import MessageBanner from '../components/common/MessageBanner'
 
+import '../styles/common.css';
+import '../styles/index.css';
+
 
 const Index = () => {
-  const { session} = useContext(SessionContext);
+  const { session } = useContext(SessionContext);
   const [showLogin, setShowLogin] = useState(false);
   const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [message, setMessage] = useState({ content: null, product: null, action: null });
@@ -23,7 +26,7 @@ const Index = () => {
   // check session, open login forms
   useEffect(() => {
 
-    if(session && session.id){
+    if (session && session.id) {
       navigate('/')
     }
 
@@ -49,18 +52,22 @@ const Index = () => {
       <Navbar />
 
       <MessageBanner message={message} setMessage={setMessage} />
-      
-        {(showLogin || showCreateAccount) && (
-          <div>
-            <div id="overlay" onClick={handleClose}></div>
-            {showLogin && <Login onClose={handleClose} />}
-            {showCreateAccount && <CreateAccount onClose={handleClose} />}
-          </div>
-        )}
-        
-        <Banner />
-        <Products setMessage={setMessage}/>
-        
+
+      {(showLogin || showCreateAccount) && (
+        <div>
+          <div id="overlay" onClick={handleClose}></div>
+          {showLogin && <Login onClose={handleClose} />}
+          {showCreateAccount && <CreateAccount onClose={handleClose} />}
+        </div>
+      )}
+      <Banner />
+
+      <section className="view-container">
+        <div className="row">
+          <Products setMessage={setMessage} />
+        </div>
+      </section>
+
       <Footer />
     </div>
   );

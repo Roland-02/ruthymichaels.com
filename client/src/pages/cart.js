@@ -3,13 +3,15 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import { loadStripe } from '@stripe/stripe-js';
 
+import '../styles/cart.css';
+import '../styles/common.css';
+
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
 import axios from 'axios';
 
-import '../styles/cart.css';
 
 const Cart = () => {
     const { session } = useContext(SessionContext);

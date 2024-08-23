@@ -18,7 +18,7 @@
 }
 
 /* products display */
-.view-container .row {
+.row {
   display: flex;
   position: relative;
   justify-content: center;
@@ -187,7 +187,6 @@
   font-size: 16px;
   border: 1px solid #ccc;
 }
-
 
 @media (max-width: 768px) {
   

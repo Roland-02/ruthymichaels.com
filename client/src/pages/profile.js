@@ -4,6 +4,7 @@ import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
 import '../styles/profile.css';
+import '../styles/common.css';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -160,7 +161,6 @@ const Profile = () => {
 
             <MessageBanner message={message} setMessage={setMessage} />
 
-            <main>
                 <div className="view-container">
 
                     <div className="profile-container">
@@ -252,7 +252,6 @@ const Profile = () => {
                                     </div>
                                 )}
                             </div>
-
                         </div>
 
                         <div className="order-history">
@@ -283,7 +282,6 @@ const Profile = () => {
 
                     </div>
                 </div>
-            </main>
 
             <Footer />
         </div>

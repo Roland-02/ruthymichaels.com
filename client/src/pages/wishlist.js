@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
+import '../styles/wishlist.css';
+import '../styles/common.css';
+
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import Products from '../components/index/Products';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
 
-import '../styles/wishlist.css';
 
 const Wishlist = () => {
     const { session } = useContext(SessionContext);

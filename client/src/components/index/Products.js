@@ -6,7 +6,6 @@ import axios from 'axios';
 
 import '../../styles/index.css';
 import '../../styles/common.css'
-
 import '../../bootstrap/css/mdb.min.css';
 
 
@@ -17,6 +16,8 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
     const [productTypes, setProductTypes] = useState([]);
+    const [imageSrc, setImageSrc] = useState();
+    const [loading, setLoading] = useState(false);
     const [selectedType, setSelectedType] = useState("");
     const [sortOption, setSortOption] = useState("default");
     const [minPrice, setMinPrice] = useState(0);
@@ -34,7 +35,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             //     const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
             //     return { ...prod, imageUrls };
             // });
-            // // setProducts(formattedProducts);
 
             const sampleWishlist = [
                 {
@@ -139,7 +139,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             setAllProducts(sampleWishlist)
             const types = [...new Set(sampleWishlist.map(product => product.type))];
             const prices = sampleWishlist.map(product => product.price);
-            
+
             const maxPriceRounded = Math.ceil(Math.max(...prices));
             setProductTypes(types);
             setMinPrice(Math.floor(Math.min(...prices)));
@@ -350,6 +350,21 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         }
     };
 
+    const handleMouseEnter = (product) => {
+        if (product.imageUrls[1]) {
+            setLoading(true);
+            setTimeout(() => {
+                setImageSrc(product.imageUrls[1]);
+                setLoading(false);
+            }, 3000); // 3 seconds delay
+        }
+    };
+
+    const handleMouseLeave = (product) => {
+        setImageSrc(product.imageUrls[0]);
+        setLoading(false);
+    };
+
     useEffect(() => {
         const initialize = async () => {
             if (initialProducts) {
@@ -503,20 +518,23 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">
 
                     {/* Sort By Dropdown */}
-                    <div className="sort-container">
-                        <label htmlFor="sort-by">Sort by: </label>
-                        <select
-                            id="sort-by"
-                            value={sortOption}
-                            onChange={(e) => setSortOption(e.target.value)}
-                        >
-                            <option value="default">Default</option>
-                            <option value="price-asc">Price: Low to High</option>
-                            <option value="price-desc">Price: High to Low</option>
-                        </select>
-                    </div>
+                    {!initialProducts && (
+                        <div className="sort-container">
+                            <label htmlFor="sort-by">Sort by: </label>
+                            <select
+                                id="sort-by"
+                                value={sortOption}
+                                onChange={(e) => setSortOption(e.target.value)}
+                            >
+                                <option value="default">Default</option>
+                                <option value="price-asc">Price: Low to High</option>
+                                <option value="price-desc">Price: High to Low</option>
+                            </select>
+                        </div>
+                    )}
 
-                    <div className={`card-container ${initialProducts ? 'center-layout' : 'default-layout'}`}>                        {products.map((product) => (
+                    <div className={`card-container ${initialProducts ? 'center-layout' : 'default-layout'}`}>
+                        {products.map((product) => (
                         <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.id}>
                             <div className="product-card" onClick={(e) => {
                                 e.stopPropagation();

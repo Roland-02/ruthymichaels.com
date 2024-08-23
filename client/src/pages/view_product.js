@@ -5,7 +5,7 @@ import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
 import '../styles/view_product.css'
-// import '../styles/index.css'
+import '../styles/common.css';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';

@@ -8,7 +8,6 @@ import AdminProducts from './components/admin/Products_View';
 import Cart from './pages/cart';
 import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
-// import CheckoutForm from './components/checkout/CheckoutForm';
 
 
 const App = () => {

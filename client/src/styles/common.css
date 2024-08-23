@@ -7,11 +7,22 @@ body {
     min-width: 400px;
 }
 
+.view-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    min-height: 100vh;
+    /* margin-top: 100px; */
+}
+
+
+/* nav-bar */
 .nav-bar {
     position: fixed;
     top: 0;
     width: 100%;
-    height: 75px;
+    height: 90px;
     z-index: 100;
     display: flex;
     justify-content: center;
@@ -55,11 +66,9 @@ body {
     margin-left: 45px;
 }
 
-.page-title {
-    margin: 0;
-    font-size: 2rem;
+.logo-image {
+    width: 125px;
     cursor: pointer;
-    white-space: nowrap;
 }
 
 .search-container {
@@ -318,7 +327,7 @@ body {
     font-weight: 550;
 }
 
-
+/* responsiveness */
 @media (max-width: 1189px) {
     .search-input.expanded {
         width: 20vw;
