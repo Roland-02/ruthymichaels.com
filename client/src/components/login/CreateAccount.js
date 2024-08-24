@@ -19,6 +19,7 @@ const CreateAccount = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confPassword, setConfPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const { setSession } = useContext(SessionContext);
 
@@ -29,6 +30,9 @@ const CreateAccount = () => {
     }
   }, []);
 
+  const togglePassword = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -103,9 +107,10 @@ const CreateAccount = () => {
           />
           <label className="form-label" htmlFor="email_signup">Email address</label>
         </div>
+
         <div className="form-outline mb-4">
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             className="form-control border"
             id="password_signup"
             value={password}
@@ -114,9 +119,10 @@ const CreateAccount = () => {
           />
           <label className="form-label" htmlFor="password_signup">Password</label>
         </div>
+        
         <div className="form-outline mb-4">
           <input
-            type="password"
+            type={showPassword ? 'text' : 'password'}
             className="form-control border"
             id="confPassword_signup"
             value={confPassword}
@@ -125,6 +131,16 @@ const CreateAccount = () => {
           />
           <label className="form-label" htmlFor="confPassword_signup">Confirm password</label>
         </div>
+
+        <div className="row mb-4">
+          <div className="col d-flex justify-content-center">
+            <div className="form-check">
+              <input className="form-check-input" id="show" type="checkbox" onClick={togglePassword} />
+              <label htmlFor="show">Show password</label>
+            </div>
+          </div>
+        </div>
+
         <button type="submit" className="btn btn-primary btn-block mb-4">Sign up</button>
         <p>or continue with</p>
 

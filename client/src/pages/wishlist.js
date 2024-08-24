@@ -77,9 +77,9 @@ const Wishlist = () => {
                 imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
             }
         ];
-        setWishlist(sampleWishlist)
+        // setWishlist(sampleWishlist)
 
-        // initialize();
+        initialize();
 
     }, [session, navigate]);
 

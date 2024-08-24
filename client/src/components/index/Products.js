@@ -28,13 +28,13 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
     const fetchProducts = async () => {
         try {
-            // const response = await axios.get('/server/get_products');
-            // const allProducts = response.data;
-            // const formattedProducts = allProducts.map(prod => {
-            //     const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-            //     const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
-            //     return { ...prod, imageUrls };
-            // });
+            const response = await axios.get('/server/get_products');
+            const allProducts = response.data;
+            const formattedProducts = allProducts.map(prod => {
+                const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
+                const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                return { ...prod, imageUrls };
+            });
 
             const sampleWishlist = [
                 {
@@ -135,10 +135,10 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 }
             ];
 
-            setProducts(sampleWishlist)
-            setAllProducts(sampleWishlist)
-            const types = [...new Set(sampleWishlist.map(product => product.type))];
-            const prices = sampleWishlist.map(product => product.price);
+            setProducts(formattedProducts)
+            setAllProducts(formattedProducts)
+            const types = [...new Set(formattedProducts.map(product => product.type))];
+            const prices = formattedProducts.map(product => product.price);
 
             const maxPriceRounded = Math.ceil(Math.max(...prices));
             setProductTypes(types);

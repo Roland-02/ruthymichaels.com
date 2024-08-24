@@ -121,7 +121,8 @@ body {
 .menu-item.active svg {
     fill: #ff68b3;
 }
-  
+
+
 
 .footer {
     position: sticky;
@@ -155,6 +156,10 @@ body {
     z-index: 101;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+.login-container h2{
+    text-decoration: underline;
 }
 
 .loginBtn {
@@ -197,6 +202,24 @@ body {
     color: red;
     font-size: 16px;
 }
+
+.form-label {
+    position: absolute;
+    top: 50%;
+    left: 12px;
+    transform: translateY(-50%);
+    transition: all 0.2s ease;
+    color: #757575;
+    pointer-events: none;
+    padding: 0 4px;
+  }
+  
+  .form-control:focus + .form-label,
+  .form-control:not(:placeholder-shown) + .form-label {
+    top: -10px;
+    left: 10px;
+    font-size: 0.80rem;
+  }
 
 /* Results Container Styles */
 .results-container {

@@ -111,7 +111,7 @@ router.post('/createAccount', async (req, res) => {
                     }
 
                     const user_id = result.insertId;
-                    res.cookie('sessionEmail', hashedEmail, { httpOnly: true, secure: true });
+                    res.cookie('sessionEmail', email, { httpOnly: true, secure: true });
                     res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
 
                     connection.release();

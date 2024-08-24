@@ -99,7 +99,6 @@
   font-weight: 400;
   margin-top: 5px;
   margin-bottom: 0;
-
 }
 
 .card-footer {
@@ -186,6 +185,7 @@
   font-size: 16px;
   border: 1px solid #ccc;
 }
+
 
 @media (max-width: 768px) {
   

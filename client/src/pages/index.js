@@ -43,6 +43,11 @@ const Index = () => {
     }
   }, [location.pathname, navigate]);
 
+  useEffect(() => {
+    window.scrollTo(0, 0);
+
+  })
+
   const handleClose = () => {
     navigate('/');
   };

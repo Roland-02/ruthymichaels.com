@@ -9,12 +9,13 @@ import '../../bootstrap/css/mdb.min.css';
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
 
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const { session, setSession } = useContext(SessionContext);
     const navigate = useNavigate();
@@ -31,8 +32,7 @@ const Login = () => {
     }, []);
 
     const togglePassword = () => {
-        const passwordInput = document.getElementById('password_login');
-        passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+        setShowPassword(!showPassword);
     };
 
     const handleSubmit = async (e) => {
@@ -107,10 +107,9 @@ const Login = () => {
 
                 <div className="form-outline mb-4" style={{ textAlign: 'left' }}>
                     <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         className="form-control border"
-                        id="password_login"
-                        name="password"
+                        id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         required
