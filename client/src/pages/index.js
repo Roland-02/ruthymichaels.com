@@ -60,13 +60,9 @@ const Index = () => {
           {showCreateAccount && <CreateAccount onClose={handleClose} />}
         </div>
       )}
-      <Banner />
 
-      <section className="view-container">
-        <div className="row">
-          <Products setMessage={setMessage} />
-        </div>
-      </section>
+      <Banner />
+      <Products setMessage={setMessage} />
 
       <Footer />
     </div>

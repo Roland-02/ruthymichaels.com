@@ -1,3 +1,7 @@
+.view-container.cart{
+    margin-top: 90px;
+    padding-top: 3vh;
+}
 
 .cart-layout {
     display: flex;

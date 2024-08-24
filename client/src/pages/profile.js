@@ -161,7 +161,7 @@ const Profile = () => {
 
             <MessageBanner message={message} setMessage={setMessage} />
 
-                <div className="view-container">
+                <div className="view-container profile">
 
                     <div className="profile-container">
                         <div className="profile-info">

@@ -17,6 +17,8 @@
   position: relative;
 }
 
+
+
 /* products display */
 .row {
   display: flex;
@@ -31,7 +33,6 @@
 .card-container {
   display: flex;
   flex-wrap: wrap;
-  min-height: 50vh;
   height: auto;
   max-width: 80vw;
 }

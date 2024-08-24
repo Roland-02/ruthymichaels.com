@@ -369,6 +369,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         const initialize = async () => {
             if (initialProducts) {
                 setProducts(initialProducts)
+                
             } else {
                 await fetchProducts();
             }
@@ -455,7 +456,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
 
     return (
-        <section className="view-container">
+        <section className="view-container products">
             <div className="row">
 
                 {!initialProducts && (
