@@ -71,6 +71,7 @@ body {
     cursor: pointer;
 }
 
+/* search button */
 .search-container {
     position: relative;
     display: flex;
@@ -95,16 +96,32 @@ body {
 .search-input.expanded {
     width: 26vw;
     opacity: 1;
+    border-bottom-color: #fca4d0
 }
 
+.search-icon {
+    transition: fill 0.5s ease;
+}
+
+.search-icon.expanded {
+    fill: #ff68b3;
+}
+
+/* menu buttons */
 .menu-item svg {
     cursor: pointer;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: transform 0.3s ease, fill 0.3s ease;
 }
 
 .menu-item:hover svg {
     transform: scale(1.1);
+    fill: #ff68b3;
 }
+
+.menu-item.active svg {
+    fill: #ff68b3;
+}
+  
 
 .footer {
     position: sticky;
@@ -116,6 +133,7 @@ body {
     margin-top: 7vh;
 }
 
+/* login */
 #overlay,
 .overlay {
     position: fixed;
@@ -137,12 +155,6 @@ body {
     z-index: 101;
     background-color: #fff;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-}
-
-.error-label {
-    text-align: left;
-    color: red;
-    font-size: 16px;
 }
 
 .loginBtn {
@@ -178,6 +190,12 @@ body {
 
 .loginBtn:hover {
     box-shadow: 0 0 10px 0 rgba(70, 106, 183, 0.847);
+}
+
+.error-label {
+    text-align: left;
+    color: red;
+    font-size: 16px;
 }
 
 /* Results Container Styles */
@@ -250,6 +268,7 @@ body {
     word-wrap: break-word;
 }
 
+/* message */
 .message-banner {
     position: fixed;
     top: 0;
