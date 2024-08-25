@@ -92,7 +92,7 @@ const CreateAccount = () => {
 
   return (
     <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
-      <h2 className="text-center mt-2 mb-3">Create Account</h2>
+      <h2 className="text-center mt-2 mb-4">Create Account</h2>
       {error && <label className="error-label">{error}</label>}
 
       <form id="createAccount-form" className="container" style={{ width: '90%' }} onSubmit={handleSubmit}>
