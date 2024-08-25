@@ -74,6 +74,7 @@ const CreateAccount = () => {
       console.log('User cancelled login or did not fully authorize.');
       setError('Please log into this app.');
     }
+
   };
 
   const responseGoogle = (response) => {
@@ -119,7 +120,7 @@ const CreateAccount = () => {
           />
           <label className="form-label" htmlFor="password_signup">Password</label>
         </div>
-        
+
         <div className="form-outline mb-4">
           <input
             type={showPassword ? 'text' : 'password'}
@@ -141,7 +142,7 @@ const CreateAccount = () => {
           </div>
         </div>
 
-        <button type="submit" className="btn btn-primary btn-block mb-4">Sign up</button>
+        <button type="submit" className="btn btn-primary btn-block mb-4"><strong>SIGN UP</strong></button>
         <p>or continue with</p>
 
         <div className="m-3">
@@ -150,7 +151,7 @@ const CreateAccount = () => {
             <FacebookLogin
               appId="417605231226749"
               autoLoad={false}
-              fields="name"
+              fields="name, email"
               callback={responseFacebook}
               cssClass="loginBtn"
             />
@@ -176,6 +177,7 @@ const CreateAccount = () => {
       </form>
     </div>
   );
+
 };
 
 export default CreateAccount;

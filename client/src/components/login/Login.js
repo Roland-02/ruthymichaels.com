@@ -127,7 +127,7 @@ const Login = () => {
                     </div>
                 </div>
 
-                <button type="submit" className="btn btn-primary btn-block mb-4">Sign in</button>
+                <button type="submit" className="btn btn-primary btn-block mb-4"><strong>SIGN IN</strong></button>
 
                 <p>or continue with</p>
                 <div className="m-3">
