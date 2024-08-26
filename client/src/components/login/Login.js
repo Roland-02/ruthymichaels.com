@@ -21,15 +21,12 @@ const Login = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        window.scrollTo(0, 0);
         const userId = Cookies.get('sessionID');
         if (userId) {
             console.log('Logged in User ID:', userId);
         }
     }, [session]);
-
-    useEffect(() => {
-        window.scrollTo(0, 0);
-    }, []);
 
     const togglePassword = () => {
         setShowPassword(!showPassword);

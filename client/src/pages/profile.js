@@ -19,14 +19,9 @@ const Profile = () => {
     const [User, setUser] = useState({
         email: 'name@domain.com',
         password: '******************'
-
     });
     const [orders, setOrders] = useState([]);
     const [editState, setEditState] = useState({
-        email: false,
-        password: false
-    });
-    const [isChanged, setIsChanged] = useState({
         email: false,
         password: false
     });

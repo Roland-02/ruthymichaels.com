@@ -26,8 +26,8 @@ const Navbar = () => {
     try {
       await axios.post('/signout');
       setSession(null);
-      window.location.reload();
-      console.log(session)
+      navigate('/');
+
     } catch (error) {
       console.error('Error signing out:', error);
     }
@@ -79,10 +79,6 @@ const Navbar = () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  useEffect(() => {
-    console.log(session)
-  }, [session])
 
   const handleTitleClick = async () => {
     navigate('/');

@@ -19,8 +19,9 @@ const App = () => {
                 <Route path="/" element={<Index />} />
                 <Route path="/home" element={<Index />} />
                 <Route path="/index" element={<Index />} />
-                <Route path="/login" element={<Index />} />
-                <Route path="/createAccount" element={<Index />} />
+                
+                <Route path="/login" element={<Index form="login" />} />
+                <Route path="/createAccount" element={<Index form="createAccount" />} />
                 
                 <Route path="/:name" element={<View_Product />} />
 

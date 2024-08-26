@@ -125,32 +125,6 @@ router.post('/createAccount', async (req, res) => {
     });
 });
 
-// Route to fetch and decrypt password
-router.get('/fetch_password', async (req, res) => {
-    try {
-        const userId = req.query.user_id;  // Assuming user_id is passed as a query parameter
-
-        // Fetch the encrypted password from the database
-        const query = 'SELECT password FROM user_login WHERE user_id = ?';
-        const [rows] = await db.execute(query, [userId]);
-
-        if (rows.length > 0) {
-            const encryptedPassword = rows[0].password;
-
-            // Decrypt the password
-            const decryptedPassword = decrypt(encryptedPassword);
-
-            // Send the decrypted password back to the frontend
-            res.json({ password: decryptedPassword });
-        } else {
-            res.status(404).json({ error: 'User not found' });
-        }
-    } catch (error) {
-        console.error('Error fetching password:', error);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-});
-
 // POST route to update user email
 router.post('/change_email/:userId', async (req, res) => {
     try {
@@ -243,9 +217,13 @@ router.post('/signout', function (req, res) {
         res.clearCookie('sessionID');
 
         console.log("--------> User signed out");
-        // Redirect to home or login page
+        console.log("Redirecting to home page...");
+
+       // Redirect to home or login page
         res.redirect('/');
     });
+ 
+
 });
 
 

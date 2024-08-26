@@ -15,39 +15,22 @@ import '../styles/common.css';
 import '../styles/index.css';
 
 
-const Index = () => {
+const Index = ({ form }) => {
   const { session } = useContext(SessionContext);
-  const [showLogin, setShowLogin] = useState(false);
-  const [showCreateAccount, setShowCreateAccount] = useState(false);
   const [message, setMessage] = useState({ content: null, product: null, action: null });
-  const location = useLocation();
+  const [overlayVisible, setOverlayVisible] = useState(false);
   const navigate = useNavigate();
-
-  // check session, open login forms
-  useEffect(() => {
-
-    if (session && session.id) {
-      navigate('/')
-    }
-
-    // open login forms if in url
-    if (location.pathname === '/login') {
-      setShowLogin(true);
-      setShowCreateAccount(false);
-    } else if (location.pathname === '/createAccount') {
-      setShowCreateAccount(true);
-      setShowLogin(false);
-    } else {
-      setShowLogin(false);
-      setShowCreateAccount(false);
-    }
-    
-  }, [location.pathname, navigate]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
-  })
+    // Determine which form to show based on the 'form' prop
+    if (form === 'login' || form === 'createAccount') {
+      setOverlayVisible(true);
+    } else {
+      setOverlayVisible(false);
+    }
+  }, [form]);
 
   const handleClose = () => {
     navigate('/');
@@ -59,11 +42,11 @@ const Index = () => {
 
       <MessageBanner message={message} setMessage={setMessage} />
 
-      {(showLogin || showCreateAccount) && (
+      {overlayVisible && (
         <div>
           <div id="overlay" onClick={handleClose}></div>
-          {showLogin && <Login onClose={handleClose} />}
-          {showCreateAccount && <CreateAccount onClose={handleClose} />}
+          {form === 'login' && <Login onClose={handleClose} />}
+          {form === 'createAccount' && <CreateAccount onClose={handleClose} />}
         </div>
       )}
 
@@ -76,5 +59,3 @@ const Index = () => {
 };
 
 export default Index;
-
-
