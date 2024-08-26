@@ -49,7 +49,7 @@ const Login = () => {
             const result = await response.json();
 
             if (result.id) {
-                setSession({ id: result.id, email: result.email });
+                setSession({ id: result.id, email: result.email, method: null });
                 navigate('/');
             } else {
                 setErrorMessage('Password or email incorrect');
@@ -63,7 +63,7 @@ const Login = () => {
         if (response.accessToken) {
             Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
-            setSession({ id: response.userID, email: response.email, });
+            setSession({ id: response.userID, email: response.email, method: 'facebook' });
             navigate('/');
         } else {
             console.log('User cancelled login or did not fully authorize.');
@@ -76,7 +76,7 @@ const Login = () => {
             const decodedToken = jwtDecode(response.credential);
             Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
-            setSession({ id: decodedToken.sub, email: decodedToken.email, });
+            setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google' });
             navigate('/');
         } else {
             console.log('User cancelled login or did not fully authorize.');
@@ -136,7 +136,7 @@ const Login = () => {
                         <FacebookLogin
                             appId="417605231226749"
                             autoLoad={false}
-                            fields="name"
+                            fields="name, email"
                             callback={responseFacebook}
                             cssClass="loginBtn"
                         />

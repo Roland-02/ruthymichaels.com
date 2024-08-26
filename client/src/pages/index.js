@@ -41,6 +41,7 @@ const Index = () => {
       setShowLogin(false);
       setShowCreateAccount(false);
     }
+    
   }, [location.pathname, navigate]);
 
   useEffect(() => {

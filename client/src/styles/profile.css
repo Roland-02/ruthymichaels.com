@@ -12,78 +12,60 @@
     flex-direction: column;
 }
 
-.profile-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
 .profile-info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    margin-bottom: 40px;
-    width: 50%;
-    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
 }
 
 .profile-section {
-    position: relative; 
-    background: #f9f9f9;
-    border-radius: 8px;
-    padding: 20px;
-    flex: 1;
+    width: 50%;
+    margin-bottom: 15px;
 }
+
+.input-group {
+    align-items: left;
+    flex-direction: column; 
+}
+
+.input-with-button {
+    display: flex;
+    align-items: center;
+}
+
 
 .profile-section.email input,
-.profile-section.address input {
-    width: 100%;
+.profile-section.password input {
+    width: 100%; 
     padding: 10px;
-    margin-top: 10px;
-    font-size: 1rem;
+    font-size: 1.1rem;
     border: 1px solid #ccc;
-    border-radius: 4px;
 }
 
-.profile-section.email input{
-    width: 90%;
-}
-
-.profile-section.address{
-    width: 100%;
-}
-
-.address-form-container {
-    display: flex;
-    align-items: end;
-}
-
-.address-form {
-    display: flex;
-    flex-direction: column;
-    width: 75%;
+.profile-section label {
+    font-size: 21px;
+    font-weight: 550;
 }
 
 .profile-info svg {
     cursor: pointer;
-    margin-left: 20px;
+    margin-left: 10px;
     transition: transform 0.3s ease, filter 0.3s ease;
-    position: absolute;
-    bottom: 10px;
-    right: 10px;
 }
 
 .profile-info svg:hover {
     transform: scale(1.1);
 }
 
-.profile-section h2 {
-    margin-bottom: 15px;
-}
-
 .profile-section p {
-    font-size: 18px;
+    font-size: 1rem;
+    text-align: center;
 }
 
+
+/* order history */
 .order-history{
     width: 50%;
 }

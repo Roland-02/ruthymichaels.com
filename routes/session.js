@@ -17,6 +17,7 @@ router.get('/session', (req, res) => {
     const session = {
         email: req.cookies.sessionEmail || null,
         id: req.cookies.sessionID || null,
+        method: null,
     };
     res.json(session);
 });
@@ -54,7 +55,7 @@ router.post('/login', async (req, res) => {
                         res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
 
                         console.log("--------> User logged in");
-                        return res.status(200).json({ message: 'Login successful', id: user_id, email: email });
+                        return res.status(200).json({ message: 'Login successful', id: user_id, email: email, method: null });
 
                     } else {
                         connection.release();
@@ -116,12 +117,38 @@ router.post('/createAccount', async (req, res) => {
 
                     connection.release();
                     console.log("--------> Created new User");
-                    return res.status(200).json({ message: 'New account created', id: user_id, email: email });
+                    return res.status(200).json({ message: 'New account created', id: user_id, email: email, method: null });
                 });
             }
 
         });
     });
+});
+
+// Route to fetch and decrypt password
+router.get('/fetch_password', async (req, res) => {
+    try {
+        const userId = req.query.user_id;  // Assuming user_id is passed as a query parameter
+
+        // Fetch the encrypted password from the database
+        const query = 'SELECT password FROM user_login WHERE user_id = ?';
+        const [rows] = await db.execute(query, [userId]);
+
+        if (rows.length > 0) {
+            const encryptedPassword = rows[0].password;
+
+            // Decrypt the password
+            const decryptedPassword = decrypt(encryptedPassword);
+
+            // Send the decrypted password back to the frontend
+            res.json({ password: decryptedPassword });
+        } else {
+            res.status(404).json({ error: 'User not found' });
+        }
+    } catch (error) {
+        console.error('Error fetching password:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
 });
 
 // POST route to update user email
@@ -161,6 +188,45 @@ router.post('/change_email/:userId', async (req, res) => {
 
     } catch (error) {
         console.error('Error updating email:', error);
+        res.status(500).json({ error: 'Internal Server Error' });
+    }
+});
+
+// POST route to update user email
+router.post('/change_password/:userId', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const { newPassword } = req.body;
+
+        // Validate input
+        if (!userId || !newPassword) {
+            return res.status(400).json({ error: 'Missing required fields' });
+        }
+
+        // Hash the new email
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(newPassword, salt);
+
+        // Update email in user_login table
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            const query = `UPDATE user_login SET password = ? WHERE user_id = ?`;
+
+            connection.query(query, [hashPassword, userId], (error, results) => {
+                connection.release(); // Release connection before checking for errors
+
+                if (error) {
+                    console.error(error);
+                    return res.status(500).json({ error: 'Database update failed' });
+                }
+
+                res.status(200).json({ message: 'Password updated successfully' });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error updating password:', error);
         res.status(500).json({ error: 'Internal Server Error' });
     }
 });

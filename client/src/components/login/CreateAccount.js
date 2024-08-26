@@ -53,7 +53,7 @@ const CreateAccount = () => {
       const result = await response.json();
 
       if (result.id) {
-        setSession({ id: result.id, email: result.email });
+        setSession({ id: result.id, email: result.email, method: null });
         navigate('/'); // Redirect to the home page or dashboard
       } else {
         setError('User already exists');
@@ -68,7 +68,7 @@ const CreateAccount = () => {
     if (response.accessToken) {
       Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
       Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
-      setSession({ id: response.userID, email: response.email, });
+      setSession({ id: response.userID, email: response.email, method: 'facebook' });
       navigate('/');
     } else {
       console.log('User cancelled login or did not fully authorize.');
@@ -82,7 +82,7 @@ const CreateAccount = () => {
       const decodedToken = jwtDecode(response.credential);
       Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
       Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
-      setSession({ id: decodedToken.sub, email: decodedToken.email, });
+      setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google' });
       navigate('/');
     } else {
       console.log('User cancelled login or did not fully authorize.');
