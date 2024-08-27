@@ -11,7 +11,7 @@ const SimilarProducts = ({ product }) => {
     }, [product]);
 
     const handleProductClick = (name) => {
-        navigate(`/${name}`);
+        navigate(`/item/${name}`);
     };
 
     const fetchSimilar = async () => {

@@ -9,7 +9,7 @@ body {
 
 .view-container {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     flex-direction: column;
     min-height: 100vh;
@@ -158,7 +158,7 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 
-.login-container h2{
+.login-container h2 {
     text-decoration: underline;
 }
 
@@ -212,14 +212,14 @@ body {
     color: #757575;
     pointer-events: none;
     padding: 0 4px;
-  }
-  
-  .form-control:focus + .form-label,
-  .form-control:not(:placeholder-shown) + .form-label {
+}
+
+.form-control:focus+.form-label,
+.form-control:not(:placeholder-shown)+.form-label {
     top: -10px;
     left: 10px;
     font-size: 0.80rem;
-  }
+}
 
 /* Results Container Styles */
 .results-container {

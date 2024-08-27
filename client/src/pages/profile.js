@@ -15,12 +15,12 @@ const Profile = () => {
     const { session } = useContext(SessionContext);
     const { name } = useParams();
     const [message, setMessage] = useState({ content: null, product: null, action: null });
+    const [orders, setOrders] = useState([]);
     const navigate = useNavigate();
     const [User, setUser] = useState({
         email: 'name@domain.com',
         password: '******************'
     });
-    const [orders, setOrders] = useState([]);
     const [editState, setEditState] = useState({
         email: false,
         password: false
@@ -28,6 +28,7 @@ const Profile = () => {
 
     useEffect(() => {
         const initialize = async () => {
+            console.log(session)
             if (session && session.id) {
                 // Fetch the user's info if a session exists
                 try {
@@ -133,7 +134,7 @@ const Profile = () => {
                                         disabled={!editState.email}
                                     />
 
-                                    {(session && !session.method) && (
+{(session && session.method === null) && (
                                         <>
                                             {!editState.email && (
                                                 <svg
@@ -167,7 +168,7 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        {(session && !session.method) && (
+                        {(session && session.method === null) && (
                             <div className="profile-section password">
                                 <div className="input-group">
                                     <label htmlFor="password">Password</label>
@@ -210,6 +211,7 @@ const Profile = () => {
                                 </div>
                             </div>
                         )}
+
                     </div>
 
 

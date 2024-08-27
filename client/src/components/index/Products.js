@@ -336,7 +336,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     };
 
     const handleProductClick = (name) => {
-        navigate(`/${name}`);
+        navigate(`/item/${name}`);
     };
 
     const sortProducts = (products, sortOption) => {
@@ -367,6 +367,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
     useEffect(() => {
         const initialize = async () => {
+            console.log(session)
             if (initialProducts) {
                 setProducts(initialProducts)
                 
@@ -429,8 +430,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
             }
         ];
-
-        // setProducts(sampleWishlist)
 
     }, [session, initialProducts]);
 
