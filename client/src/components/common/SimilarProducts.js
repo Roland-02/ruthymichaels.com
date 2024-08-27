@@ -16,58 +16,6 @@ const SimilarProducts = ({ product }) => {
 
     const fetchSimilar = async () => {
         try {
-
-            // setSimilar([
-            //     {
-            //         id: 1,
-            //         name: 'Proroductroductduct roduct roduct roduct roductroduct',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '10',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     },
-            //     {
-            //         id: 2,
-            //         name: 'Product 2',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '20.00',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     },
-            //     {
-            //         id: 3,
-            //         name: 'Product 3',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '30.00',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     },
-            //     {
-            //         id: 4,
-            //         name: 'Product 1',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '10.00',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     },
-            //     {
-            //         id: 5,
-            //         name: 'Product 2',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '20.00',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     },
-            //     {
-            //         id: 6,
-            //         name: 'Product 3',
-            //         type: 'book',
-            //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-            //         price: '30.00',
-            //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-            //     }
-            // ])
-
             const response = await axios.get('/server/get_products');
             if (response.status === 200) {
                 const allProducts = response.data;

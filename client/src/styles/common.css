@@ -257,7 +257,6 @@ body {
 .result-image img {
     width: 140px;
     height: 190px;
-    border-radius: 5px;
     object-fit: cover;
     margin: 15px;
 }
