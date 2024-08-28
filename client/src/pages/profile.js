@@ -134,7 +134,7 @@ const Profile = () => {
                                         disabled={!editState.email}
                                     />
 
-{(session && session.method === null) && (
+                                    {(session && session.method === null) && (
                                         <>
                                             {!editState.email && (
                                                 <svg
@@ -213,7 +213,6 @@ const Profile = () => {
                         )}
 
                     </div>
-
 
                     <div className="order-history">
                         <h2>Order History</h2>

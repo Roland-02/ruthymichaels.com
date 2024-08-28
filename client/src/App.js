@@ -23,7 +23,7 @@ const App = () => {
                 <Route path="/login" element={<Index form="login" />} />
                 <Route path="/createAccount" element={<Index form="createAccount" />} />
                 
-                <Route path="/:name" element={<View_Product />} />
+                <Route path="/item/:name" element={<View_Product />} />
 
                 <Route path="/basket" element={<Cart />} />
                 <Route path="/cart" element={<Cart />} />

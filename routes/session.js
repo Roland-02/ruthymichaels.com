@@ -51,7 +51,7 @@ router.post('/login', async (req, res) => {
                     if (isMatch) {
                         const user_id = result[0].user_id;
                         connection.release();
-                        res.cookie('sessionEmail', hashedEmail, { httpOnly: true, secure: true });
+                        res.cookie('sessionEmail', email, { httpOnly: true, secure: true });
                         res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
 
                         console.log("--------> User logged in");

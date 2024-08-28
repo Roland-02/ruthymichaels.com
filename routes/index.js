@@ -324,10 +324,11 @@ router.post('/remove_cart_product', async (req, res) => {
 
 router.post('/delete_cart', async (req, res) => {
     try {
+        console.log('called')
         const { user_id } = req.body;
 
         if (!user_id) {
-            return res.status(400).send('User ID and Product ID are required');
+            return res.status(400).send('User ID is required');
         }
 
         getConnection((err, connection) => {

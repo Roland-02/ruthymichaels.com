@@ -219,7 +219,7 @@
 
 @media (max-width: 991px) {
 
-    .view-container,
+    .view-container.cart,
     .cart-layout {
         min-width: 524px;
         flex-direction: column;

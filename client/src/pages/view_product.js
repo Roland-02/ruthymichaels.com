@@ -263,22 +263,22 @@ const View_Product = () => {
                 await fetchWishlist();
             }
         };
-        // initialize();
+        initialize();
 
 
         // Simulate fetching a product from an API or database
-        const fetchedProduct = {
-            id: 1,
-            name: 'The Great Adventure',
-            type: 'book',
-            description: 'Dive into an exhilarating journey across uncharted territories with our protagonist as they discover hidden secrets and face unimaginable challenges.',
-            price: '15.99',
-            imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-        };
+        // const fetchedProduct = {
+        //     id: 1,
+        //     name: 'The Great Adventure',
+        //     type: 'book',
+        //     description: 'Dive into an exhilarating journey across uncharted territories with our protagonist as they discover hidden secrets and face unimaginable challenges.',
+        //     price: '15.99',
+        //     imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        // };
 
-        // Set the fetched product to the state
-        setProduct(fetchedProduct);
-        setSelectedImage(fetchedProduct.imageUrls[0]);
+        // // Set the fetched product to the state
+        // setProduct(fetchedProduct);
+        // setSelectedImage(fetchedProduct.imageUrls[0]);
 
     }, [session, navigate]);
 
