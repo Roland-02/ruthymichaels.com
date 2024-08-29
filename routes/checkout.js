@@ -1,7 +1,6 @@
 const express = require('express');
 const router = express.Router();
 const bodyParser = require('body-parser');
-const axios = require('axios');
 const { getConnection } = require('../database');
 const mysql = require('mysql');
 const crypto = require('crypto');
@@ -29,54 +28,7 @@ const generateToken = () => {
     return crypto.randomBytes(16).toString('hex');
 };
 
-// router.post('/create_checkout_session', async (req, res) => {
-//     const { cartItems, user_id, user_email } = req.body;
-//     const generatedToken = generateToken();
-//     tokenStore[user_id] = generatedToken;
-
-//     // transform cartItems into the format required by Stripe
-//     const line_items = cartItems.map(item => ({
-//         price_data: {
-//             currency: 'gbp',
-//             product_data: {
-//                 name: item.name,
-//                 metadata: {
-//                     temp: 5,
-//                     product_id: item.id,
-//                 },
-//             },
-//             unit_amount: item.price * 100,
-//         },
-//         quantity: item.qty,
-
-//     }));
-
-
-//     try {
-//         const session = await stripe.checkout.sessions.create({
-//             payment_method_types: ['card'],
-//             line_items: line_items,
-//             mode: 'payment',
-//             shipping_address_collection: {
-//                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
-//             },
-//             success_url: `http://localhost:8080/cart?order_success=true&token=${generatedToken}&session_id={CHECKOUT_SESSION_ID}`,
-//             cancel_url: `http://localhost:8080/cart`,
-//             metadata: {
-//                 user_id: user_id
-//             },
-//             ...(user_email && { customer_email: user_email })
-//         });
-
-//         res.status(200).json({ sessionId: session.id });
-//     } catch (error) {
-//         console.log(error)
-//         res.status(500).json({ error: 'Failed to create Stripe session' });
-
-//     }
-
-// });
-
+// process checkout
 router.post('/create_checkout_session', async (req, res) => {
     const { cartItems, user_id, user_email } = req.body;
     const generatedToken = generateToken();
@@ -126,10 +78,10 @@ router.post('/create_checkout_session', async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Failed to create Stripe session' });
     }
+    
 });
 
-
-// only called over http or valid https
+// post-checkout processes - save order, send confirmation email, clear carts
 router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
     const event = req.body;
 
@@ -207,8 +159,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                         // Wait for all items to be inserted
                         await Promise.all(orderItemPromises);
 
-                        // Release the connection and send a success response
-                        // res.status(200).send('Order recorded successfully');
 
                     } catch (error) {
                         console.error('Error inserting order items:', error);
@@ -268,7 +218,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
 
             // Process cart deletion
             try {
-                console.log(user_id)
                 if (user_id) {
                     // Call the logic directly without making an HTTP request
                     getConnection((err, connection) => {

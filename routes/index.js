@@ -8,27 +8,6 @@ var crypto = require('crypto');
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
 const IV_LENGTH = 16; // AES block size for CBC mode
 
-function encrypt(text) {
-    let iv = crypto.randomBytes(IV_LENGTH);
-    let cipher = crypto.createCipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
-    let encrypted = cipher.update(text);
-
-    encrypted = Buffer.concat([encrypted, cipher.final()]);
-
-    return iv.toString('hex') + ':' + encrypted.toString('hex');
-}
-
-function decrypt(text) {
-    let textParts = text.split(':');
-    let iv = Buffer.from(textParts.shift(), 'hex');
-    let encryptedText = Buffer.from(textParts.join(':'), 'hex');
-    let decipher = crypto.createDecipheriv('aes-256-cbc', Buffer.from(ENCRYPTION_KEY, 'hex'), iv);
-    let decrypted = decipher.update(encryptedText);
-
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-
-    return decrypted.toString();
-}
 
 // get products endpoint
 router.get('/get_products', async (req, res) => {
@@ -485,6 +464,70 @@ router.post('/remove_wishlist', async (req, res) => {
     }
 
 });
+
+// get order history for a user
+router.get('/order_history/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    try {
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            const ordersQuery = `SELECT order_id, date, total_cost 
+                                 FROM orders 
+                                 WHERE user_id = ? 
+                                 ORDER BY date DESC`;
+
+            connection.query(ordersQuery, [user_id], async (error, orders) => {
+                if (error) {
+                    connection.release();
+                    console.error('Error fetching orders:', error);
+                    return res.status(500).send('Failed to fetch orders');
+                }
+
+                // Fetch order items for each order
+                const orderItemsPromises = orders.map(order => {
+                    return new Promise((resolve, reject) => {
+                        const itemsQuery = `SELECT oi.product_id, p.name as item, oi.qty as quantity, p.price as price
+                                            FROM order_items oi
+                                            JOIN products p ON oi.product_id = p.id
+                                            WHERE oi.order_id = ?`;
+
+                        connection.query(itemsQuery, [order.order_id], (err, items) => {
+                            if (err) {
+                                console.error('Error fetching order items:', err);
+                                return reject(err);
+                            }
+
+                            resolve({
+                                ...order,
+                                items: items // Add the items to the order object
+                            });
+                        });
+                    });
+                });
+
+                try {
+                    const ordersWithItems = await Promise.all(orderItemsPromises);
+                    connection.release();
+                    console.log(ordersWithItems)
+
+                    res.status(200).json(ordersWithItems);
+
+                } catch (error) {
+                    connection.release();
+                    console.error('Error processing order items:', error);
+                    res.status(500).send('Failed to process order items');
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
+
+
 
 
 module.exports = router;

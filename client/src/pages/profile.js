@@ -9,7 +9,7 @@ import '../styles/common.css';
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import MessageBanner from '../components/common/MessageBanner';
-
+import OrderHistory from '../components/profile/OrderHistory';
 
 const Profile = () => {
     const { session } = useContext(SessionContext);
@@ -26,9 +26,29 @@ const Profile = () => {
         password: false
     });
 
+    const fetchOrders = async () => {
+        try {
+            const response = await axios.get(`/server/order_history/${session.id}`);
+
+            // Assuming the response is the order history data array
+            const formattedOrders = response.data.map(order => ({
+                ...order,
+                date: new Date(order.date).toLocaleDateString('en-GB'),
+                items: order.items.map(item => ({
+                    ...item,
+                    price: item.price // Format price to 2 decimal places
+                }))
+            }));
+            setOrders(formattedOrders);
+
+        } catch (error) {
+            console.error('Failed to fetch orders:', error);
+            setMessage({ content: 'Failed to load order history', product: null, action: null });
+        }
+    };
+
     useEffect(() => {
         const initialize = async () => {
-            console.log(session)
             if (session && session.id) {
                 // Fetch the user's info if a session exists
                 try {
@@ -36,6 +56,7 @@ const Profile = () => {
                         ...prevState,
                         email: session.email,
                     }));
+                    fetchOrders()
                 } catch (error) {
                     console.error('Error fetching user info:', error);
                 }
@@ -49,6 +70,8 @@ const Profile = () => {
         initialize();
 
     }, [session, navigate]);
+
+    console.log(orders)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -214,31 +237,7 @@ const Profile = () => {
 
                     </div>
 
-                    <div className="order-history">
-                        <h2>Order History</h2>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Order Number</th>
-                                    <th>Item</th>
-                                    <th>Quantity</th>
-                                    <th>Price</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {orders.map((order) => (
-                                    <tr key={order.orderNumber}>
-                                        <td>{order.orderNumber}</td>
-                                        <td>{order.item}</td>
-                                        <td>{order.quantity}</td>
-                                        <td>£{order.price.toFixed(2)}</td>
-                                        <td>{new Date(order.date).toLocaleDateString('en-GB')}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
+                    <OrderHistory orders={orders} />
 
                 </div>
             </div>
