@@ -44,7 +44,7 @@ const Index = ({ form }) => {
 
       {overlayVisible && (
         <div>
-          <div id="overlay" onClick={handleClose}></div>
+          <div className="overlay" onClick={handleClose}></div>
           {form === 'login' && <Login onClose={handleClose} />}
           {form === 'createAccount' && <CreateAccount onClose={handleClose} />}
         </div>

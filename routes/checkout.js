@@ -78,7 +78,7 @@ router.post('/create_checkout_session', async (req, res) => {
         console.error(error);
         res.status(500).json({ error: 'Failed to create Stripe session' });
     }
-    
+
 });
 
 // post-checkout processes - save order, send confirmation email, clear carts
@@ -159,6 +159,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                         // Wait for all items to be inserted
                         await Promise.all(orderItemPromises);
 
+                        console.log('stored order')
 
                     } catch (error) {
                         console.error('Error inserting order items:', error);
@@ -178,31 +179,31 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
 
                 // Create the email content
                 const emailContent = `
-        Dear ${customer_name},
+Dear ${customer_name},
 
-        Thank you for your order!
+Thank you for your order!
 
-        Order ID: ${session.id}
+Order ID: ${session.id}
 
-        Items Ordered:
-        ${orderDetails}
+Items Ordered:
+${orderDetails}
 
-        Shipping Address:
-        ${shipping_address.line1}, 
-        ${shipping_address.line2 ? `${shipping_address.line2},` : ''}
-        ${shipping_address.city}, 
-        ${shipping_address.postal_code}, 
-        ${shipping_address.country}
+Shipping Address:
+${shipping_address.line1}, 
+${shipping_address.line2 ? `${shipping_address.line2},` : ''}
+${shipping_address.city}, 
+${shipping_address.postal_code}, 
+${shipping_address.country}
 
-        Payment Details:
-        ${brand} ${funding}
-        **** **** **** ${last4}
+Payment Details:
+${brand} ${funding}
+**** **** **** ${last4}
 
-        I hope you enjoy your purchase!
+I hope you enjoy your purchase!
 
-        Regards,
+Regards,
 
-        Ruthy Michaels`;
+Ruthy Michaels`;
 
                 await transporter.sendMail({
                     from: 'RuthyMichaels@gmail.com', // Sender address
@@ -210,6 +211,8 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                     subject: 'Order Confirmation - Thank you for your purchase!',
                     text: emailContent,
                 });
+
+                console.log('sent confirmation email')
 
             } catch (error) {
                 console.log('Error sending confirmation email:', error);
@@ -236,6 +239,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                         });
                     });
 
+                    console.log('cleared cache')
                     return res.sendStatus(200);
 
                 } else {

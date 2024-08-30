@@ -33,7 +33,6 @@
     align-items: center;
 }
 
-
 .profile-section.email input,
 .profile-section.password input {
     width: 100%; 
@@ -63,7 +62,7 @@
 }
 
 
-/* order history */
+/* order history table */
 .order-history{
     width: 50%;
 }
@@ -84,4 +83,154 @@ th, td {
 
 th {
     background-color: #f9f9f9;
+    text-align: center;
+}
+
+.review-btn {
+    background-color: #ffa8d3;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.review-btn:hover {
+    background-color: #ff7bbd;
+}
+
+
+/* leave review form */
+.review-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    z-index: 101;
+    background-color: #fff;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+}
+
+.review-form {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.review-container h2 {
+    text-align: center;
+    text-decoration: underline;
+    margin-bottom: 0px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.review-container p {
+    margin-bottom: 0px;
+    font-size: 20px;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.form-group textarea {
+    margin-bottom: 10px;
+}
+
+.form-group label {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.star-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.star-container {
+    position: relative;
+    display: inline-block;
+    font-size: 2.5rem; 
+}
+
+.star {
+    color: #d3d3d3;
+}
+
+.full-star.filled, .half-star.filled {
+    color: #FFD700;
+}
+
+.half-star {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 57%;
+    overflow: hidden;
+    color: #d3d3d3; 
+}
+
+.half-star.filled {
+    color: #FFD700;
+}
+
+.star-container .half-star {
+    z-index: 1;
+}
+
+.star-container .full-star {
+    z-index: 0;
+}
+
+.form-buttons {
+    display: flex;
+    justify-content: space-between;
+    width: 75%;
+    gap: 20px; 
+}
+
+.btn {
+    flex: 1; 
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.5s;
+}
+
+.btn-save {
+    background-color: #64afff;
+    color: #fff;
+    border: none;
+}
+
+.btn-cancel {
+    background-color: #929292;
+    color: #fff;
+    border: none;
+}
+
+.btn-save:hover {
+    background-color: #1687ff;
+    color: #fff;
+}
+
+.btn-cancel:hover {
+    background-color: #5f5f5f;
+    color: #fff;
 }

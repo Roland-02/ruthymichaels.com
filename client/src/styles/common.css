@@ -135,7 +135,6 @@ body {
 }
 
 /* login */
-#overlay,
 .overlay {
     position: fixed;
     top: 0;

@@ -510,7 +510,6 @@ router.get('/order_history/:user_id', async (req, res) => {
                 try {
                     const ordersWithItems = await Promise.all(orderItemsPromises);
                     connection.release();
-                    console.log(ordersWithItems)
 
                     res.status(200).json(ordersWithItems);
 

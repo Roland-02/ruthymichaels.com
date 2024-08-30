@@ -10,13 +10,85 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import MessageBanner from '../components/common/MessageBanner';
 import OrderHistory from '../components/profile/OrderHistory';
+import ReviewForm from '../components/profile/ReviewForm';
 
-const Profile = () => {
+
+const Profile = ({ form }) => {
     const { session } = useContext(SessionContext);
     const { name } = useParams();
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [orders, setOrders] = useState([]);
+    const [showReviewForm, setShowReviewForm] = useState(false);
+    const [reviewItem, setReviewItem] = useState(null);
+    const [overlayVisible, setOverlayVisible] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+
+        // Determine which form to show based on the 'form' prop
+        if (form === 'review' || form === 'change_password') {
+            setOverlayVisible(true);
+        } else {
+            setOverlayVisible(false);
+        }
+
+    }, [form]);
+
+    // const [orders, setOrders] = useState([
+    //     {
+    //         order_id: "EDuTFbNJt",
+    //         date: "2024-08-28T21:34:42.000Z",
+    //         total_cost: 14.99,
+    //         items: [
+    //             {
+    //                 product_id: 52,
+    //                 item: "Black Girl Colouring Book",
+    //                 quantity: 1,
+    //                 price: 4.99
+    //             },
+    //             {
+    //                 product_id: 54,
+    //                 item: "Mystery Novel",
+    //                 quantity: 1,
+    //                 price: 10.00
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         order_id: "ZeFkkEaL",
+    //         date: "2024-08-27T19:22:13.000Z",
+    //         total_cost: 29.98,
+    //         items: [
+    //             {
+    //                 product_id: 55,
+    //                 item: "Wireless Headphones",
+    //                 quantity: 1,
+    //                 price: 29.98
+    //             }
+    //         ]
+    //     },
+    //     {
+    //         order_id: "ECuTFaML",
+    //         date: "2024-08-26T18:15:00.000Z",
+    //         total_cost: 45.00,
+    //         items: [
+    //             {
+    //                 product_id: 60,
+    //                 item: "Yoga Mat",
+    //                 quantity: 1,
+    //                 price: 25.00
+    //             },
+    //             {
+    //                 product_id: 61,
+    //                 item: "Water Bottle",
+    //                 quantity: 2,
+    //                 price: 10.00
+    //             }
+    //         ]
+    //     }
+    // ]);
+    
     const [User, setUser] = useState({
         email: 'name@domain.com',
         password: '******************'
@@ -26,6 +98,21 @@ const Profile = () => {
         password: false
     });
 
+    const handleReviewClick = (order_id, product_id, item_name) => {
+        setReviewItem({ order_id, product_id, item_name });
+        navigate(`/profile/order/${order_id}/review_item/${product_id}`)
+    };
+
+    const handleReviewSave = (reviewData) => {
+        setReviewItem(null);
+        console.log('Review saved:', reviewData); 
+    };
+
+    const handleReviewCancel = () => {
+        setReviewItem(null);
+        navigate(`/profile`)
+    };
+
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`/server/order_history/${session.id}`);
@@ -33,7 +120,8 @@ const Profile = () => {
             // Assuming the response is the order history data array
             const formattedOrders = response.data.map(order => ({
                 ...order,
-                date: new Date(order.date).toLocaleDateString('en-GB'),
+                // order_id: `...${order.order_id.slice(-10)}`,
+                date: order.date,
                 items: order.items.map(item => ({
                     ...item,
                     price: item.price // Format price to 2 decimal places
@@ -70,8 +158,6 @@ const Profile = () => {
         initialize();
 
     }, [session, navigate]);
-
-    console.log(orders)
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -134,11 +220,29 @@ const Profile = () => {
         }
     };
 
+    const handleClose = () => {
+        navigate('/profile');
+    };
+
     return (
         <div>
             <Navbar />
 
             <MessageBanner message={message} setMessage={setMessage} />
+
+            {overlayVisible && (
+                <div>
+                    <div className="overlay" onClick={handleClose}></div>
+                    {form === 'review' &&
+                        <ReviewForm 
+                            onSave={handleReviewSave}
+                            onCancel={handleReviewCancel}
+                            order_id={reviewItem.order_id}
+                            product_id={reviewItem.product_id}
+                            item_name={reviewItem.item_name}
+                        />}
+                </div>
+            )}
 
             <div className="view-container profile">
 
@@ -237,7 +341,12 @@ const Profile = () => {
 
                     </div>
 
-                    <OrderHistory orders={orders} />
+                    <OrderHistory
+                        orders={orders}
+                        handleReviewClick={handleReviewClick}
+                    />
+
+
 
                 </div>
             </div>
