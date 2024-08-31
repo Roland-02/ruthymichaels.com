@@ -33,9 +33,9 @@ const App = () => {
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/account" element={<Profile />} />
 
-                <Route path="/profile/order/:id/review_item/:id" element={<Profile form="review" />} />
+                <Route path="/profile/review_item/:id" element={<Profile form="review" />} />
                 <Route path="/profile/change_password/:id" element={<Profile form="change_password" />} />
-                <Route path="/account/order/:id/review_item/:id" element={<Profile form="review" />} />
+                <Route path="/account/review_item/:id" element={<Profile form="review" />} />
                 <Route path="/account/change_password/:id" element={<Profile form="change_password" />} />
 
                 <Route path="/admin" element={<Admin />} />

@@ -18,10 +18,12 @@ const Profile = ({ form }) => {
     const { name } = useParams();
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [orders, setOrders] = useState([]);
+    const [reviews, setReviews] = useState({});
     const [showReviewForm, setShowReviewForm] = useState(false);
     const [reviewItem, setReviewItem] = useState(null);
     const [overlayVisible, setOverlayVisible] = useState(false);
     const navigate = useNavigate();
+
 
     useEffect(() => {
         window.scrollTo(0, 0);
@@ -35,60 +37,6 @@ const Profile = ({ form }) => {
 
     }, [form]);
 
-    // const [orders, setOrders] = useState([
-    //     {
-    //         order_id: "EDuTFbNJt",
-    //         date: "2024-08-28T21:34:42.000Z",
-    //         total_cost: 14.99,
-    //         items: [
-    //             {
-    //                 product_id: 52,
-    //                 item: "Black Girl Colouring Book",
-    //                 quantity: 1,
-    //                 price: 4.99
-    //             },
-    //             {
-    //                 product_id: 54,
-    //                 item: "Mystery Novel",
-    //                 quantity: 1,
-    //                 price: 10.00
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         order_id: "ZeFkkEaL",
-    //         date: "2024-08-27T19:22:13.000Z",
-    //         total_cost: 29.98,
-    //         items: [
-    //             {
-    //                 product_id: 55,
-    //                 item: "Wireless Headphones",
-    //                 quantity: 1,
-    //                 price: 29.98
-    //             }
-    //         ]
-    //     },
-    //     {
-    //         order_id: "ECuTFaML",
-    //         date: "2024-08-26T18:15:00.000Z",
-    //         total_cost: 45.00,
-    //         items: [
-    //             {
-    //                 product_id: 60,
-    //                 item: "Yoga Mat",
-    //                 quantity: 1,
-    //                 price: 25.00
-    //             },
-    //             {
-    //                 product_id: 61,
-    //                 item: "Water Bottle",
-    //                 quantity: 2,
-    //                 price: 10.00
-    //             }
-    //         ]
-    //     }
-    // ]);
-    
     const [User, setUser] = useState({
         email: 'name@domain.com',
         password: '******************'
@@ -98,19 +46,86 @@ const Profile = ({ form }) => {
         password: false
     });
 
-    const handleReviewClick = (order_id, product_id, item_name) => {
-        setReviewItem({ order_id, product_id, item_name });
-        navigate(`/profile/order/${order_id}/review_item/${product_id}`)
+    const handleReviewClick = (product_id, item_name) => {
+        const existingReview = reviews[product_id];
+
+        if (existingReview) {
+            // If review exists, pre-fill the form with existing review data
+            setReviewItem({
+                // order_id,
+                product_id,
+                item_name,
+                rating: existingReview.rating,
+                review: existingReview.review
+            });
+        } else {
+            // If no review exists, open a blank form
+            setReviewItem({
+                // order_id,
+                product_id,
+                item_name,
+                rating: 0,
+                review: ''
+            });
+        }
+
+        navigate(`/profile/review_item/${product_id}`);
     };
 
-    const handleReviewSave = (reviewData) => {
-        setReviewItem(null);
-        console.log('Review saved:', reviewData); 
+    const handleReviewSave = async (reviewData) => {
+        try {
+
+            const data = {
+                ...reviewData,
+                user_id: session.id,
+            }
+
+            const response = await axios.post('/server/add_review', data);
+            if (response.status === 201) {
+                setMessage({ content: 'Thank you for your review', product: null, action: '' });
+
+
+            } else {
+                console.error('Failed to save the review.');
+                setMessage({ content: 'Failed to save your review. Please try again', product: null, action: '' });
+            }
+
+        } catch (error) {
+            setMessage({ content: 'Please rate and review before saving!', product: null, action: '' });
+            console.error('Error saving the review:', error);
+        } finally {
+            setReviewItem(null);
+            setOverlayVisible(false);
+            navigate(`/profile`);
+
+        }
+
+
     };
 
-    const handleReviewCancel = () => {
-        setReviewItem(null);
-        navigate(`/profile`)
+    const handleReviewDelete = async (reviewData) => {
+        try {
+            const data = {
+                ...reviewData,
+                user_id: session.id,
+            }
+
+            const response = await axios.post('/server/delete_review', data);
+            if (response.status === 200) {
+                setMessage({ content: 'Review deleted', product: null, action: '' });
+            } else if (response.status === 404) {
+                setOverlayVisible(false)
+            }
+
+        } catch (error) {
+            setMessage({ content: 'Error deleting review', product: null, action: '' });
+            console.error('Error saving the review:', error);
+
+        } finally {
+            setReviewItem(null);
+            setOverlayVisible(false);
+            navigate(`/profile`);
+        }
     };
 
     const fetchOrders = async () => {
@@ -120,18 +135,43 @@ const Profile = ({ form }) => {
             // Assuming the response is the order history data array
             const formattedOrders = response.data.map(order => ({
                 ...order,
-                // order_id: `...${order.order_id.slice(-10)}`,
                 date: order.date,
                 items: order.items.map(item => ({
                     ...item,
-                    price: item.price // Format price to 2 decimal places
+                    price: item.price
                 }))
             }));
             setOrders(formattedOrders);
 
+            const user_reviews = await fetchUserReviews();
+            setReviews(user_reviews)
+
+
         } catch (error) {
             console.error('Failed to fetch orders:', error);
             setMessage({ content: 'Failed to load order history', product: null, action: null });
+        }
+    };
+
+    const fetchUserReviews = async () => {
+        try {
+            const response = await axios.get(`/server/fetch_user_reviews/${session.id}`);
+            if (response.status === 200) {
+                const reviewsArray = response.data.reviews;
+
+                // Convert the array to an object keyed by "order_id_product_id"
+                const reviewsObject = reviewsArray.reduce((acc, review) => {
+                    acc[review.product_id] = review;  // Key by product_id only
+                    return acc;
+                }, {});
+
+                return reviewsObject;
+            } else {
+                return {};
+            }
+        } catch (error) {
+            console.error('Error fetching user reviews:', error);
+            return {};
         }
     };
 
@@ -234,12 +274,14 @@ const Profile = ({ form }) => {
                 <div>
                     <div className="overlay" onClick={handleClose}></div>
                     {form === 'review' &&
-                        <ReviewForm 
+                        <ReviewForm
                             onSave={handleReviewSave}
-                            onCancel={handleReviewCancel}
+                            onDelete={handleReviewDelete}
                             order_id={reviewItem.order_id}
                             product_id={reviewItem.product_id}
                             item_name={reviewItem.item_name}
+                            rating={reviewItem.rating}
+                            review={reviewItem.review}
                         />}
                 </div>
             )}

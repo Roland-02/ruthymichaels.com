@@ -1,12 +1,17 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import '../../styles/profile.css';
 import '../../styles/common.css';
 
-const ReviewForm = ({ onSave, onCancel, order_id, product_id, item_name }) => {
+const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating: initialRating = 0, review: initialReview = '' }) => {
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [review, setReview] = useState('');
+
+    useEffect(() => {
+        setRating(initialRating);
+        setReview(initialReview);
+    }, [initialRating, initialReview]);
 
     const handleClick = (rate) => {
         setRating(rate);
@@ -21,28 +26,28 @@ const ReviewForm = ({ onSave, onCancel, order_id, product_id, item_name }) => {
     };
 
     const handleSave = () => {
-        if (rating > 0 && review.trim()) {
-            // Call onSave with the review details
-            onSave({
-                order_id,
-                product_id,
-                rating,
-                review,
-            });
-        } else {
-            alert('Please provide a rating and a review.');
-        }
+        onSave({
+            order_id,
+            product_id,
+            rating,
+            review,
+        });
     };
+
+    const handleDelete = () => {
+        onDelete({
+            order_id,
+            product_id,
+        })
+    }
 
     return (
         <div className='review-container'>
-
             <div className="review-form">
                 <h2>Leave a Review</h2>
                 <p>{item_name}</p>
 
                 <div className="form-group">
-
                     <label>Rating:</label>
                     <div className="star-rating">
                         {[...Array(5)].map((_, index) => {
@@ -84,12 +89,12 @@ const ReviewForm = ({ onSave, onCancel, order_id, product_id, item_name }) => {
                     ></textarea>
                 </div>
                 <div className="form-buttons">
-                    <button className="btn btn-save" onClick={handleSave}>
+                    <a className="btn btn-save" onClick={handleSave}>
                         Save
-                    </button>
-                    <button className="btn btn-cancel" onClick={onCancel}>
-                        Cancel
-                    </button>
+                    </a>
+                    <a className="btn btn-delete" onClick={handleDelete}>
+                        Delete
+                    </a>
                 </div>
             </div>
         </div>

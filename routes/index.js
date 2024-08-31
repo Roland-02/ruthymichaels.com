@@ -526,7 +526,127 @@ router.get('/order_history/:user_id', async (req, res) => {
     }
 });
 
+router.post('/add_review', async (req, res) => {
+    const { order_id, product_id, user_id, rating, review } = req.body;
 
+    if (!product_id || !rating || !review) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    getConnection(async (err, connection) => {
+        if (err) throw err;
+
+        // Check if the review already exists
+        const checkQuery = `SELECT review_id FROM product_reviews WHERE product_id = ? AND user_id = ?`;
+        const checkQueryFormatted = mysql.format(checkQuery, [product_id, user_id]);
+
+        connection.query(checkQueryFormatted, async (err, result) => {
+            if (err) {
+                console.error('Error checking for existing review:', err);
+                connection.release();
+                return res.status(500).send({ message: 'Failed to check for existing review' });
+            }
+
+            let insert_query;
+            let queryFormatted;
+            if (result.length > 0) {
+                // Review exists, so update it
+                insert_query = `UPDATE product_reviews SET rating = ?, review = ? WHERE product_id = ? AND user_id = ?`;
+                queryFormatted = mysql.format(insert_query, [rating, review, order_id, product_id, user_id]);
+            
+            } else {
+                // No review exists, so insert a new one
+                insert_query = `INSERT INTO product_reviews (review_id, product_id, user_id, rating, review) VALUES (0, ?, ?, ?, ?)`;
+                queryFormatted = mysql.format(insert_query, [product_id, user_id, rating, review]);
+            }
+
+            connection.query(queryFormatted, async (err, result) => {
+                connection.release();
+
+                if (err) {
+                    console.error('Error saving review:', err);
+                    return res.status(500).send({ message: 'Failed to save review' });
+                }
+
+                res.status(201).send({ message: 'Product review saved successfully' });
+            });
+
+        });
+    });
+});
+
+// Fetch reviews for a user's orders
+router.get('/fetch_user_reviews/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+
+    getConnection(async (err, connection) => {
+        if (err) throw err;
+
+        const query = `SELECT pr.product_id, pr.rating, pr.review, p.name AS product_name
+        FROM product_reviews pr
+        INNER JOIN products p ON pr.product_id = p.id
+        WHERE pr.user_id = ?;`;
+
+        const fetch_query = mysql.format(query, [user_id]);
+
+        connection.query(fetch_query, (err, result) => {
+            connection.release();
+
+            if (err) {
+                console.error('Error executing query:', err);
+                return res.status(500).json({ error: 'Database query error' });
+            }
+
+            if (!result || result.length === 0) {
+                return res.status(404).json({ message: 'No reviews found for this user' });
+            }
+
+            // Transform the result into a plain array
+            const reviews = result.map(row => ({
+                // order_id: row.order_id,
+                product_id: row.product_id,
+                rating: row.rating,
+                review: row.review,
+                product_name: row.product_name,
+            }));
+
+            res.status(200).json({ reviews });
+        });
+    })
+});
+
+router.post('/delete_review', async (req, res) => {
+    const { product_id, user_id } = req.body;
+
+    if (!product_id || !user_id) {
+        return res.status(400).json({ error: 'All fields are required' });
+    }
+
+    getConnection(async (err, connection) => {
+        if (err) throw err;
+
+        const deleteQuery = `DELETE FROM product_reviews WHERE product_id = ? AND user_id = ?`;
+        const deleteQueryFormatted = mysql.format(deleteQuery, [product_id, user_id]);
+
+        connection.query(deleteQueryFormatted, async (err, result) => {
+            connection.release();
+
+            if (err) {
+                console.error('Error deleting review:', err);
+                return res.status(500).send({ message: 'Failed to delete review' });
+            }
+
+            if (result.affectedRows > 0) {
+                res.status(200).send({ message: 'Review deleted successfully' });
+            } else {
+                res.status(404).send({ message: 'Review not found' });
+            }
+
+        });
+
+    });
+
+});
 
 
 module.exports = router;

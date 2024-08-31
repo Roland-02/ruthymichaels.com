@@ -26,7 +26,6 @@ const OrderHistory = ({ orders, handleReviewClick }) => {
                                 <tr key={`${order.order_id}-${item.product_id}`}>
                                     {index === 0 && (
                                         <td rowSpan={order.items.length}>
-                                            {/* {order.order_id} */}
                                             ...{order.order_id.slice(-10)}
                                         </td>
                                     )}
@@ -41,9 +40,9 @@ const OrderHistory = ({ orders, handleReviewClick }) => {
                                     <td>
                                         <button
                                             className='review-btn'
-                                            onClick={() => handleReviewClick(order.order_id, item.product_id, item.item)}
+                                            onClick={() => handleReviewClick(item.product_id, item.item)}
                                         >
-                                            <strong>Review</strong>
+                                           Review
                                         </button>
                                     </td>
                                 </tr>
