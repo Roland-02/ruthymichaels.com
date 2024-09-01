@@ -19,28 +19,16 @@ const Profile = ({ form }) => {
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [orders, setOrders] = useState([]);
     const [reviews, setReviews] = useState({});
-    const [showReviewForm, setShowReviewForm] = useState(false);
     const [reviewItem, setReviewItem] = useState(null);
     const [overlayVisible, setOverlayVisible] = useState(false);
     const navigate = useNavigate();
 
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-
-        // Determine which form to show based on the 'form' prop
-        if (form === 'review' || form === 'change_password') {
-            setOverlayVisible(true);
-        } else {
-            setOverlayVisible(false);
-        }
-
-    }, [form]);
-
     const [User, setUser] = useState({
         email: 'name@domain.com',
         password: '******************'
     });
+
     const [editState, setEditState] = useState({
         email: false,
         password: false
@@ -84,7 +72,6 @@ const Profile = ({ form }) => {
             if (response.status === 201) {
                 setMessage({ content: 'Thank you for your review', product: null, action: '' });
 
-
             } else {
                 console.error('Failed to save the review.');
                 setMessage({ content: 'Failed to save your review. Please try again', product: null, action: '' });
@@ -99,7 +86,6 @@ const Profile = ({ form }) => {
             navigate(`/profile`);
 
         }
-
 
     };
 
@@ -175,30 +161,6 @@ const Profile = ({ form }) => {
         }
     };
 
-    useEffect(() => {
-        const initialize = async () => {
-            if (session && session.id) {
-                // Fetch the user's info if a session exists
-                try {
-                    setUser(prevState => ({
-                        ...prevState,
-                        email: session.email,
-                    }));
-                    fetchOrders()
-                } catch (error) {
-                    console.error('Error fetching user info:', error);
-                }
-
-            } else {
-                navigate('/login');
-            }
-        };
-
-        window.scrollTo(0, 0);
-        initialize();
-
-    }, [session, navigate]);
-
     const handleChange = (e) => {
         const { name, value } = e.target;
         setUser((prevState) => ({
@@ -263,6 +225,43 @@ const Profile = ({ form }) => {
     const handleClose = () => {
         navigate('/profile');
     };
+
+    useEffect(() => {
+        const initialize = async () => {
+            if (session && session.id) {
+                // Fetch the user's info if a session exists
+                try {
+                    setUser(prevState => ({
+                        ...prevState,
+                        email: session.email,
+                    }));
+                    fetchOrders()
+                } catch (error) {
+                    console.error('Error fetching user info:', error);
+                }
+
+            } else {
+                navigate('/login');
+            }
+        };
+
+        window.scrollTo(0, 0);
+        initialize();
+
+    }, [session, navigate]);
+
+    useEffect(() => {
+        window.scrollTo(0, 0);
+
+        // Determine which form to show based on the 'form' prop
+        if (form === 'review' || form === 'change_password') {
+            setOverlayVisible(true);
+        } else {
+            setOverlayVisible(false);
+        }
+
+    }, [form]);
+
 
     return (
         <div>
@@ -386,9 +385,8 @@ const Profile = ({ form }) => {
                     <OrderHistory
                         orders={orders}
                         handleReviewClick={handleReviewClick}
+                        reviews={reviews}
                     />
-
-
 
                 </div>
             </div>

@@ -52,9 +52,8 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
                     <div className="star-rating">
                         {[...Array(5)].map((_, index) => {
                             const starValue = index + 1;
-                            const halfStarValue = index + 0.5;
                             return (
-                                <span key={index} className="star-container">
+                                <span key={index} className="star-container review-form">
                                     <i
                                         className={`star full-star ${(hoverRating >= starValue || rating >= starValue) ? 'filled' : ''}`}
                                         onClick={() => handleClick(starValue)}
@@ -63,18 +62,11 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
                                     >
                                         ★
                                     </i>
-                                    <i
-                                        className={`star half-star ${(hoverRating >= halfStarValue || rating >= halfStarValue) ? 'filled' : ''}`}
-                                        onClick={() => handleClick(halfStarValue)}
-                                        onMouseEnter={() => handleMouseEnter(halfStarValue)}
-                                        onMouseLeave={handleMouseLeave}
-                                    >
-                                        ★
-                                    </i>
                                 </span>
                             );
                         })}
                     </div>
+
                 </div>
 
                 <div className="form-group">

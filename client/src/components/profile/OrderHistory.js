@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import '../../styles/profile.css';
 import '../../styles/common.css';
 
-const OrderHistory = ({ orders, handleReviewClick }) => {
+const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
 
     return (
         <div className="order-history">
@@ -38,12 +38,12 @@ const OrderHistory = ({ orders, handleReviewClick }) => {
                                         </td>
                                     )}
                                     <td>
-                                        <button
-                                            className='review-btn'
-                                            onClick={() => handleReviewClick(item.product_id, item.item)}
+                                        <a
+                                            className={`review-link ${reviews[item.product_id] ? 'reviewed' : ''}`}
+                                            onClick={() => handleReviewClick(item.product_id, order.item_name)}
                                         >
-                                           Review
-                                        </button>
+                                            {reviews[item.product_id] ? 'reviewed' : 'review'}
+                                        </a>
                                     </td>
                                 </tr>
                             ))}

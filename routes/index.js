@@ -3,10 +3,6 @@ var express = require('express');
 const { getConnection } = require('../database');
 const mysql = require('mysql');
 const router = express.Router();
-var crypto = require('crypto');
-
-const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY
-const IV_LENGTH = 16; // AES block size for CBC mode
 
 
 // get products endpoint
@@ -552,8 +548,8 @@ router.post('/add_review', async (req, res) => {
             if (result.length > 0) {
                 // Review exists, so update it
                 insert_query = `UPDATE product_reviews SET rating = ?, review = ? WHERE product_id = ? AND user_id = ?`;
-                queryFormatted = mysql.format(insert_query, [rating, review, order_id, product_id, user_id]);
-            
+                queryFormatted = mysql.format(insert_query, [rating, review, product_id, user_id]);
+
             } else {
                 // No review exists, so insert a new one
                 insert_query = `INSERT INTO product_reviews (review_id, product_id, user_id, rating, review) VALUES (0, ?, ?, ?, ?)`;
@@ -570,6 +566,59 @@ router.post('/add_review', async (req, res) => {
 
                 res.status(201).send({ message: 'Product review saved successfully' });
             });
+
+        });
+    });
+});
+
+// Fetch reviews for a products
+router.get('/fetch_product_reviews/:product_id', async (req, res) => {
+    const { product_id } = req.params;
+
+    getConnection(async (err, connection) => {
+        if (err) throw err;
+
+        const query = `
+        SELECT 
+            pr.product_id, 
+            pr.rating, 
+            pr.review, 
+            p.name AS product_name,
+            u.user_id,
+            u.email AS user_email
+        FROM 
+            product_reviews pr
+        INNER JOIN 
+            products p ON pr.product_id = p.id
+        INNER JOIN
+            user_login u ON pr.user_id = u.user_id
+        WHERE 
+            pr.product_id = ?;`;
+
+        const fetch_query = mysql.format(query, [product_id]);
+
+        connection.query(fetch_query, (err, result) => {
+            connection.release();
+
+            if (err) {
+                console.error('Error executing query:', err);
+                return res.status(500).json({ error: 'Database query error' });
+            }
+
+            if (!result || result.length === 0) {
+                return res.status(404).json({ message: 'No reviews found for this product' });
+            }
+
+            // Transform the result into a plain array
+            const reviews = result.map(row => ({
+                user_email: row.user_email,
+                product_id: row.product_id,
+                rating: row.rating,
+                review: row.review,
+                product_name: row.product_name
+            }));
+
+            res.status(200).json({ reviews });
 
         });
     });

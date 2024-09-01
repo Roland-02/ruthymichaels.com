@@ -189,10 +189,10 @@ Items Ordered:
 ${orderDetails}
 
 Shipping Address:
-${shipping_address.line1}, 
-${shipping_address.line2 ? `${shipping_address.line2},` : ''}
-${shipping_address.city}, 
-${shipping_address.postal_code}, 
+${shipping_address.line1} 
+${shipping_address.line2 ? `${shipping_address.line2}` : ''}
+${shipping_address.city} 
+${shipping_address.postal_code} 
 ${shipping_address.country}
 
 Payment Details:

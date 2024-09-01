@@ -29,36 +29,8 @@ const View_Product = () => {
     const [quantity, setQuantity] = useState(1);
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
-    // const [reviews, setReviews] = useState([])
-    const [averageRating, setAverageRating] = useState([])
-    const [reviews, setReviews] = useState([
-        {
-            email: 'john.doe@example.com',
-            rating: 5,
-            comment: 'Amazing product! Exceeded my expectaAmazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.Amazing product! Exceeded my expectations.tions.',
-        },
-        {
-            email: 'jane.smith@example.com',
-            rating: 4,
-            comment: 'Very good, but could be better with a few improvements.',
-        },
-        {
-            email: 'alex.jones@example.com',
-            rating: 3,
-            comment: 'It’s okay. Decent for the price.',
-        },
-        {
-            email: 'lisa.williams@example.com',
-            rating: 2,
-            comment: 'Not what I expected. Quality could be improved.',
-        },
-        {
-            email: 'michael.brown@example.com',
-            rating: 5,
-            comment: 'Disappointing. Would not recommend.',
-        },
-    ]);
-
+    const [reviews, setReviews] = useState([]);
+    const [averageRating, setAverageRating] = useState([]);
     const navigate = useNavigate();
 
 
@@ -80,6 +52,28 @@ const View_Product = () => {
 
         } catch (error) {
             console.error('Error fetching product: ', error);
+        }
+    };
+
+    const fetchProductReviews = async (product_id) => {
+        try {
+            const response = await axios.get(`/server/fetch_product_reviews/${product_id}`);
+            if (response.status === 200) {
+                const reviewsArray = response.data.reviews;
+                const formattedReviewsArray = reviewsArray.map(review => ({
+                    ...review,
+                    user_email: review.user_email.split('@')[0]
+                }));
+
+                setReviews(formattedReviewsArray)
+
+            } else {
+                setReviews([]);
+
+            }
+        } catch (error) {
+            console.error('Error fetching user reviews:', error);
+            setReviews([]);
         }
     };
 
@@ -254,43 +248,6 @@ const View_Product = () => {
         }
     };
 
-    useEffect(() => {
-        const initialize = async () => {
-            await fetchProduct();
-            await fetchCartProducts();
-
-            if (session && session.id) {
-                await fetchWishlist();
-            }
-        };
-        initialize();
-
-
-        // Simulate fetching a product from an API or database
-        // const fetchedProduct = {
-        //     id: 1,
-        //     name: 'The Great Adventure',
-        //     type: 'book',
-        //     description: 'Dive into an exhilarating journey across uncharted territories with our protagonist as they discover hidden secrets and face unimaginable challenges.',
-        //     price: '15.99',
-        //     imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-        // };
-
-        // // Set the fetched product to the state
-        // setProduct(fetchedProduct);
-        // setSelectedImage(fetchedProduct.imageUrls[0]);
-
-    }, [session, navigate]);
-
-    useEffect(() => {
-        if (reviews.length > 0) {
-            const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-            const avg = sum / reviews.length;
-            setAverageRating(Math.round(avg));  // Round to nearest integer
-        }
-    }, [reviews]);
-
-
     const increaseQuantity = () => setQuantity(quantity + 1);
     const decreaseQuantity = () => {
         if (quantity > 1) {
@@ -306,6 +263,33 @@ const View_Product = () => {
             setQuantity(1);
         }
     };
+
+    useEffect(() => {
+        const initialize = async () => {
+            await fetchProduct();
+            await fetchCartProducts();
+
+            if (session && session.id) {
+                await fetchWishlist();
+            }
+
+        };
+        initialize();
+
+    }, [session, navigate]);
+
+    useEffect(() => {
+        if (product && product.id) {
+            fetchProductReviews(product.id);
+
+            const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+            const avg = sum / reviews.length;
+
+            setAverageRating(Math.round(avg));
+
+        }
+    }, [product, reviews]);
+
 
     return (
         <div>
@@ -374,14 +358,13 @@ const View_Product = () => {
                         </div>
                     </div>
                 </div>
-
-
-                <div className='reviews-wrapper'>
-                    <div className="reviews-header">
-                        <h2 className="reviews-heading">Customer Reviews</h2>
-                        <div className="average-rating">
+                
+                <div className='product-reviews-wrapper'>
+                    <div className="product-reviews-header">
+                        <h2 className="product-reviews-heading">Customer Reviews</h2>
+                        <div className="product-average-rating">
                             <span>Average Rating:</span>
-                            <div className="stars">
+                            <div className="star-container product-heading">
                                 {Array.from({ length: 5 }, (_, i) => (
                                     <span key={i} className={i < averageRating ? 'star filled' : 'star'}>★</span>
                                 ))}
@@ -389,19 +372,19 @@ const View_Product = () => {
                         </div>
                     </div>
 
-                    <div className="review-container">
+                    <div className="product-review-container">
                         {reviews.length > 0 ? (
                             reviews.map((review, index) => (
-                                <div key={index} className="review">
-                                    <div className="review-header">
-                                        <p className="review-user">{review.email}</p>
-                                        <div className="review-rating">
+                                <div key={index} className="product-review">
+                                    <div className="product-review-header">
+                                        <p className="product-review-user">{review.user_email}</p>
+                                        <div className="star-container product">
                                             {Array.from({ length: 5 }, (_, i) => (
                                                 <span key={i} className={i < review.rating ? 'star filled' : 'star'}>★</span>
                                             ))}
                                         </div>
                                     </div>
-                                    <p className="review-comment">{review.comment}</p>
+                                    <p className="review-comment">{review.review}</p>
                                 </div>
                             ))
                         ) : (
@@ -415,7 +398,7 @@ const View_Product = () => {
             </div>
 
             <Footer />
-            
+
         </div>
     );
 };

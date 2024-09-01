@@ -30,12 +30,12 @@ router.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const hashedEmail = hashEmail(email);
+    // const hashedEmail = hashEmail(email);
 
     getConnection(async (err, connection) => {
         if (err) throw err;
         const sqlSearch = "SELECT * FROM user_login WHERE email = ?";
-        const search_query = mysql.format(sqlSearch, [hashedEmail]);
+        const search_query = mysql.format(sqlSearch, [email]);
 
         connection.query(search_query, async (err, result) => {
             if (err) throw err;
@@ -71,12 +71,13 @@ router.post('/login', async (req, res) => {
 // POST request - user wants to create an account
 router.post('/createAccount', async (req, res) => {
     const { email, password } = req.body;
+    console.log(email)
 
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    const hashedEmail = hashEmail(email);
+    // const hashedEmail = hashEmail(email);
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
@@ -87,9 +88,9 @@ router.post('/createAccount', async (req, res) => {
         }
 
         const sqlSearch = "SELECT * FROM user_login WHERE email = ?";
-        const search_query = mysql.format(sqlSearch, [hashedEmail]);
+        const search_query = mysql.format(sqlSearch, [email]);
         const sqlInsert = "INSERT INTO user_login (user_id, email, password) VALUES (0, ?, ?)";
-        const insert_query = mysql.format(sqlInsert, [hashedEmail, hashPassword]);
+        const insert_query = mysql.format(sqlInsert, [email, hashPassword]);
 
         connection.query(search_query, (err, result) => {
             if (err) {

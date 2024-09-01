@@ -368,6 +368,24 @@ body {
     font-weight: 550;
 }
 
+
+/* stars */
+.star-rating {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.star {
+    color: #d3d3d3;
+}
+
+.star.filled {
+    color: #FFD700;
+}
+
+
 /* responsiveness */
 @media (max-width: 1189px) {
     .search-input.expanded {

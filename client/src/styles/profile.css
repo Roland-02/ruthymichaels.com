@@ -142,7 +142,6 @@ th {
     margin-bottom: 0px;
     font-size: 20px;
     font-weight: 500;
-    font-style: italic;
 }
 
 .form-group textarea {
@@ -154,46 +153,8 @@ th {
     font-size: 20px;
 }
 
-.star-rating {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-}
-
-.star-container {
-    position: relative;
-    display: inline-block;
-    font-size: 2.5rem; 
-}
-
-.star {
-    color: #d3d3d3;
-}
-
-.full-star.filled, .half-star.filled {
-    color: #FFD700;
-}
-
-.half-star {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 57%;
-    overflow: hidden;
-    color: #d3d3d3; 
-}
-
-.half-star.filled {
-    color: #FFD700;
-}
-
-.star-container .half-star {
-    z-index: 1;
-}
-
-.star-container .full-star {
-    z-index: 0;
+.star-container.review-form {
+    font-size: 3rem; 
 }
 
 .form-buttons {
@@ -233,4 +194,23 @@ th {
 .btn-delete:hover {
     background-color: #fe1a1a;
     color: #fff;
+}
+
+/* Review link styles */
+.review-link {
+    text-decoration: none;
+    color: #007bff; /* Default link color */
+    text-decoration: underline;
+
+    cursor: pointer;
+}
+
+.review-link.reviewed {
+    color: #28a745; /* Green color for reviewed items */
+    text-decoration: underline;
+
+}
+
+.review-link:hover {
+    text-decoration: underline;
 }
