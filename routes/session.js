@@ -206,7 +206,6 @@ router.post('/login', (req, res) => {
 // POST request - user wants to create an account
 router.post('/createAccount', async (req, res) => {
     const { email, password } = req.body;
-    console.log(email)
 
     if (!email || !password) {
         return res.status(400).json({ message: 'Email and password are required' });

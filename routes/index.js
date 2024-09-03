@@ -3,6 +3,7 @@ var express = require('express');
 const { getConnection } = require('../database');
 const mysql = require('mysql');
 const router = express.Router();
+const nodemailer = require('nodemailer');
 
 
 // get products endpoint
@@ -695,6 +696,38 @@ router.post('/delete_review', async (req, res) => {
 
     });
 
+});
+
+router.post('/contact', (req, res) => {
+    const { email, orderRef, text } = req.body;
+
+    // Set up nodemailer transporter
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.myEmail,       
+            pass: process.env.myEmailPassword 
+        }
+    });
+
+    // Email content
+    const mailOptions = {
+        from: email,
+        to: process.env.myEmail,
+        subject: `Contact Form Submission from ${email}`,
+        text: `You have received a new message from the contact form.\n\nEmail: ${email}\nOrder Reference: ${orderRef || 'N/A'}\nMessage:\n${text}`
+    };
+
+    // Send email
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+            res.status(500).json({ success: false, error: 'Failed to send message.' });
+        } else {
+            console.log('Email sent:', info.response);
+            res.status(200).json({ success: true });
+        }
+    });
 });
 
 

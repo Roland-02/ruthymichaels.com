@@ -218,44 +218,7 @@ const Cart = () => {
 
     };
 
-    useEffect(() => {
-        const initialize = async () => {
-            if (loading) return; 
-
-            await fetchCartProducts();
-
-            if (session && session.id) {
-                await fetchWishlist();
-            }
-
-        };
-        window.scrollTo(0, 0);
-        initialize();
-
-    }, [session, loading, navigate]);
-
-    useEffect(() => {
-        if (cartProducts.length > 0) {
-            setShippingCost(3.99);
-        } else {
-            setShippingCost(0);
-        }
-    }, [cartProducts]);
-
-    useEffect(() => {
-
-        const params = new URLSearchParams(location.search);
-        const orderSuccess = params.get('order_success');
-        const token = params.get('token');
-
-        if (orderSuccess && token) {
-            setOrderSuccess(true);
-            localStorage.removeItem('cartProducts');
-            setCartedProducts([]);
-            setTotalPrice(0);
-        }
-
-    }, [location, session, cartProducts, totalPrice, navigate]);
+ 
 
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
@@ -335,6 +298,45 @@ const Cart = () => {
             console.error('Error during checkout:', error);
         }
     };
+
+    useEffect(() => {
+        const initialize = async () => {
+            if (loading) return; 
+
+            await fetchCartProducts();
+
+            if (session && session.id) {
+                await fetchWishlist();
+            }
+
+        };
+        window.scrollTo(0, 0);
+        initialize();
+
+    }, [session, loading, navigate]);
+
+    useEffect(() => {
+        if (cartProducts.length > 0) {
+            setShippingCost(3.99);
+        } else {
+            setShippingCost(0);
+        }
+    }, [cartProducts]);
+
+    useEffect(() => {
+
+        const params = new URLSearchParams(location.search);
+        const orderSuccess = params.get('order_success');
+        const token = params.get('token');
+
+        if (orderSuccess && token) {
+            setOrderSuccess(true);
+            localStorage.removeItem('cartProducts');
+            setCartedProducts([]);
+            setTotalPrice(0);
+        }
+
+    }, [location, session, cartProducts, totalPrice, navigate]);
 
 
     return (

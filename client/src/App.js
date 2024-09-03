@@ -8,6 +8,10 @@ import AdminProducts from './components/admin/Products_View';
 import Cart from './pages/cart';
 import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
+import About from './pages/about';
+import Contact from './pages/contact';
+
+
 
 
 const App = () => {
@@ -37,6 +41,9 @@ const App = () => {
                 <Route path="/profile/change_password/:id" element={<Profile form="change_password" />} />
                 <Route path="/account/review_item/:id" element={<Profile form="review" />} />
                 <Route path="/account/change_password/:id" element={<Profile form="change_password" />} />
+
+                <Route path="/about" element={<About />} />
+                <Route path="/contact" element={<Contact />} />
 
                 <Route path="/admin" element={<Admin />} />
                 <Route path="/admin/products" element={<AdminProducts />} />

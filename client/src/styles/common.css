@@ -122,6 +122,7 @@ body {
     fill: #ff68b3;
 }
 
+/* footer */
 .footer {
     position: sticky;
     bottom: 0;
@@ -130,6 +131,20 @@ body {
     height: 150px;
     background-color: #f59af161;
     margin-top: 7vh;
+}
+
+.footer-links {
+    margin-top: 10px;
+}
+
+.footer-link {
+    margin: 0 20px;
+    color: rgb(66, 65, 65);
+    text-decoration: none;
+}
+
+.footer-link:hover {
+    text-decoration: underline;
 }
 
 /* login */
@@ -311,7 +326,7 @@ body {
     border-radius: 5px;
 
     display: flex;
-    align-items: center; 
+    align-items: center;
     justify-content: center;
     text-align: center;
 
@@ -332,7 +347,7 @@ body {
 }
 
 .message-banner.success {
-    background-color: #98ffb2; 
+    background-color: #98ffb2;
 }
 
 .message-banner:hover {
@@ -391,7 +406,6 @@ body {
     font-size: 1.2rem;
     font-weight: 550;
 }
-
 
 /* stars */
 .star-rating {

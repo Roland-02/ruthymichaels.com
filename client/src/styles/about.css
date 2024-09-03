@@ -1,0 +1,16 @@
+/* about page */
+.view-container.about{
+    margin-top: 110px;
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    width: 75%;
+}
+
+.view-container.about h2{
+    margin-bottom: 20px;
+}
+
+.view-container.about p {
+    font-size: 20px;
+}

@@ -46,10 +46,10 @@ const Profile = ({ form }) => {
             const response = await axios.post(`/resend_verification/${session.email}`);
 
             if (response.status === 200) {
-                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+                setMessage({ content: `${response.data.message}`, product: '', action: 'success' });
 
             } else {
-                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+                setMessage({ content: `${response.data.message}`, product: '', action: 'error' });
             }
         } catch (error) {
             console.error('Error resending verification link:', error);
@@ -92,15 +92,15 @@ const Profile = ({ form }) => {
 
             const response = await axios.post('/server/add_review', data);
             if (response.status === 201) {
-                setMessage({ content: 'Thank you for your review', product: null, action: '' });
+                setMessage({ content: 'Thank you for your review', product: null, action: 'success' });
 
             } else {
                 console.error('Failed to save the review.');
-                setMessage({ content: 'Failed to save your review. Please try again', product: null, action: '' });
+                setMessage({ content: 'Failed to save your review. Please try again', product: null, action: 'error' });
             }
 
         } catch (error) {
-            setMessage({ content: 'Please rate and review before saving!', product: null, action: '' });
+            setMessage({ content: 'Please rate and review before saving!', product: null, action: 'error' });
             console.error('Error saving the review:', error);
         } finally {
             setReviewItem(null);
@@ -120,13 +120,13 @@ const Profile = ({ form }) => {
 
             const response = await axios.post('/server/delete_review', data);
             if (response.status === 200) {
-                setMessage({ content: 'Review deleted', product: null, action: '' });
+                setMessage({ content: 'Review deleted', product: null, action: 'success' });
             } else if (response.status === 404) {
                 setOverlayVisible(false)
             }
 
         } catch (error) {
-            setMessage({ content: 'Error deleting review', product: null, action: '' });
+            setMessage({ content: 'Error deleting review', product: null, action: 'error' });
             console.error('Error saving the review:', error);
 
         } finally {
@@ -157,7 +157,7 @@ const Profile = ({ form }) => {
 
         } catch (error) {
             console.error('Failed to fetch orders:', error);
-            setMessage({ content: 'Failed to load order history', product: null, action: null });
+            setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
         }
     };
 

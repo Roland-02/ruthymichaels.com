@@ -10,7 +10,7 @@ const MessageBanner = ({ message, setMessage }) => {
         if (message.content) {
             const timer = setTimeout(() => {
                 setMessage({ content: null, product: null, action: null });
-            }, 2500); //seconds
+            }, 3000); //seconds
 
             return () => clearTimeout(timer);
         }
