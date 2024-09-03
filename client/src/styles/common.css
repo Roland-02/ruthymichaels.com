@@ -16,7 +16,6 @@ body {
     width: 100%;
 }
 
-
 /* nav-bar */
 .nav-bar {
     position: fixed;
@@ -71,7 +70,6 @@ body {
     width: 125px;
     cursor: pointer;
 }
-
 
 /* search button */
 .search-container {
@@ -309,17 +307,32 @@ body {
     width: 30%;
     height: 75px;
     margin-top: 75px;
-    background-color: #f0f8ff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     border-radius: 5px;
+
     display: flex;
-    align-items: center;
-    justify-content: space-between;
+    align-items: center; 
+    justify-content: center;
     text-align: center;
+
     padding: 15px;
     z-index: 101;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
+
+    white-space: nowrap;
+}
+
+.message-banner.default {
+    background-color: #f0f8ff;
+}
+
+.message-banner.error {
+    background-color: #ff93a7;
+}
+
+.message-banner.success {
+    background-color: #98ffb2; 
 }
 
 .message-banner:hover {

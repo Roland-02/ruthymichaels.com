@@ -10,20 +10,6 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 
-// Function to hash email
-function hashEmail(email) {
-    return crypto.createHash('sha256').update(email).digest('hex');
-};
-
-router.get('/session', (req, res) => {
-    const session = {
-        email: req.cookies.sessionEmail || null,
-        id: req.cookies.sessionID || null,
-        method: null,
-    };
-    res.json(session);
-});
-
 // Function to send email
 const sendVerificationEmail = (userEmail) => {
     const transporter = nodemailer.createTransport({
@@ -58,6 +44,15 @@ const sendVerificationEmail = (userEmail) => {
         }
     });
 };
+
+router.get('/session', (req, res) => {
+    const session = {
+        email: req.cookies.sessionEmail || null,
+        id: req.cookies.sessionID || null,
+        method: null,
+    };
+    res.json(session);
+});
 
 router.get('/check_verification', (req, res) => {
     const { email } = req.query;
@@ -115,10 +110,9 @@ router.get('/verify_email', (req, res) => {
                 if (err) throw err;
 
                 if (result.affectedRows > 0) {
-                    const sessionData = { id: result.insertId, email: userEmail };
 
-                    req.cookies.sessionEmail = userEmail;
-                    req.cookies.sessionID = result.insertID;
+                    res.cookie('sessionEmail', userEmail, { httpOnly: true, secure: true });
+                    res.cookie('sessionID', result.insertId, { httpOnly: true, secure: true });
 
                     res.redirect('/index?verified=true');
 
@@ -173,6 +167,7 @@ router.post('/login', (req, res) => {
     const { email, password } = req.body;
 
     getConnection((err, connection) => {
+
         if (err) {
             console.error(err);
             return res.status(500).json({ message: 'Database connection error' });

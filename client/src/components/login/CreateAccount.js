@@ -23,14 +23,7 @@ const CreateAccount = () => {
   const [error, setError] = useState('');
   const { setSession } = useContext(SessionContext);
 
-  useEffect(() => {
-    window.scrollTo(0, 0);
-    const userId = Cookies.get('sessionID');
-    if (userId) {
-      console.log('Logged in User ID:', userId);
-    }
-  }, []);
-
+  
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };

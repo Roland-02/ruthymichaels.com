@@ -16,13 +16,14 @@ export const SessionProvider = ({ children }) => {
             } catch (error) {
                 console.error('Error fetching session data:', error);
             } finally {
-                setLoading(false);  // Session check complete
+                setLoading(false);
             }
         };
 
         checkSession();
-    }, []);
 
+    }, []);
+    
     return (
         <SessionContext.Provider value={{ session, setSession, loading }}>
             {children}

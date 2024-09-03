@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
+import Cookies from 'js-cookie';
 
 import Login from '../components/login/Login';
 import CreateAccount from '../components/login/CreateAccount';
@@ -16,26 +17,30 @@ import '../styles/index.css';
 
 
 const Index = ({ form }) => {
-  const { session } = useContext(SessionContext);
+  const { session, setSession } = useContext(SessionContext);
   const [message, setMessage] = useState({ content: null, product: null, action: null });
   const [overlayVisible, setOverlayVisible] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
+
   useEffect(() => {
     const params = new URLSearchParams(location.search);
     const verified = params.get('verified');
+
     if (verified) {
       if (verified === 'true') {
         setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
 
       } else {
         setMessage({ content: 'Account verification failed', product: null, action: 'error' });
-      }
-      navigate('/')
 
+      }
+
+      navigate('/');
     }
-  }, [location]);
+
+  }, [location, navigate, setSession]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -46,6 +51,7 @@ const Index = ({ form }) => {
     } else {
       setOverlayVisible(false);
     }
+
   }, [form]);
 
   const handleClose = () => {

@@ -7,6 +7,7 @@ import axios from 'axios';
 
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
+
 import FacebookLogin from 'react-facebook-login';
 import { GoogleOAuthProvider, GoogleLogin } from '@react-oauth/google';
 import Cookies from 'js-cookie';
@@ -23,13 +24,6 @@ const Login = () => {
     const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        window.scrollTo(0, 0);
-        const userId = Cookies.get('sessionID');
-        if (userId) {
-            console.log('Logged in User ID:', userId);
-        }
-    }, [session]);
 
     const togglePassword = () => {
         setShowPassword(!showPassword);
@@ -50,7 +44,6 @@ const Login = () => {
             console.error('Error resending verification link:', error);
         }
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
