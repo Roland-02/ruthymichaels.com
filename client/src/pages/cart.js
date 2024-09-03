@@ -14,7 +14,7 @@ import axios from 'axios';
 
 
 const Cart = () => {
-    const { session } = useContext(SessionContext);
+    const { session, loading } = useContext(SessionContext);
     const [cartProducts, setCartedProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -220,6 +220,8 @@ const Cart = () => {
 
     useEffect(() => {
         const initialize = async () => {
+            if (loading) return; 
+
             await fetchCartProducts();
 
             if (session && session.id) {
@@ -230,7 +232,7 @@ const Cart = () => {
         window.scrollTo(0, 0);
         initialize();
 
-    }, [session, navigate]);
+    }, [session, loading, navigate]);
 
     useEffect(() => {
         if (cartProducts.length > 0) {

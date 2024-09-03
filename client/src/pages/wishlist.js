@@ -14,13 +14,16 @@ import MessageBanner from '../components/common/MessageBanner';
 
 
 const Wishlist = () => {
-    const { session } = useContext(SessionContext);
+    const { session, loading } = useContext(SessionContext);
     const [wishlist, setWishlist] = useState([]);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
+    console.log(session)
 
     useEffect(() => {
         const initialize = async () => {
+            if (loading) return; 
+            
             if (session && session.id) {
                 await fetchWishlist();
             } else {
@@ -30,7 +33,7 @@ const Wishlist = () => {
         window.scrollTo(0, 0);
         initialize();
 
-    }, [session, navigate]);
+    }, [session, loading, navigate]);
 
 
     const fetchWishlist = async () => {

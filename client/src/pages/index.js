@@ -19,7 +19,23 @@ const Index = ({ form }) => {
   const { session } = useContext(SessionContext);
   const [message, setMessage] = useState({ content: null, product: null, action: null });
   const [overlayVisible, setOverlayVisible] = useState(false);
+  const location = useLocation();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const verified = params.get('verified');
+    if (verified) {
+      if (verified === 'true') {
+        setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
+
+      } else {
+        setMessage({ content: 'Account verification failed', product: null, action: 'error' });
+      }
+      navigate('/')
+
+    }
+  }, [location]);
 
   useEffect(() => {
     window.scrollTo(0, 0);

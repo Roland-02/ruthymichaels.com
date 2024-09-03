@@ -220,6 +220,17 @@ body {
     font-size: 0.80rem;
 }
 
+.resend-link.profile {
+    color: #007bff;
+    cursor: pointer;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.resend-link.profile:hover {
+    text-decoration: underline;
+}
+
 /* Results Container Styles */
 .results-container {
     position: absolute;

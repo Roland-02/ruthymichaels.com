@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useContext } from 'react';
 import { SessionContext } from '../context/SessionContext';
+import axios from 'axios';
 
 import '../../styles/common.css';
 import '../../bootstrap/css/mdb.min.css';
@@ -13,11 +14,13 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const Login = () => {
+    const { session, setSession } = useContext(SessionContext);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
-    const { session, setSession } = useContext(SessionContext);
+    const [message, setMessage] = useState({ content: null, product: null, action: null });
+    const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -32,8 +35,26 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
+    const handleResendVerification = async () => {
+        try {
+            // const email = session.email
+            const response = await axios.post(`/resend_verification/${email}`);
+
+            if (response.status === 200) {
+                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+
+            } else {
+                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+            }
+        } catch (error) {
+            console.error('Error resending verification link:', error);
+        }
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
         try {
             const response = await fetch('/login', {
                 method: 'POST',
@@ -45,12 +66,19 @@ const Login = () => {
 
             const result = await response.json();
 
-            if (result.id) {
+            if (response.status === 403) {
+                setErrorMessage('Please verify your account');
+                setVerificationStatus(false);
+
+            } else if (result.id) {
                 setSession({ id: result.id, email: result.email, method: null });
                 navigate('/');
+
             } else {
-                setErrorMessage('Password or email incorrect');
+                setErrorMessage('Email or password incorrect');
+                
             }
+
         } catch (error) {
             setErrorMessage('An error occurred. Please try again.');
         }
@@ -85,7 +113,16 @@ const Login = () => {
         <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
             <h2 className="text-center mt-2 mb-4">Login</h2>
 
-            {errorMessage && <label className="error-label">{errorMessage}</label>}
+            {errorMessage &&(
+                <label className="error-label">
+                    {errorMessage}
+                    {!verificationStatus && (
+                        <a className="resend-link" onClick={handleResendVerification}>
+                            Send link
+                        </a>
+                    )}
+                </label>
+            )}
 
             <form id="login-form" className="container" style={{ width: '90%' }} onSubmit={handleSubmit}>
                 <div className="form-outline mb-4" style={{ textAlign: 'left' }}>

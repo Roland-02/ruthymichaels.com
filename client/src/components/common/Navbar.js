@@ -34,6 +34,45 @@ const Navbar = () => {
 
   };
 
+  const handleClickOutside = (event) => {
+    if (
+      searchContainerRef.current &&
+      !searchContainerRef.current.contains(event.target) &&
+      resultsContainerRef.current &&
+      !resultsContainerRef.current.contains(event.target)
+    ) {
+      setIsExpanded(false);
+      setSearchQuery('');
+      setSearchResults([]);
+    }
+  };
+  
+  const handleTitleClick = async () => {
+    navigate('/');
+  };
+
+  const highlightText = (text, query) => {
+    if (!query) return text;
+
+    const parts = text.split(new RegExp(`(${query})`, 'gi'));
+    return parts.map((part, index) =>
+      part.toLowerCase() === query.toLowerCase() ? <strong key={index}>{part}</strong> : part
+    );
+  };
+
+  const handleProductClick = (name) => {
+    navigate(`/${name}`);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const toggleSearch = () => {
+    setSearchResults([]);
+    setIsExpanded(!isExpanded);
+  };
+
   useEffect(() => {
     const fetchSearchResults = async () => {
       if (searchQuery) {
@@ -60,51 +99,12 @@ const Navbar = () => {
     fetchSearchResults();
   }, [searchQuery]);
 
-  const handleClickOutside = (event) => {
-    if (
-      searchContainerRef.current &&
-      !searchContainerRef.current.contains(event.target) &&
-      resultsContainerRef.current &&
-      !resultsContainerRef.current.contains(event.target)
-    ) {
-      setIsExpanded(false);
-      setSearchQuery('');
-      setSearchResults([]);
-    }
-  };
-
   useEffect(() => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
-
-  const handleTitleClick = async () => {
-    navigate('/');
-  };
-
-  const highlightText = (text, query) => {
-    if (!query) return text;
-
-    const parts = text.split(new RegExp(`(${query})`, 'gi'));
-    return parts.map((part, index) =>
-      part.toLowerCase() === query.toLowerCase() ? <strong key={index}>{part}</strong> : part
-    );
-  };
-
-  const handleProductClick = (name) => {
-    navigate(`/${name}`);
-  };
-
-  const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
-  };
-
-  const toggleSearch = () => {
-    setSearchResults([]);
-    setIsExpanded(!isExpanded);
-  };
 
 
   return (

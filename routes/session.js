@@ -6,6 +6,8 @@ const mysql = require('mysql');
 var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
 var crypto = require('crypto');
+const nodemailer = require('nodemailer');
+const jwt = require('jsonwebtoken');
 
 
 // Function to hash email
@@ -22,48 +24,186 @@ router.get('/session', (req, res) => {
     res.json(session);
 });
 
-// POST request - user wants to login
-router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+// Function to send email
+const sendVerificationEmail = (userEmail) => {
+    const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+            user: process.env.myEmail,
+            pass: process.env.myEmailPassword,
+        },
+    });
+    const token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const verificationUrl = `http://localhost:8080/verify_email?token=${token}`;
 
-    if (!email || !password) {
-        return res.status(400).json({ message: 'Email and password are required' });
+    const mailOptions = {
+        from: process.env.myEmail,
+        to: userEmail,
+        subject: 'Email Verification',
+        html: `<p>
+        Please verify your email by clicking on the link below:</p>
+        <p>
+        <a href="${verificationUrl}">${verificationUrl}</a>
+        </p>
+        <p>
+        This link will expire in 1 hour</p>
+        <p>`,
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            console.error('Error sending email:', error);
+        } else {
+            console.log('Verification email sent:', info.response);
+        }
+    });
+};
+
+router.get('/check_verification', (req, res) => {
+    const { email } = req.query;
+
+    if (!email) {
+        return res.status(400).json({ message: 'Email is required' });
     }
 
-    // const hashedEmail = hashEmail(email);
+    getConnection((err, connection) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Database connection error' });
+        }
 
-    getConnection(async (err, connection) => {
-        if (err) throw err;
-        const sqlSearch = "SELECT * FROM user_login WHERE email = ?";
-        const search_query = mysql.format(sqlSearch, [email]);
+        const sqlSearch = 'SELECT verified FROM user_login WHERE email = ?';
+        connection.query(sqlSearch, [email], (err, result) => {
+            connection.release();
 
-        connection.query(search_query, async (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database query error' });
+            }
+
+            if (result.length === 0) {
+                return res.status(404).json({ message: 'User not found' });
+            }
+
+            const isVerified = result[0].verified;
+
+            if (isVerified) {
+                return res.status(200).json({ message: 'Verified', verified: true });
+            } else {
+                return res.status(200).json({ message: 'Unverified', verified: false });
+            }
+        });
+    });
+});
+
+router.get('/verify_email', (req, res) => {
+    const { token } = req.query;
+
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const userEmail = decoded.email;
+
+        // Get a connection from the pool
+        getConnection((err, connection) => {
             if (err) throw err;
 
-            if (result.length == 0) {
+            const update_query = 'UPDATE user_login SET verified = 1 WHERE email = ?';
+            connection.query(update_query, [userEmail], (err, result) => {
+                connection.release();  // Always release the connection back to the pool
+
+                if (err) throw err;
+
+                if (result.affectedRows > 0) {
+                    const sessionData = { id: result.insertId, email: userEmail };
+
+                    req.cookies.sessionEmail = userEmail;
+                    req.cookies.sessionID = result.insertID;
+
+                    res.redirect('/index?verified=true');
+
+                } else {
+                    res.redirect('/index?verified=false');
+
+                }
+            });
+        });
+
+    } catch (error) {
+        console.error('Error verifying email:', error);
+        res.status(400).send('Invalid or expired token.');
+    }
+});
+
+router.post('/resend_verification/:email', (req, res) => {
+    const { email } = req.params;
+
+    try {
+        // Get a connection from the pool
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const user_query = 'SELECT * FROM user_login WHERE email = ?';
+            connection.query(user_query, [email], (err, result) => {
+                if (err) throw err;
+
                 connection.release();
-                return res.status(404).json({ message: 'User not found' });
-            } else {
-                const dbPassword = result[0].password;
-                bcrypt.compare(password, dbPassword, async (err, isMatch) => {
-                    if (err) throw err;
 
-                    if (isMatch) {
-                        const user_id = result[0].user_id;
-                        connection.release();
-                        res.cookie('sessionEmail', email, { httpOnly: true, secure: true });
-                        res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
 
-                        console.log("--------> User logged in");
-                        return res.status(200).json({ message: 'Login successful', id: user_id, email: email, method: null });
+                if (result.length > 0 && !result[0].verified) {
+                    // Send the verification email again
+                    sendVerificationEmail(email);
 
-                    } else {
-                        connection.release();
-                        return res.status(401).json({ message: 'Credentials incorrect' });
-                    }
+                    res.status(200).json({ message: 'Verification link sent. Please check your email.' });
+                } else {
+                    res.status(400).json({ message: 'Email is already verified or does not exist.' });
+                }
+                
+            });
+        });
 
-                });
+    } catch (error) {
+        console.error('Error resending verification email:', error);
+        res.status(500).json({ message: 'Server error.' });
+    }
+});
+
+// POST request - user wants to login
+router.post('/login', (req, res) => {
+    const { email, password } = req.body;
+
+    getConnection((err, connection) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Database connection error' });
+        }
+
+        const user_query = 'SELECT * FROM user_login WHERE email = ?';
+        connection.query(user_query, [email], async (err, result) => {
+            connection.release();
+
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database query error' });
             }
+
+            if (result.length === 0) {
+                return res.status(400).json({ message: 'Email or password incorrect' });
+            }
+
+            const user = result[0];
+
+            if (!user.verified) {
+                return res.status(403).json({ message: 'Please verify your account', verified: false });
+            }
+
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Email or password incorrect' });
+            }
+
+            // Assuming you create a session or return user data here
+            return res.status(200).json({ id: user.user_id, email: user.email });
         });
     });
 });
@@ -112,6 +252,8 @@ router.post('/createAccount', async (req, res) => {
                         return res.status(500).json({ message: 'Database insertion error' });
                     }
 
+                    sendVerificationEmail(email);
+
                     const user_id = result.insertId;
                     res.cookie('sessionEmail', email, { httpOnly: true, secure: true });
                     res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
@@ -124,47 +266,6 @@ router.post('/createAccount', async (req, res) => {
 
         });
     });
-});
-
-// POST route to update user email
-router.post('/change_email/:userId', async (req, res) => {
-    try {
-        const userId = req.params.userId; // Get userId from request parameters
-        const { newEmail } = req.body; // Get newEmail from request body
-
-        // Validate input
-        if (!userId || !newEmail) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
-
-        // Hash the new email
-        const hashedEmail = hashEmail(newEmail);
-
-        // Update email in user_login table
-        getConnection(async (err, connection) => {
-            if (err) throw err;
-
-            const query = `UPDATE user_login SET email = ? WHERE user_id = ?`;
-
-            connection.query(query, [hashedEmail, userId], (error, results) => {
-                connection.release(); // Release connection before checking for errors
-
-                if (error) {
-                    console.error(error);
-                    return res.status(500).json({ error: 'Database update failed' });
-                }
-
-                // Update session email
-                res.cookie('sessionEmail', newEmail, { httpOnly: true, secure: true });
-
-                res.status(200).json({ message: 'Email updated successfully' });
-            });
-        });
-
-    } catch (error) {
-        console.error('Error updating email:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
-    }
 });
 
 // POST route to update user email
@@ -220,10 +321,10 @@ router.post('/signout', function (req, res) {
         console.log("--------> User signed out");
         console.log("Redirecting to home page...");
 
-       // Redirect to home or login page
+        // Redirect to home or login page
         res.redirect('/');
     });
- 
+
 
 });
 

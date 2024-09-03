@@ -3,16 +3,20 @@ import axios from 'axios';
 
 export const SessionContext = createContext();
 
+
 export const SessionProvider = ({ children }) => {
     const [session, setSession] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkSession = async () => {
             try {
-                const response = await axios.get('/session'); // Updated endpoint
+                const response = await axios.get('/session');
                 setSession(response.data);
             } catch (error) {
                 console.error('Error fetching session data:', error);
+            } finally {
+                setLoading(false);  // Session check complete
             }
         };
 
@@ -20,7 +24,7 @@ export const SessionProvider = ({ children }) => {
     }, []);
 
     return (
-        <SessionContext.Provider value={{ session, setSession }}>
+        <SessionContext.Provider value={{ session, setSession, loading }}>
             {children}
         </SessionContext.Provider>
     );
