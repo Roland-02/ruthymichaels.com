@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
-import '../styles/contact.css';
+import '../styles/common.css';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';

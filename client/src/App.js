@@ -12,8 +12,6 @@ import About from './pages/about';
 import Contact from './pages/contact';
 
 
-
-
 const App = () => {
     return (
         <SessionProvider>
@@ -26,7 +24,8 @@ const App = () => {
                 
                 <Route path="/login" element={<Index form="login" />} />
                 <Route path="/createAccount" element={<Index form="createAccount" />} />
-                
+                <Route path="/change_password" element={<Index form="change_password" />} />
+
                 <Route path="/item/:name" element={<View_Product />} />
 
                 <Route path="/basket" element={<Cart />} />

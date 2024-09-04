@@ -2,7 +2,6 @@ import React, { useContext, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-
 import { SessionContext } from '../context/SessionContext';
 import axios from 'axios';
 

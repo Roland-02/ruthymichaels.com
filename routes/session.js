@@ -9,16 +9,17 @@ var crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
-
-// Function to send email
-const sendVerificationEmail = (userEmail) => {
-    const transporter = nodemailer.createTransport({
+const transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
             user: process.env.myEmail,
             pass: process.env.myEmailPassword,
         },
     });
+
+// Function to send email
+const sendVerificationEmail = (userEmail) => {
+    
     const token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const verificationUrl = `http://localhost:8080/verify_email?token=${token}`;
 
@@ -211,7 +212,6 @@ router.post('/createAccount', async (req, res) => {
         return res.status(400).json({ message: 'Email and password are required' });
     }
 
-    // const hashedEmail = hashEmail(email);
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
 
@@ -262,42 +262,74 @@ router.post('/createAccount', async (req, res) => {
     });
 });
 
-// POST route to update user email
-router.post('/change_password/:userId', async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const { newPassword } = req.body;
+router.post('/forgot_password', (req, res) => {
+    const { email } = req.body;
 
-        // Validate input
-        if (!userId || !newPassword) {
-            return res.status(400).json({ error: 'Missing required fields' });
-        }
+    getConnection((err, connection) => {
+        if (err) throw err;
 
-        // Hash the new email
-        const salt = await bcrypt.genSalt(10);
-        const hashPassword = await bcrypt.hash(newPassword, salt);
-
-        // Update email in user_login table
-        getConnection(async (err, connection) => {
+        const query = 'SELECT user_id FROM user_login WHERE email = ?';
+        connection.query(query, [email], (err, result) => {
+            connection.release();
             if (err) throw err;
 
-            const query = `UPDATE user_login SET password = ? WHERE user_id = ?`;
+            if (result.length > 0) {
+                const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+                const resetLink = `http://localhost:8080/change_password?token=${token}`;
 
-            connection.query(query, [hashPassword, userId], (error, results) => {
-                connection.release(); // Release connection before checking for errors
+                // Send email with reset link
+                const mailOptions = {
+                    from: process.env.myEmail,
+                    to: email,
+                    subject: 'Password Reset',
+                    text: `Click the link below to reset your password:\n ${resetLink}`
+                };
 
-                if (error) {
-                    console.error(error);
-                    return res.status(500).json({ error: 'Database update failed' });
+                transporter.sendMail(mailOptions, (error, info) => {
+                    if (error) {
+                        console.error('Error sending email:', error);
+                        res.json({ success: false });
+                    } else {
+                        res.json({ success: true });
+                    }
+                });
+            } else {
+                res.json({ success: false });
+            }
+        });
+    });
+});
+
+// POST route to update user email
+router.post('/change_password', async (req, res) => {
+    const { token, password } = req.body;
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const email = decoded.email;
+
+        const salt = await bcrypt.genSalt(10);
+        const hashPassword = await bcrypt.hash(password, salt);
+    
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            const updateQuery = 'UPDATE user_login SET password = ? WHERE email = ?';
+            connection.query(updateQuery, [hashPassword, email], (err, result) => {
+                connection.release();
+                if (err) throw err;
+
+                if (result.affectedRows > 0) {
+                    res.json({ success: true });
+                } else {
+                    res.json({ success: false });
                 }
 
-                res.status(200).json({ message: 'Password updated successfully' });
             });
         });
-
     } catch (error) {
-        console.error('Error updating password:', error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        console.error('Error changing password:', error);
+        res.status(400).json({ success: false });
     }
 });
 

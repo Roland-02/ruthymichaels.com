@@ -21,7 +21,7 @@ const Login = () => {
     const [showPassword, setShowPassword] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [message, setMessage] = useState({ content: null, product: null, action: null });
-    const [verificationStatus, setVerificationStatus] = useState(null);
+    const [verificationStatus, setVerificationStatus] = useState(true);
     const navigate = useNavigate();
 
 
@@ -35,15 +35,40 @@ const Login = () => {
             const response = await axios.post(`/resend_verification/${email}`);
 
             if (response.status === 200) {
-                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+                setMessage({ content: `${response.data.message}`, product: '', action: 'success' });
 
             } else {
-                setMessage({ content: `${response.data.message}`, product: '', action: '' });
+                setMessage({ content: `${response.data.message}`, product: '', action: 'error' });
+
             }
         } catch (error) {
             console.error('Error resending verification link:', error);
         }
     };
+
+    const handleForgotPassword = async () => {
+
+        if (!email) {
+            setErrorMessage('Please enter your email to reset your password');
+            return;
+        }
+
+        try {
+            const response = await axios.post('/forgot_password', { email });
+
+            if (response.data.success) {
+                setErrorMessage('A reset link has been sent to your email')
+                setMessage({ content: 'Password reset link sent to your email.', product: null, action: 'success' });
+            } else {
+                setMessage({ content: 'Error sending password reset link.', product: null, action: 'error' });
+            }
+
+        } catch (error) {
+            console.error('Error sending password reset link:', error);
+            setMessage({ content: 'Error sending password reset link.', product: null, action: 'error' });
+        }
+    };
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -69,7 +94,7 @@ const Login = () => {
 
             } else {
                 setErrorMessage('Email or password incorrect');
-                
+
             }
 
         } catch (error) {
@@ -104,17 +129,19 @@ const Login = () => {
 
     return (
         <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
-            <h2 className="text-center mt-2 mb-4">Login</h2>
+            <h2 className="text-center mt-2 mb-2">Login</h2>
 
-            {errorMessage &&(
-                <label className="error-label">
-                    {errorMessage}
+            {errorMessage && (
+                <div className="error-container">
+                    <label className="error-label">
+                        {errorMessage}
+                    </label>
                     {!verificationStatus && (
                         <a className="resend-link" onClick={handleResendVerification}>
-                            Send link
+                            Send verification link
                         </a>
                     )}
-                </label>
+                </div>
             )}
 
             <form id="login-form" className="container" style={{ width: '90%' }} onSubmit={handleSubmit}>
@@ -184,6 +211,8 @@ const Login = () => {
                 </div>
                 <div className="text-center">
                     <p>Don't have an account? <a href="/createAccount">Sign up</a></p>
+                    <p className='forgot-password'><a onClick={handleForgotPassword}>Forgot Password?</a></p>
+
                 </div>
             </form>
         </div>

@@ -14,6 +14,7 @@ import { jwtDecode } from 'jwt-decode';
 
 
 const CreateAccount = () => {
+  const { setSession } = useContext(SessionContext);
   const navigate = useNavigate();
   const location = useLocation();
   const [email, setEmail] = useState('');
@@ -21,7 +22,6 @@ const CreateAccount = () => {
   const [confPassword, setConfPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
-  const { setSession } = useContext(SessionContext);
 
   
   const togglePassword = () => {

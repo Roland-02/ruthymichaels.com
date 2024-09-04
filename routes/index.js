@@ -715,7 +715,7 @@ router.post('/contact', (req, res) => {
         from: email,
         to: process.env.myEmail,
         subject: `Contact Form Submission from ${email}`,
-        text: `You have received a new message from the contact form.\n\nEmail: ${email}\nOrder Reference: ${orderRef || 'N/A'}\nMessage:\n${text}`
+        text: `You have received a new message from the contact form.\n\nEmail: ${email}\n\nOrder Reference: ${orderRef || 'N/A'}\n\nMessage:\n${text}`
     };
 
     // Send email
