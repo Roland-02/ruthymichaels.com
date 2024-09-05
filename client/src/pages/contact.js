@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
 import axios from 'axios';
 
-import '../styles/common.css';
+import '../styles/contact.css';
 
 import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
@@ -11,6 +11,8 @@ import MessageBanner from '../components/common/MessageBanner';
 
 
 const Contact = () => {
+    window.scrollTo(0, 0);
+
     const { session } = useContext(SessionContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState(session ? session.email : '');
