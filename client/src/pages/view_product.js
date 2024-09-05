@@ -21,6 +21,7 @@ const View_Product = () => {
         name: '',
         type: '',
         description: '',
+        age: '',
         price: '',
         imageUrls: []
     });
@@ -102,7 +103,6 @@ const View_Product = () => {
                 setCartedProducts(allCart);
             } else {
                 // fetch cart from cache
-                console.log('fetch from cache')
                 const cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];
                 const cartProductIDs = cachedCart.map(item => item.productID);
                 setCartedProducts(cartProductIDs);

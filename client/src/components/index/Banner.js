@@ -1,5 +1,5 @@
-// src/components/common/Banner.js
 import React from 'react';
+
 import '../../styles/index.css';
 import '../../bootstrap/css/mdb.min.css';
 

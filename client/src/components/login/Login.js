@@ -93,12 +93,12 @@ const Login = () => {
                 navigate('/');
 
             } else {
-                setErrorMessage('Email or password incorrect');
+                setErrorMessage(result.message);
 
             }
 
         } catch (error) {
-            setErrorMessage('An error occurred. Please try again.');
+            console.log(error)
         }
     };
 

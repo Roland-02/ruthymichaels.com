@@ -14,7 +14,7 @@ router.get('/get_products', async (req, res) => {
             return res.status(500).send('Database connection failed');
         }
 
-        const query = 'SELECT id, name, type, description, price, image_URLs FROM products';
+        const query = 'SELECT * FROM products';
         connection.query(query, (error, results) => {
             connection.release();
 
@@ -43,7 +43,7 @@ router.get('/get_product', async (req, res) => {
                 return res.status(500).send('Database connection failed');
             }
 
-            const query = 'SELECT id, name, type, description, price, image_URLs FROM products WHERE id = ?';
+            const query = 'SELECT * FROM products WHERE id = ?';
             connection.query(query, [id], (error, results) => {
                 connection.release();
 
@@ -66,7 +66,7 @@ router.get('/get_product', async (req, res) => {
                 return res.status(500).send('Database connection failed');
             }
 
-            const query = 'SELECT id, name, type, description, price, image_URLs FROM products WHERE name = ?';
+            const query = 'SELECT * FROM products WHERE name = ?';
             connection.query(query, [name], (error, results) => {
                 connection.release();
 
@@ -110,7 +110,7 @@ router.get('/get_products_by_ids', async (req, res) => {
         // Generate placeholders for the query
         const placeholders = idArray.map(() => '?').join(',');
 
-        const query = `SELECT id, name, type, description, price, image_URLs FROM products WHERE id IN (${placeholders})`;
+        const query = `SELECT * FROM products WHERE id IN (${placeholders})`;
         connection.query(query, idArray, (error, results) => {
             connection.release();
 
@@ -728,6 +728,63 @@ router.post('/contact', (req, res) => {
             res.status(200).json({ success: true });
         }
     });
+});
+
+// delete account
+router.post('/delete_account/:user_id', async (req, res) => {
+    const { user_id } = req.params;
+    console.log(user_id)
+    if (!user_id) {
+        return res.status(400).json({ error: 'User ID is required' });
+    }
+
+    getConnection(async (err, connection) => {
+        if (err) throw err;
+
+        try {
+            // Start a transaction to ensure atomicity
+            await connection.beginTransaction();
+
+            // Delete user from user_login
+            const deleteUserQuery = `DELETE FROM user_login WHERE user_id = ?`;
+
+            // Delete user from user_cart
+            const deleteCartQuery = `DELETE FROM user_cart WHERE user_id = ?`;
+
+            // Delete user from user_wishlist
+            const deleteWishlistQuery = `DELETE FROM user_wishlist WHERE user_id = ?`;
+
+            // Execute all queries
+            await connection.query(deleteUserQuery, [user_id], (err, result) => {
+                if(err) throw err;
+            });
+
+            await connection.query(deleteCartQuery, [user_id], (err, result) => {
+                if(err) throw err;
+            });
+
+            await connection.query(deleteWishlistQuery, [user_id], (err, result) => {
+                if(err) throw err;
+            });
+
+            // Commit the transaction if all queries succeed
+            await connection.commit();
+
+            console.log('deleted user')
+
+            res.status(200).send({ success: true });
+
+        } catch (err) {
+            // Rollback the transaction in case of error
+            await connection.rollback();
+            console.error('Error deleting account and related data:', err);
+            res.status(500).send({ message: 'Failed to delte account' });
+
+        } finally {
+            connection.release(); // Always release the connection
+        }
+    });
+
 });
 
 

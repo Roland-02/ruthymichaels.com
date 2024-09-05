@@ -8,6 +8,7 @@
     display: flex;
     align-items: center;
     flex-direction: column;
+    padding-bottom: 150px;
 }
 
 .profile-info {
@@ -310,4 +311,28 @@ th {
     margin-top: -10px;
     margin-bottom: 10px;
     text-align: center;
+}
+
+
+/* delete account */
+.delete-account-container {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    margin-top: 30px;
+}
+
+.delete-account-btn {
+    background-color: rgba(199, 41, 41, 0.608);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+
+.delete-account-btn:hover {
+    background-color: rgb(199, 41, 41)
 }

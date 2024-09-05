@@ -184,7 +184,7 @@ router.post('/login', (req, res) => {
             }
 
             if (result.length === 0) {
-                return res.status(400).json({ message: 'Email or password incorrect' });
+                return res.status(400).json({ message: 'User not found' });
             }
 
             const user = result[0];

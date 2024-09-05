@@ -14,7 +14,7 @@ import ReviewForm from '../components/profile/ReviewForm';
 
 
 const Profile = ({ form }) => {
-    const { session, loading } = useContext(SessionContext);
+    const { session, setSession, loading } = useContext(SessionContext);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [orders, setOrders] = useState([]);
     const [reviews, setReviews] = useState({});
@@ -136,6 +136,29 @@ const Profile = ({ form }) => {
         }
     };
 
+    const handleDeleteAccount = async () => {
+        if (window.confirm("Are you sure you want to delete your account? This action cannot be undone.")) {
+            try {
+                const response = await axios.post(`/server/delete_account/${session.id}`);
+                if (response.data.success) {
+
+                    setMessage({ content: 'We\'re sorry to see you go :(', product: '', action: 'success' })
+
+                    setTimeout(() => {
+                        setSession(null);
+                        navigate('/');
+                    }, 3000); // 3000 milliseconds = 3 seconds
+
+                } else {
+                    setMessage({ content: 'There was an error deleting your account', product: '', action: 'error' })
+                }
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                setMessage({ content: 'There was an error deleting your account', product: '', action: 'error' })
+            }
+        }
+    };
+
     const fetchOrders = async () => {
         try {
             const response = await axios.get(`/server/order_history/${session.id}`);
@@ -199,7 +222,7 @@ const Profile = ({ form }) => {
         window.scrollTo(0, 0);
 
         const initialize = async () => {
-            if (loading) return; 
+            if (loading) return;
 
             if (session && session.id) {
 
@@ -329,6 +352,12 @@ const Profile = ({ form }) => {
                         handleReviewClick={handleReviewClick}
                         reviews={reviews}
                     />
+
+                    <div className="delete-account-container">
+                        <button className="delete-account-btn" onClick={handleDeleteAccount}>
+                            Delete Account
+                        </button>
+                    </div>
 
                 </div>
             </div>

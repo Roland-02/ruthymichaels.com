@@ -35,7 +35,7 @@ router.get('/oauth2callback', async (req, res) => {
 // handle product upload
 router.post('/products/add_product', upload.array('images', 6), async (req, res) => {
     try {
-        const { name, type, description, price } = req.body;
+        const { name, type, description, age, price } = req.body;
         const files = req.files;
         if (!name || !price || files.length === 0) {
             return res.status(400).send({ message: 'Name, price, and at least one image are required' });
@@ -71,8 +71,8 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
         getConnection((err, connection) => {
             if (err) throw err;
 
-            let query = 'INSERT INTO products (id, name, type, description, price, image_URLs) VALUES (0, ?, ?, ?, ?, ?)';
-            connection.query(query, [name, type, description, price, imageUrlsString], (error, results) => {
+            let query = 'INSERT INTO products (id, name, type, description, age, price, image_URLs) VALUES (0, ?, ?, ?, ?, ?)';
+            connection.query(query, [name, type, description, age, price, imageUrlsString], (error, results) => {
                 connection.release();
 
                 if (error) {
@@ -93,7 +93,7 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
 router.post('/products/edit_product/:id', upload.array('images', 6), async (req, res) => {
     try {
         const { id } = req.params;
-        const { name, type, description, price } = req.body;
+        const { name, type, description, age, price } = req.body;
         const files = req.files;
         const existingImages = req.body.existingImages || [];
         
@@ -144,8 +144,8 @@ router.post('/products/edit_product/:id', upload.array('images', 6), async (req,
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'UPDATE products SET name = ?, type = ?, description = ?, price = ?, image_URLs = ? WHERE id = ?';
-            connection.query(query, [name, type, description, price, imageUrlsString, id], (error, results) => {
+            const query = 'UPDATE products SET name = ?, type = ?, description = ?, age = ? , price = ?, image_URLs = ? WHERE id = ?';
+            connection.query(query, [name, type, description, age, price, imageUrlsString, id], (error, results) => {
                 connection.release();
 
                 if (error) {
@@ -209,30 +209,5 @@ router.post('/products/delete_product/:id', async (req, res) => {
     }
 });
 
-// router.post('/products/delete_product/:id', async (req, res) => {
-//     try {
-//         const { id } = req.params;
-
-//         getConnection((err, connection) => {
-//             if (err) throw err;
-
-//             let query = 'DELETE FROM products WHERE id = ?';
-//             connection.query(query, [id], (error, results) => {
-//                 connection.release();
-
-//                 if (error) {
-//                     console.error(error);
-//                     return res.status(500).send('Database deletion failed');
-//                 }
-
-//                 res.status(200).send({ message: 'Product deleted successfully' });
-//             });
-//         });
-
-//     } catch (error) {
-//         console.error('Error:', error);
-//         res.status(500).send('An error occurred while processing the request');
-//     }
-// });
 
 module.exports = router;
