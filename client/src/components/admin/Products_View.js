@@ -2,14 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+
 import '../../styles/common.css';
 import '../../styles/admin.css';
 import '../../bootstrap/css/mdb.min.css';
 
 import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
-import ProductForm from './Product_Form';
+import ProductForm from './ProductForm'
+
+// import ProductForm from './Edit_Product_Form';
 
 const Products_View = ({ session }) => {
     const [products, setProducts] = useState([]);
@@ -46,12 +48,14 @@ const Products_View = ({ session }) => {
 
     }, [location.pathname, navigate]);
 
+    console.log(products)
+
     const handleDelete = async (productId) => {
         try {
             const response = await axios.post(`/admin/products/delete_product/${productId}`);
             if (response.status == 200) {
                 setProducts(products.filter(product => product.id !== productId));
-            setMessage({ text: 'Product deleted', type: 'success' });
+                setMessage({ text: 'Product deleted', type: 'success' });
             } else {
                 setMessage({ text: 'Failed to delete', type: 'danger' });
             }
@@ -83,10 +87,11 @@ const Products_View = ({ session }) => {
     return (
         <div>
             <Navbar session={session} />
+
             {showAddForm && (
                 <div>
-                    <div id="overlay" onClick={handleClose}></div>
-                    <ProductForm/>
+                    <div className="overlay" onClick={handleClose}></div>
+                    <ProductForm />
                 </div>
             )}
 
@@ -107,6 +112,7 @@ const Products_View = ({ session }) => {
                                     <th>Name</th>
                                     <th>Type</th>
                                     <th>Description</th>
+                                    <th>Age</th>
                                     <th>Price</th>
                                     <th></th>
                                 </tr>
@@ -117,6 +123,7 @@ const Products_View = ({ session }) => {
                                         <td>{product.name}</td>
                                         <td>{product.type}</td>
                                         <td>{product.description}</td>
+                                        <td>{product.age === 0 ? 'Kids' : 'Adults'}</td>
                                         <td>£{product.price}</td>
                                         <td>
                                             <svg

@@ -17,9 +17,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [cartProducts, setCartedProducts] = useState([]);
     const [productTypes, setProductTypes] = useState([]);
     const [selectedAge, setSelectedAge] = useState(""); // New state for age filter
-
-    // const [imageSrc, setImageSrc] = useState();
-    // const [loading, setLoading] = useState(false);
     const [selectedType, setSelectedType] = useState("");
     const [sortOption, setSortOption] = useState("default");
     const [minPrice, setMinPrice] = useState(0);

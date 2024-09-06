@@ -3,14 +3,14 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../../client/src/components/context/SessionContext';
 import Index from './pages/index';
 import View_Product from './pages/view_product'
-import Admin from './pages/admin'; 
-import AdminProducts from './components/admin/Products_View';
 import Cart from './pages/cart';
 import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
 import About from './pages/about';
 import Contact from './pages/contact';
 
+import Admin from './pages/admin'; 
+import AdminProducts from './components/admin/Products_View';
 
 const App = () => {
     return (

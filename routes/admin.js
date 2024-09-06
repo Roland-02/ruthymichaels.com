@@ -32,7 +32,6 @@ router.get('/oauth2callback', async (req, res) => {
     }
 });
 
-// handle product upload
 router.post('/products/add_product', upload.array('images', 6), async (req, res) => {
     try {
         const { name, type, description, age, price } = req.body;
