@@ -23,6 +23,7 @@ const Cart = () => {
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
     const location = useLocation();
+    window.scrollTo(0, 0);
 
 
     const fetchCartProducts = async () => {
@@ -218,8 +219,6 @@ const Cart = () => {
 
     };
 
- 
-
     const calculateTotalPrice = (products) => {
         return products.reduce((total, product) => total + (product.price * product.qty), 0);
     };
@@ -310,7 +309,6 @@ const Cart = () => {
             }
 
         };
-        window.scrollTo(0, 0);
         initialize();
 
     }, [session, loading, navigate]);

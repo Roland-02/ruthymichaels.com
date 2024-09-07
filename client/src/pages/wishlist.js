@@ -18,22 +18,7 @@ const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
-    console.log(session)
-
-    useEffect(() => {
-        const initialize = async () => {
-            if (loading) return; 
-            
-            if (session && session.id) {
-                await fetchWishlist();
-            } else {
-                navigate('/login');
-            }
-        };
-        window.scrollTo(0, 0);
-        initialize();
-
-    }, [session, loading, navigate]);
+    window.scrollTo(0, 0);
 
 
     const fetchWishlist = async () => {
@@ -80,6 +65,21 @@ const Wishlist = () => {
             setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'love' });
         }
     };
+
+    useEffect(() => {
+        const initialize = async () => {
+            if (loading) return; 
+
+            // if (session && session.id) {
+            await fetchWishlist();
+            // } else {
+            // navigate('/login');
+            // }
+        };
+        initialize();
+
+    }, [session, loading, navigate]);
+
 
     return (
         <div>

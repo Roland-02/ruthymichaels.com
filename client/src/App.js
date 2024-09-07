@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../../client/src/components/context/SessionContext';
+
 import Index from './pages/index';
 import View_Product from './pages/view_product'
 import Cart from './pages/cart';
@@ -9,7 +10,8 @@ import Profile from './pages/profile';
 import About from './pages/about';
 import Contact from './pages/contact';
 
-import Admin from './pages/admin'; 
+import ProtectedRoute from './components/context/ProtectedRoutes';
+import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
 
 const App = () => {
@@ -17,37 +19,29 @@ const App = () => {
         <SessionProvider>
             <Router>
                 <Routes>
-                    
-                <Route path="/" element={<Index />} />
-                <Route path="/home" element={<Index />} />
-                <Route path="/index" element={<Index />} />
-                
-                <Route path="/login" element={<Index form="login" />} />
-                <Route path="/createAccount" element={<Index form="createAccount" />} />
-                <Route path="/change_password" element={<Index form="change_password" />} />
 
-                <Route path="/item/:name" element={<View_Product />} />
+                    <Route path="/" element={<Index />} />
+                    <Route path="/home" element={<Index />} />
+                    <Route path="/index" element={<Index />} />
+                    <Route path="/login" element={<Index form="login" />} />
+                    <Route path="/createAccount" element={<Index form="createAccount" />} />
+                    <Route path="/change_password" element={<Index form="change_password" />} />
 
-                <Route path="/basket" element={<Cart />} />
-                <Route path="/cart" element={<Cart />} />
+                    <Route path="/item/:name" element={<View_Product />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/cart" element={<Cart />} />
 
-                <Route path="/wishlist" element={<Wishlist />} />
+                    {/* Protected Routes (requires logged in user) */}
+                    <Route path="/wishlist" element={<ProtectedRoute element={<Wishlist />} />} />
+                    <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+                    <Route path="/profile/review_item/:id" element={<ProtectedRoute element={<Profile form="review" />} />} />
+                    <Route path="/profile/change_password/:id" element={<ProtectedRoute element={<Profile form="change_password" />} />} />
 
-                <Route path="/profile" element={<Profile />} />
-                <Route path="/account" element={<Profile />} />
-
-                <Route path="/profile/review_item/:id" element={<Profile form="review" />} />
-                <Route path="/profile/change_password/:id" element={<Profile form="change_password" />} />
-                <Route path="/account/review_item/:id" element={<Profile form="review" />} />
-                <Route path="/account/change_password/:id" element={<Profile form="change_password" />} />
-
-                <Route path="/about" element={<About />} />
-                <Route path="/contact" element={<Contact />} />
-
-                <Route path="/admin" element={<Admin />} />
-                <Route path="/admin/products" element={<AdminProducts />} />
-                <Route path="/admin/products/add_product" element={<AdminProducts />} />
-                <Route path="/admin/products/edit_product/:id" element={<AdminProducts />} />
+                    <Route path="/admin" element={<Admin />} />
+                    <Route path="/admin/products" element={<AdminProducts />} />
+                    <Route path="/admin/products/add_product" element={<AdminProducts />} />
+                    <Route path="/admin/products/edit_product/:id" element={<AdminProducts />} />
 
                 </Routes>
             </Router>

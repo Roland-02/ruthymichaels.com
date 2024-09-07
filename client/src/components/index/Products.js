@@ -332,7 +332,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                             </div>
 
                             {/* Age Filter */}
-                            <div className="type-filter">
+                            <div className="type-filter mt-2">
                                 <h4>Age</h4>
                                 <div>
                                     <input

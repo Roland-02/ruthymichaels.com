@@ -8,6 +8,6 @@
 
 .wishlist-container {
     display: flex;
-    width: 70%;
+    width: 100%;
     justify-content: center;
 }

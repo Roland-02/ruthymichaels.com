@@ -3,7 +3,6 @@ import axios from 'axios';
 
 export const SessionContext = createContext();
 
-
 export const SessionProvider = ({ children }) => {
     const [session, setSession] = useState(null);
     const [loading, setLoading] = useState(true);

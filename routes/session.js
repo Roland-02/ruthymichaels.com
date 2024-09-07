@@ -1,11 +1,8 @@
-// login and signup broken
-
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql');
 var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
-var crypto = require('crypto');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
@@ -15,7 +12,7 @@ const transporter = nodemailer.createTransport({
             user: process.env.myEmail,
             pass: process.env.myEmailPassword,
         },
-    });
+});
 
 // Function to send email
 const sendVerificationEmail = (userEmail) => {
@@ -46,11 +43,33 @@ const sendVerificationEmail = (userEmail) => {
     });
 };
 
+const sendAdminVerificationEmail = async (user) => {
+    // Generate a verification token for the admin
+    const token = jwt.sign(
+        { email: user.email, role: user.role },
+        process.env.JWT_SECRET,
+        { expiresIn: '15m' } // The link will expire in 15 minutes
+    );
+
+    const verificationUrl = `http:localhost:8080/admin/verify/${token}`;
+    
+    // Send email
+    const mailOptions = {
+        from: process.env.myEmail,
+        to: process.env.myEmail, // Sends to the specified admin email
+        subject: 'Admin Login Verification',
+        html: `<p>Click the link below to verify and complete your admin login:</p>
+               <a href="${verificationUrl}">Verify Admin Login</a>`,
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
 router.get('/session', (req, res) => {
     const session = {
         email: req.cookies.sessionEmail || null,
         id: req.cookies.sessionID || null,
-        method: null,
+        method: req.cookies.sessionMethod || null,
     };
     res.json(session);
 });
@@ -196,6 +215,10 @@ router.post('/login', (req, res) => {
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).json({ message: 'Email or password incorrect' });
+            }
+
+            if(user.role === 'admin'){
+                sendAdminVerificationEmail(email);
             }
 
             // Assuming you create a session or return user data here

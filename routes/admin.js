@@ -32,6 +32,34 @@ router.get('/oauth2callback', async (req, res) => {
     }
 });
 
+router.get('/admin/verify/:token', async (req, res) => {
+    const token = req.params.token;
+
+    try {
+        // Verify the token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Check if the user is still an admin (you can query the database to double-check)
+        const user = await db.query('SELECT * FROM user_login WHERE email = ?', [decoded.email]);
+
+        if (user && user.role === 'admin') {
+            // Generate a new token or session for the admin user
+            const adminToken = jwt.sign(
+                { email: user.email, role: 'admin' },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            // Redirect or send response indicating success
+            res.redirect(`${process.env.FRONTEND_URL}/admin/dashboard?token=${adminToken}`);
+        } else {
+            res.status(403).json({ message: 'Unauthorized or invalid token' });
+        }
+    } catch (error) {
+        res.status(400).json({ message: 'Token is invalid or expired' });
+    }
+});
+
 router.post('/products/add_product', upload.array('images', 6), async (req, res) => {
     try {
         const { name, type, description, age, price } = req.body;

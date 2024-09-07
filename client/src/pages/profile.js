@@ -22,6 +22,7 @@ const Profile = ({ form }) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
+    window.scrollTo(0, 0);
 
 
     const [User, setUser] = useState({
@@ -219,42 +220,34 @@ const Profile = ({ form }) => {
     };
 
     useEffect(() => {
-        window.scrollTo(0, 0);
-
         const initialize = async () => {
-            if (loading) return;
+            // if (loading) return;
 
-            if (session && session.id) {
+            // Fetch the user's info if a session exists
+            try {
+                setUser(prevState => ({
+                    ...prevState,
+                    email: session.email,
+                }));
 
-                // Fetch the user's info if a session exists
-                try {
-                    setUser(prevState => ({
-                        ...prevState,
-                        email: session.email,
-                    }));
-                    await fetchOrders();
+                await fetchOrders();
 
-                    if (!session.method) {
-                        await checkVerificationStatus();
-                    }
-
-                } catch (error) {
-                    console.error('Error fetching user info:', error);
+                if (session.method === null) {
+                    await checkVerificationStatus();
                 }
 
-            } else {
-                navigate('/login');
+            } catch (error) {
+                console.error('Error fetching user info:', error);
             }
+            
         }
 
         initialize();
 
-    }, [session, loading, navigate]);
+    }, [session, navigate]);
 
     useEffect(() => {
-        window.scrollTo(0, 0);
 
-        // Determine which form to show based on the 'form' prop
         if (form === 'review' || form === 'change_password') {
             setOverlayVisible(true);
         } else {
@@ -263,6 +256,7 @@ const Profile = ({ form }) => {
 
     }, [form]);
 
+    console.log(session)
 
     return (
         <div>

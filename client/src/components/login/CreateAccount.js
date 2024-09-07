@@ -62,6 +62,7 @@ const CreateAccount = () => {
     if (response.accessToken) {
       Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
       Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
+      Cookies.set('sessionMethod', 'facebook', { path: '/', secure: true, sameSite: 'Strict' });
       setSession({ id: response.userID, email: response.email, method: 'facebook' });
       navigate('/');
     } else {
@@ -76,6 +77,7 @@ const CreateAccount = () => {
       const decodedToken = jwtDecode(response.credential);
       Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
       Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
+      Cookies.set('sessionMethod', 'google', { path: '/', secure: true, sameSite: 'Strict' });
       setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google' });
       navigate('/');
     } else {

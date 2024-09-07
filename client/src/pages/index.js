@@ -23,37 +23,43 @@ const Index = ({ form }) => {
   const [token, setToken] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
+  window.scrollTo(0, 0);
+
 
   const handleClose = () => {
     navigate('/');
   };
 
   useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const verified = params.get('verified');
-    const tokenFromQuery = params.get('token');
 
-    if (verified) {
-      if (verified === 'true') {
-        setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
+    const initialize = async () => {
 
-      } else {
-        setMessage({ content: 'Account verification failed', product: null, action: 'error' });
+      const params = new URLSearchParams(location.search);
+      const verified = params.get('verified');
+      const tokenFromQuery = params.get('token');
 
+      if (verified) {
+        if (verified === 'true') {
+          setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
+
+        } else {
+          setMessage({ content: 'Account verification failed', product: null, action: 'error' });
+
+        }
+
+        navigate('/');
       }
 
-      navigate('/');
+      if (tokenFromQuery) {
+        setToken(tokenFromQuery);
+      }
     }
 
-    if (tokenFromQuery) {
-      setToken(tokenFromQuery);
-    }
-
+    initialize();
 
   }, [location, navigate]);
 
   useEffect(() => {
-    window.scrollTo(0, 0);
 
     // Determine which form to show based on the 'form' prop
     if (form === 'login' || form === 'createAccount' || form === 'change_password') {
