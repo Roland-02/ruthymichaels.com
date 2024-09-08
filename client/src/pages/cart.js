@@ -275,7 +275,8 @@ const Cart = () => {
             const response = await axios.post(`/checkout/create_checkout_session`, {
                 cartItems: cartProducts,
                 user_id: session.id || null,
-                user_email: session.email || ''
+                user_email: session.email || '',
+                shipping_cost: shippingCost,
             });
 
             if (response.status === 200) {

@@ -59,7 +59,7 @@ const sendAdminVerificationEmail = async (user) => {
         to: process.env.myEmail, // Sends to the specified admin email
         subject: 'Admin Login Verification',
         html: `<p>Click the link below to verify and complete your admin login:</p>
-               <a href="${verificationUrl}">Verify Admin Login</a>`,
+               <a href="${verificationUrl}">${verificationUrl}</a>`,
     };
 
     await transporter.sendMail(mailOptions);

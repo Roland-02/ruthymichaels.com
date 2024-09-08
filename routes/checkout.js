@@ -30,7 +30,7 @@ const generateToken = () => {
 
 // process checkout
 router.post('/create_checkout_session', async (req, res) => {
-    const { cartItems, user_id, user_email } = req.body;
+    const { cartItems, user_id, user_email, shipping_cost } = req.body;
     const generatedToken = generateToken();
     tokenStore[user_id] = generatedToken;
 
@@ -56,6 +56,7 @@ router.post('/create_checkout_session', async (req, res) => {
             quantity: item.qty,
         };
     }));
+    
 
     try {
         const session = await stripe.checkout.sessions.create({
@@ -65,6 +66,24 @@ router.post('/create_checkout_session', async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
             },
+
+            shipping_options: [
+                {
+                    shipping_rate_data: {
+                        type: 'fixed_amount',
+                        fixed_amount: {
+                            amount: shipping_cost * 100, // Shipping cost in cents (5.00 GBP here)
+                            currency: 'gbp',
+                        },
+                        display_name: 'Standard Shipping',
+                        delivery_estimate: {
+                            minimum: { unit: 'business_day', value: 5 },
+                            maximum: { unit: 'business_day', value: 7 },
+                        },
+                    },
+                },
+            ],
+
             success_url: `${process.env.DOMAIN}/cart?order_success=true&token=${generatedToken}&session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${process.env.DOMAIN}/cart`,
             metadata: {
