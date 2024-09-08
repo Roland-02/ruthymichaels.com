@@ -1,11 +1,10 @@
 const express = require('express');
 const { google } = require('googleapis');
 const multer = require('multer');
-const fs = require('fs');
 const { Readable } = require('stream')
-const path = require('path');
 const { getConnection } = require('../database');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
@@ -24,7 +23,6 @@ router.get('/oauth2callback', async (req, res) => {
     try {
         const { tokens } = await oauth2Client.getToken(code);
         oauth2Client.setCredentials(tokens);
-        console.log('Tokens:', tokens);
         res.send('Authentication successful! You can close this tab.');
     } catch (error) {
         console.error('Error getting tokens:', error);
@@ -32,31 +30,30 @@ router.get('/oauth2callback', async (req, res) => {
     }
 });
 
-router.get('/admin/verify/:token', async (req, res) => {
-    const token = req.params.token;
-
+router.get('/verify_admin', async (req, res) => {
     try {
+        const { token } = req.query;
+        if (!token) {
+            return res.redirect('/index?verified=false');
+        }
+
         // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Check if the user is still an admin (you can query the database to double-check)
-        const user = await db.query('SELECT * FROM user_login WHERE email = ?', [decoded.email]);
-
-        if (user && user.role === 'admin') {
-            // Generate a new token or session for the admin user
-            const adminToken = jwt.sign(
-                { email: user.email, role: 'admin' },
-                process.env.JWT_SECRET,
-                { expiresIn: '1h' }
-            );
-
-            // Redirect or send response indicating success
-            res.redirect(`${process.env.FRONTEND_URL}/admin/dashboard?token=${adminToken}`);
-        } else {
-            res.status(403).json({ message: 'Unauthorized or invalid token' });
+        // Check if the user has the admin role
+        if (!(decoded.email === process.env.myEmail && decoded.role === 'admin')) {
+            return res.redirect('/index?verified=false');
         }
+
+        res.cookie('sessionEmail', decoded.email, { httpOnly: true, secure: true });
+        res.cookie('sessionID', decoded.user_id, { httpOnly: true, secure: true });
+        res.cookie('sessionRole', 'admin',  { httpOnly: true, secure: true });
+
+        return res.redirect('/admin');
+
     } catch (error) {
-        res.status(400).json({ message: 'Token is invalid or expired' });
+        console.log(error);
+        return res.redirect('/index?verified=false');
     }
 });
 

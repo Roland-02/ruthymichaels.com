@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 const sendVerificationEmail = (userEmail) => {
     
     const token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    const verificationUrl = `http://localhost:8080/verify_email?token=${token}`;
+    const verificationUrl = `${process.env.DOMAIN}/verify_email?token=${token}`;
 
     const mailOptions = {
         from: process.env.myEmail,
@@ -51,7 +51,7 @@ const sendAdminVerificationEmail = async (user) => {
         { expiresIn: '15m' } // The link will expire in 15 minutes
     );
 
-    const verificationUrl = `http:localhost:8080/admin/verify/${token}`;
+    const verificationUrl = `${process.env.DOMAIN}/admin/verify_admin?token=${token}`;
     
     // Send email
     const mailOptions = {
@@ -70,6 +70,7 @@ router.get('/session', (req, res) => {
         email: req.cookies.sessionEmail || null,
         id: req.cookies.sessionID || null,
         method: req.cookies.sessionMethod || null,
+        role: req.cookies.sessionRole || 'user',
     };
     res.json(session);
 });
@@ -218,7 +219,8 @@ router.post('/login', (req, res) => {
             }
 
             if(user.role === 'admin'){
-                sendAdminVerificationEmail(email);
+                sendAdminVerificationEmail(user);
+                return res.status(405).json({ message: 'Admin verification sent to email', verified: false });
             }
 
             // Assuming you create a session or return user data here
@@ -298,7 +300,7 @@ router.post('/forgot_password', (req, res) => {
 
             if (result.length > 0) {
                 const token = jwt.sign({ email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-                const resetLink = `http://localhost:8080/change_password?token=${token}`;
+                const resetLink = `${process.env.DOMAIN}/change_password?token=${token}`;
 
                 // Send email with reset link
                 const mailOptions = {
@@ -363,12 +365,12 @@ router.post('/signout', function (req, res) {
         if (err) {
             return res.status(500).send('Failed to destroy session');
         }
+
         // Clear cookies        
         res.clearCookie('sessionEmail');
         res.clearCookie('sessionID');
-
-        console.log("--------> User signed out");
-        console.log("Redirecting to home page...");
+        res.clearCookie('sessionMethod');
+        res.clearCookie('sessionRole');
 
         // Redirect to home or login page
         res.redirect('/');

@@ -2,6 +2,9 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { SessionProvider } from '../../client/src/components/context/SessionContext';
 
+import ProtectedRoute from './components/context/ProtectedRoutes';
+import AdminProtectedRoute from './components/context/AdminProtectedRoute';
+
 import Index from './pages/index';
 import View_Product from './pages/view_product'
 import Cart from './pages/cart';
@@ -10,7 +13,6 @@ import Profile from './pages/profile';
 import About from './pages/about';
 import Contact from './pages/contact';
 
-import ProtectedRoute from './components/context/ProtectedRoutes';
 import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
 
@@ -38,10 +40,11 @@ const App = () => {
                     <Route path="/profile/review_item/:id" element={<ProtectedRoute element={<Profile form="review" />} />} />
                     <Route path="/profile/change_password/:id" element={<ProtectedRoute element={<Profile form="change_password" />} />} />
 
-                    <Route path="/admin" element={<Admin />} />
-                    <Route path="/admin/products" element={<AdminProducts />} />
-                    <Route path="/admin/products/add_product" element={<AdminProducts />} />
-                    <Route path="/admin/products/edit_product/:id" element={<AdminProducts />} />
+                    {/* Admin Protected Routes (requires admin role) */}
+                    <Route path="/admin" element={<AdminProtectedRoute element={<Admin />} />} />
+                    <Route path="/admin/products" element={<AdminProtectedRoute element={<AdminProducts />} />} />
+                    <Route path="/admin/products/add_product" element={<AdminProtectedRoute element={<AdminProducts />} />} />
+                    <Route path="/admin/products/edit_product/:id" element={<AdminProtectedRoute element={<AdminProducts />} />} />
 
                 </Routes>
             </Router>

@@ -53,6 +53,7 @@ const Index = ({ form }) => {
       if (tokenFromQuery) {
         setToken(tokenFromQuery);
       }
+      
     }
 
     initialize();

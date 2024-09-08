@@ -7,9 +7,8 @@ const AdminProtectedRoute = ({ element }) => {
 
     if (loading) return; 
 
-    // If no session exists, redirect to login
-    if (!(session && session.id)) {
-        return <Navigate to="/login" replace />;
+    if (!(session && session.role === 'admin')) {
+        return <Navigate to="/" replace />;
     }
 
     return element;

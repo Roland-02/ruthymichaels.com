@@ -239,7 +239,7 @@ const Profile = ({ form }) => {
             } catch (error) {
                 console.error('Error fetching user info:', error);
             }
-            
+
         }
 
         initialize();
@@ -347,11 +347,14 @@ const Profile = ({ form }) => {
                         reviews={reviews}
                     />
 
-                    <div className="delete-account-container">
-                        <button className="delete-account-btn" onClick={handleDeleteAccount}>
-                            Delete Account
-                        </button>
-                    </div>
+                    {/* Delete account button */}
+                    {(session && session.role === 'user') && (
+                        <div className="delete-account-container">
+                            <button className="delete-account-btn" onClick={handleDeleteAccount}>
+                                Delete Account
+                            </button>
+                        </div>
+                    )}
 
                 </div>
             </div>

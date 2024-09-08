@@ -122,6 +122,13 @@ body {
     fill: #ff68b3;
 }
 
+.nav-admin-label {
+    margin-left: 2vw;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
 /* footer */
 .footer {
     position: sticky;

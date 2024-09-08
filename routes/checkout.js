@@ -65,8 +65,8 @@ router.post('/create_checkout_session', async (req, res) => {
             shipping_address_collection: {
                 allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
             },
-            success_url: `http://localhost:8080/cart?order_success=true&token=${generatedToken}&session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `http://localhost:8080/cart`,
+            success_url: `${process.env.DOMAIN}/cart?order_success=true&token=${generatedToken}&session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${process.env.DOMAIN}/cart`,
             metadata: {
                 user_id: user_id,
             },
@@ -148,8 +148,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                             return new Promise((resolve, reject) => {
                                 connection.query(insert_order_item_query, async (err, result) => {
                                     if (err) throw err;
-                                    // console.error('Error inserting order item:', err);
-                                    // return reject(err)/;
 
                                     resolve(result);
                                 });
@@ -206,7 +204,7 @@ Regards,
 Ruthy Michaels`;
 
                 await transporter.sendMail({
-                    from: 'RuthyMichaels@gmail.com', // Sender address
+                    from: `${process.env.myEmail}`, // Sender address
                     to: customer_email, // Receiver address
                     subject: 'Order Confirmation - Thank you for your purchase!',
                     text: emailContent,
@@ -255,7 +253,7 @@ Ruthy Michaels`;
 
         default:
             console.log(`Unhandled event type ${event.type}`);
-            res.sendStatus(400); // Optional: Send a bad request status for unhandled event types
+            res.sendStatus(400);
     }
 
 });
