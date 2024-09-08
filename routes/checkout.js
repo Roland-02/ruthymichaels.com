@@ -113,6 +113,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             const customer_email = session.customer_details.email;
             const customer_name = session.customer_details.name;
             const shipping_address = session.customer_details.address;
+            const shipping_cost = session.total_details.amount_shipping / 100;
 
             // get card details
             const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
@@ -204,6 +205,8 @@ Order ID: ${session.id}
 
 Items Ordered:
 ${orderDetails}
+
+Shipping Cost: £${shipping_cost}
 
 Shipping Address:
 ${shipping_address.line1} 
