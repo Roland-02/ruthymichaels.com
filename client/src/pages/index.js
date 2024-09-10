@@ -23,7 +23,6 @@ const Index = ({ form }) => {
   const [token, setToken] = useState(null);
   const location = useLocation();
   const navigate = useNavigate();
-  window.scrollTo(0, 0);
 
 
   const handleClose = () => {
@@ -33,6 +32,7 @@ const Index = ({ form }) => {
   useEffect(() => {
 
     const initialize = async () => {
+  window.scrollTo(0, 0);
 
       const params = new URLSearchParams(location.search);
       const verified = params.get('verified');

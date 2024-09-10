@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../context/SessionContext';
 
@@ -22,11 +22,13 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(1000);
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
-    const [isFilterOpen, setIsFilterOpen] = useState(false); // State to toggle filter menu
+    const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const filterRef = useRef(null);
     const navigate = useNavigate();
 
+
     const toggleFilterMenu = () => {
-        setIsFilterOpen(prevState => !prevState); // Toggle the filter menu
+        setIsFilterOpen(prevState => !prevState);
     };
 
     const fetchProducts = async () => {
@@ -255,6 +257,19 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         }
     };
 
+    const handleClickOutside = (event) => {
+        if (filterRef.current && !filterRef.current.contains(event.target)) {
+            setIsFilterOpen(false); // Close the filter
+        }
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => {
+          document.removeEventListener('mousedown', handleClickOutside);
+        };
+      }, [isFilterOpen]);
+
     useEffect(() => {
         const initialize = async () => {
             if (initialProducts) {
@@ -321,7 +336,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         ];
 
         setAllProducts(sampleWishlist)
-
+        setProducts(sampleWishlist)
 
 
     }, [session, initialProducts]);
@@ -359,11 +374,27 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
                 {!initialProducts && (
                     <div className="col-lg-2 col-md-2">
+
                         {/* desktop */}
                         <div className="filter-box desktop">
+
+                            {/* Sort By */}
+                            <h4>Sort by</h4>
+                            <div className="sort-container">
+                                <select
+                                    id="sort-by"
+                                    value={sortOption}
+                                    onChange={(e) => setSortOption(e.target.value)}
+                                >
+                                    <option value="default">Default</option>
+                                    <option value="price-asc">Price: Low to High</option>
+                                    <option value="price-desc">Price: High to Low</option>
+                                </select>
+                            </div>
+
                             {/* Type Filter */}
                             <div className="type-filter">
-                                <h4>Filter</h4>
+                                <h4>Type</h4>
                                 <div>
                                     <input
                                         type="radio"
@@ -451,25 +482,40 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         </div>
 
                         {/* mobile */}
-                        <div className="filter-box mobile">
+                        <div className="filter-box mobile"  ref={filterRef}>
                             {/* Filter toggle button */}
-                            <button className="filter-toggle-btn menu-item" onClick={toggleFilterMenu}>
-                                {isFilterOpen ? (
-                                    // "Open" funnel icon
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-funnel-fill" viewBox="0 0 16 16">
-                                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
-                                    </svg>
-                                ) : (
-                                    // "Closed" funnel icon
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" class="bi bi-funnel" viewBox="0 0 16 16">
-                                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
-                                    </svg>
-                                )}
+                            <button
+                                className={`filter-toggle-btn menu-item ${isFilterOpen ? 'open' : ''}`}
+                                onClick={toggleFilterMenu}
+                            >                                
+                            {isFilterOpen ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-funnel-fill" viewBox="0 0 16 16">
+                                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" class="bi bi-funnel" viewBox="0 0 16 16">
+                                    <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                                </svg>
+                            )}
                             </button>
 
-                            {/* Filter menu (conditionally rendered based on isFilterOpen) */}
                             {isFilterOpen && (
-                                <div className="mobile-filter-box">
+  <div className={`mobile-filter-box ${isFilterOpen ? 'open' : ''}`}>
+                                    {/* Sort By */}
+                                    <h4>Sort by</h4>
+                                    <div className="sort-container">
+
+                                        <select
+                                            id="sort-by"
+                                            value={sortOption}
+                                            onChange={(e) => setSortOption(e.target.value)}
+                                        >
+                                            <option value="default">Default</option>
+                                            <option value="price-asc">Price: Low to High</option>
+                                            <option value="price-desc">Price: High to Low</option>
+                                        </select>
+                                    </div>
+
                                     {/* Type Filter */}
                                     <div className="type-filter">
                                         <h4>Filter</h4>
@@ -560,28 +606,12 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                             )}
 
                         </div>
-                        
+
                     </div>
                 )}
 
                 {/* Products Container */}
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">
-
-                    {/* Sort By Dropdown */}
-                    {!initialProducts && (
-                        <div className="sort-container">
-                            <label htmlFor="sort-by">Sort by: </label>
-                            <select
-                                id="sort-by"
-                                value={sortOption}
-                                onChange={(e) => setSortOption(e.target.value)}
-                            >
-                                <option value="default">Default</option>
-                                <option value="price-asc">Price: Low to High</option>
-                                <option value="price-desc">Price: High to Low</option>
-                            </select>
-                        </div>
-                    )}
 
                     <div className={`card-container ${initialProducts ? 'center-layout' : 'default-layout'}`}>
                         {products.map((product) => (

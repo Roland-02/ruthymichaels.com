@@ -17,6 +17,7 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const searchContainerRef = useRef(null);
   const resultsContainerRef = useRef(null)
+  const menuRef = useRef(null);
   const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();

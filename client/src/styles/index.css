@@ -153,17 +153,19 @@
   height: fit-content;
   width: 100%;
   padding: 10px;
+  padding-bottom: 20px;
   margin-bottom: 20px;
   border: 1px solid #ccc;
 }
 
 .filter-box h4 {
+  color: black;
   text-align: center;
-  border-bottom: 1px solid #ccc;
   font-size: 24px;
   font-weight: 100;
+  margin-bottom: 3px;
   padding-bottom: 5px;
-  margin-bottom: 10px;
+  border-bottom: 1px solid #ccc;
 }
 
 .type-filter input {
@@ -203,20 +205,19 @@
 /* sort by */
 .sort-container {
   display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  margin-right: 2vw;
-}
-
-.sort-container label {
-  margin-right: 10px;
-  font-weight: bold;
+  justify-content: center;
+  margin-bottom: 15px;
+  width: 100%;
 }
 
 .sort-container select {
+  width: 100%;
+  text-align: center;
   padding: 5px;
-  font-size: 16px;
-  border: 1px solid #ccc;
+  border: none;
+  cursor: pointer;
+  font-weight: 550;
+  font-size: 18px;
 }
 
 
@@ -240,44 +241,49 @@
     display: none;
   }
 
-  .filter-toggle-btn {
-    position: sticky;
-    background-color: transparent;
-    border: none;
-    display: flex;
-    cursor: pointer;
-    padding: 0;
+  .sort-container select {
+    font-size: 14px;
   }
 
-  .filter-box.mobile {
-    position: relative;
+  .filter-toggle-btn {
+    position: fixed;
+    left: 10px;
+    background-color: transparent;
+    cursor: pointer;
     border: none;
-    top: 0;
     padding: 0;
     margin: 0;
+  }
+
+  .filter-box {
+    position: sticky;
+    top: 110px;
+    border: none;
+    width: 50vw;
+    margin: 0;
+    padding: 0;
+    z-index: 2;
   }
 
   .mobile-filter-box {
-    position: absolute;
-    left: 45px;
+    position: fixed;
+    top: 90px;
+    left: -100%;
+    width: 60%;
+    height: 75%;
+    padding: 10px;
+    padding-top: 20px;
     background-color: #fff;
     border: 1px solid #ccc;
-    padding: auto;
-    z-index: 10;
-    width: 75vw;
-    margin: 0;
+    transition: left 5.5s ease-in-out;
   }
 
-  .sort-container {
-    margin-right: 0;
-    margin-bottom: 20px;
-    flex-direction: column;
+  .mobile-filter-box.open {
+    left: 0;
   }
 
-  .view-container.products .row {
-    display: flex;
-    min-height: auto;
-    padding: 10px;
+  .filter-toggle-btn.open {
+    z-index: 101;
   }
 
 
