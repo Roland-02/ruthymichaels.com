@@ -17,6 +17,7 @@ const Navbar = () => {
   const [searchResults, setSearchResults] = useState([]);
   const searchContainerRef = useRef(null);
   const resultsContainerRef = useRef(null)
+  const [menuOpen, setMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,6 +58,10 @@ const Navbar = () => {
     return parts.map((part, index) =>
       part.toLowerCase() === query.toLowerCase() ? <strong key={index}>{part}</strong> : part
     );
+  };
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
   };
 
   const handleProductClick = (name) => {
@@ -107,8 +112,11 @@ const Navbar = () => {
 
 
   return (
+
     <header>
-      <div className="nav-bar">
+
+      {/* desktop */}
+      <div className="nav-bar desktop">
         <div className="nav-container">
 
           {/* Left elements */}
@@ -133,29 +141,36 @@ const Navbar = () => {
             {session && session.role === 'admin' && <span className='nav-admin-label'>Admin</span>}
 
             {/* Search form */}
-            {session && session.role === 'user' && (
-              <div className="search-container menu-item" ref={searchContainerRef}>
-                <input
-                  type="text"
-                  className={`search-input ${isExpanded ? 'expanded' : ''}`}
-                  placeholder="Search..."
-                  value={searchQuery}
-                  onChange={handleSearchChange}
-                />
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="25"
-                  height="25"
-                  className={`search-icon ${isExpanded ? 'expanded' : ''}`}
-                  viewBox="0 0 16 16"
-                  onClick={toggleSearch}
-                >
+            <div className="search-container menu-item" ref={searchContainerRef}>
+              <input
+                type="text"
+                className={`search-input ${isExpanded ? 'expanded' : ''}`}
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                className={`search-icon ${isExpanded ? 'expanded' : ''}`}
+                viewBox="0 0 16 16"
+                onClick={toggleSearch}
+              >
+                {isExpanded ? (
+                  // "X" icon
+                  <path
+                    fillRule="evenodd"
+                    d="M3.707 3.707a1 1 0 0 1 1.414 0L8 6.586l2.879-2.879a1 1 0 1 1 1.414 1.414L9.414 8l2.879 2.879a1 1 0 0 1-1.414 1.414L8 9.414l-2.879 2.879a1 1 0 1 1-1.414-1.414L6.586 8 3.707 5.121a1 1 0 0 1 0-1.414z"
+                  />
+                ) : (
+                  // Search icon
                   <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
-                </svg>
-              </div>
-            )}
+                )}              </svg>
+            </div>
+
             {/* Search results */}
-            {session && session.role === 'user' && searchResults.length > 0 && (
+            {searchResults.length > 0 && (
               <div className="results-container visible" ref={resultsContainerRef}>
                 {searchResults.map((result) => (
                   <div
@@ -229,11 +244,131 @@ const Navbar = () => {
               </>
             )}
           </div>
+          
         </div>
       </div>
+      
+      {/* mobile */}
+      <div className="nav-bar mobile">
+        <div className="nav-container">
+
+          {/* Left elements */}
+          <div className="nav-left">
+            <button className="menu-toggle-btn" onClick={toggleMenu}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" class="bi bi-list" viewBox="0 0 16 16">
+                <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+              </svg>
+            </button>
+
+            {/* Collapsible menu */}
+            <nav className={`nav-menu ${menuOpen ? 'open' : ''}`}>
+              <ul>
+                <li><Link to="/">Home</Link></li>
+                <li><Link to="/wishlist">Wishlist</Link></li>
+                <li><Link to="/profile">Profile</Link></li>
+                <li><Link to="/about">About</Link></li>
+                <li><Link to="/contact">Contact</Link></li>
+                {session && session.id ? (
+                  <li><Link to="/">Logout</Link></li>
+                ) : (
+                  <li><Link to="/login">Login</Link></li>
+                )}
+              </ul>
+            </nav>
+
+            {/* Search form */}
+            <div className="search-container menu-item" ref={searchContainerRef}>
+              <input
+                type="text"
+                className={`search-input ${isExpanded ? 'expanded' : ''}`}
+                placeholder="Search..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+              />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="25"
+                height="25"
+                className={`search-icon ${isExpanded ? 'expanded' : ''}`}
+                viewBox="0 0 16 16"
+                onClick={toggleSearch}
+              >
+                {isExpanded ? (
+                  // "X" icon
+                  <path
+                    fillRule="evenodd"
+                    d="M3.707 3.707a1 1 0 0 1 1.414 0L8 6.586l2.879-2.879a1 1 0 1 1 1.414 1.414L9.414 8l2.879 2.879a1 1 0 0 1-1.414 1.414L8 9.414l-2.879 2.879a1 1 0 1 1-1.414-1.414L6.586 8 3.707 5.121a1 1 0 0 1 0-1.414z"
+                  />
+                ) : (
+                  // Search icon
+                  <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                )}
+              </svg>
+            </div>
+            {/* Search results */}
+            {searchResults.length > 0 && (
+              <div className="results-container visible" ref={resultsContainerRef}>
+                {searchResults.map((result) => (
+                  <div
+                    className="result-item"
+                    key={result.id}
+                    onClick={() => handleProductClick(result.name)}
+                  >
+                    <div className="result-image">
+                      <img src={result.imageUrls[0]} alt={result.name} />
+                    </div>
+                    <div className="result-details">
+                      <p className="name">{highlightText(result.name, searchQuery)}</p>
+                      <p className="type">{highlightText(result.type, searchQuery)}</p>
+                      <p className="description">{highlightText(result.description, searchQuery)}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+          </div>
+
+          {/* Centered title */}
+          <div className={`nav-center ${isExpanded ? 'hidden' : ''}`} onClick={handleTitleClick}>
+            <img
+              src={logo}
+              alt="Ruthy Michaels Logo"
+              className="logo-image"
+            />
+          </div>
+
+          {/* Right elements */}
+          <div className="nav-right">
+            {session && session.role === 'admin' ? (
+              <>
+                <Link to="/admin" className={`menu-item ${location.pathname === '/admin' ? 'active' : ''}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" class="bi bi-speedometer" viewBox="0 0 16 16">
+                    <path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2M3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.39.39 0 0 0-.029-.518z" />
+                    <path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.95 11.95 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0" />
+                  </svg>
+                </Link>
+              </>
+            ) : (
+              <>
+                {/* Cart */}
+                <Link to="/cart" className={`menu-item ${location.pathname === '/cart' ? 'active' : ''}`}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="45" height="45" className="bi bi-cart" viewBox="0 0 16 16">
+                    <path d="M0 1.5A.5.5 0 0 1 .5 1H2a.5.5 0 0 1 .485.379L2.89 3H14.5a.5.5 0 0 1 .491.592l-1.5 8A.5.5 0 0 1 13 12H4a.5.5 0 0 1-.491-.408L2.01 3.607 1.61 2H.5a.5.5 0 0 1-.5-.5M3.102 4l1.313 7h8.17l1.313-7zM5 12a2 2 0 1 0 0 4 2 2 0 0 0 0-4m7 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4m-7 1a1 1 0 1 1 0 2 1 1 0 0 1 0-2m7 0a1 1 0 1 1 0 2 1 1 0 0 1 0-2" />
+                  </svg>
+                </Link>
+              </>
+            )}
+          </div>
+
+        </div>
+
+      </div>
+
     </header>
 
   );
+
 };
 
 export default Navbar;

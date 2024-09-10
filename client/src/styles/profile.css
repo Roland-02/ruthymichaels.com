@@ -336,3 +336,10 @@ th {
 .delete-account-btn:hover {
     background-color: rgb(199, 41, 41)
 }
+
+
+/* Styles for most mobile devices (smartphones in portrait) */
+@media only screen and (max-width: 768px) {
+
+    
+}

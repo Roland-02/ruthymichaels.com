@@ -272,3 +272,10 @@
     }
 
 }
+
+
+/* Styles for most mobile devices (smartphones in portrait) */
+@media only screen and (max-width: 768px) {
+
+    
+}

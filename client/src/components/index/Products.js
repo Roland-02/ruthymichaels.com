@@ -16,14 +16,18 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [wishlist, setWishlist] = useState([]);
     const [cartProducts, setCartedProducts] = useState([]);
     const [productTypes, setProductTypes] = useState([]);
-    const [selectedAge, setSelectedAge] = useState(""); // New state for age filter
+    const [selectedAge, setSelectedAge] = useState("");
     const [selectedType, setSelectedType] = useState("");
     const [sortOption, setSortOption] = useState("default");
     const [minPrice, setMinPrice] = useState(0);
     const [maxPrice, setMaxPrice] = useState(1000);
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
+    const [isFilterOpen, setIsFilterOpen] = useState(false); // State to toggle filter menu
     const navigate = useNavigate();
 
+    const toggleFilterMenu = () => {
+        setIsFilterOpen(prevState => !prevState); // Toggle the filter menu
+    };
 
     const fetchProducts = async () => {
         try {
@@ -263,7 +267,62 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             await fetchCartProducts();
         };
 
-        initialize();
+        // initialize();
+
+        const sampleWishlist = [
+            {
+                id: 1,
+                name: 'Proroductroductduct roduct roductroduct',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '10.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 2,
+                name: 'Product 2',
+                type: 'journal',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '20.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
+            },
+            {
+                id: 3,
+                name: 'Product 3',
+                type: 'puzzle',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '30.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
+            },
+            {
+                id: 4,
+                name: 'Product 1',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '10.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 5,
+                name: 'Product 2',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '20.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            },
+            {
+                id: 6,
+                name: 'Product 3',
+                type: 'book',
+                description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+                price: '30.00',
+                imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+            }
+        ];
+
+        setAllProducts(sampleWishlist)
+
+
 
     }, [session, initialProducts]);
 
@@ -300,7 +359,8 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
                 {!initialProducts && (
                     <div className="col-lg-2 col-md-2">
-                        <div className="filter-box">
+                        {/* desktop */}
+                        <div className="filter-box desktop">
                             {/* Type Filter */}
                             <div className="type-filter">
                                 <h4>Filter</h4>
@@ -389,6 +449,118 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                 </div>
                             </div>
                         </div>
+
+                        {/* mobile */}
+                        <div className="filter-box mobile">
+                            {/* Filter toggle button */}
+                            <button className="filter-toggle-btn menu-item" onClick={toggleFilterMenu}>
+                                {isFilterOpen ? (
+                                    // "Open" funnel icon
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" className="bi bi-funnel-fill" viewBox="0 0 16 16">
+                                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5z" />
+                                    </svg>
+                                ) : (
+                                    // "Closed" funnel icon
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="35" height="35" class="bi bi-funnel" viewBox="0 0 16 16">
+                                        <path d="M1.5 1.5A.5.5 0 0 1 2 1h12a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-.128.334L10 8.692V13.5a.5.5 0 0 1-.342.474l-3 1A.5.5 0 0 1 6 14.5V8.692L1.628 3.834A.5.5 0 0 1 1.5 3.5zm1 .5v1.308l4.372 4.858A.5.5 0 0 1 7 8.5v5.306l2-.666V8.5a.5.5 0 0 1 .128-.334L13.5 3.308V2z" />
+                                    </svg>
+                                )}
+                            </button>
+
+                            {/* Filter menu (conditionally rendered based on isFilterOpen) */}
+                            {isFilterOpen && (
+                                <div className="mobile-filter-box">
+                                    {/* Type Filter */}
+                                    <div className="type-filter">
+                                        <h4>Filter</h4>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                id="all"
+                                                name="product-type"
+                                                value=""
+                                                checked={selectedType === ''}
+                                                onChange={() => setSelectedType("")}
+                                            />
+                                            <label htmlFor="all" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
+                                        </div>
+                                        {productTypes.map((type) => (
+                                            <div key={type}>
+                                                <input
+                                                    type="radio"
+                                                    id={type}
+                                                    name="product-type"
+                                                    value={type}
+                                                    checked={selectedType === type}
+                                                    onChange={(e) => setSelectedType(e.target.value)}
+                                                />
+                                                <label htmlFor={type}>{type}</label>
+                                            </div>
+                                        ))}
+                                    </div>
+
+                                    {/* Age Filter */}
+                                    <div className="type-filter mt-2">
+                                        <h4>Age</h4>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                id="all-ages"
+                                                name="age"
+                                                value=""
+                                                checked={selectedAge === ''}
+                                                onChange={() => setSelectedAge("")}
+                                            />
+                                            <label htmlFor="all-ages" style={{ fontWeight: 'bold', fontSize: '18px' }}>All</label>
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                id="kids"
+                                                name="age"
+                                                value="0"
+                                                checked={selectedAge === '0'}
+                                                onChange={() => setSelectedAge("0")}
+                                            />
+                                            <label htmlFor="kids">Kids</label>
+                                        </div>
+                                        <div>
+                                            <input
+                                                type="radio"
+                                                id="adults"
+                                                name="age"
+                                                value="1"
+                                                checked={selectedAge === '1'}
+                                                onChange={() => setSelectedAge("1")}
+                                            />
+                                            <label htmlFor="adults">Adults</label>
+                                        </div>
+                                    </div>
+
+                                    {/* Price Filter */}
+                                    <div className="price-filter mt-2">
+                                        <h4>Price</h4>
+                                        <input
+                                            type="range"
+                                            id="price-range"
+                                            name="product-price"
+                                            min={minPrice}
+                                            max={maxPrice}
+                                            value={selectedPrice}
+                                            onChange={(e) => setSelectedPrice(e.target.value)}
+                                            step="1"
+                                        />
+                                        <div className="price-label">
+                                            <label htmlFor="price-range">
+                                                up to <strong>£{selectedPrice}</strong>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                        
                     </div>
                 )}
 
@@ -479,6 +651,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 </div>
 
             </div>
+
         </section>
     );
 

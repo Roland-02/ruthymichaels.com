@@ -15,7 +15,7 @@
   background-color: #f59af161;
 }
 
-.banner-img{
+.banner-img {
   width: 100%;
 }
 
@@ -39,11 +39,14 @@
 
 /* Keyframe for bounce effect */
 @keyframes bounce {
-  0%, 100% {
-      transform: translateY(0);
+
+  0%,
+  100% {
+    transform: translateY(0);
   }
+
   50% {
-      transform: translateY(10px);
+    transform: translateY(10px);
   }
 }
 
@@ -193,7 +196,7 @@
 }
 
 .price-filter input {
-  width: 100%; 
+  width: 100%;
   max-width: 175px;
 }
 
@@ -217,12 +220,66 @@
 }
 
 
-@media (max-width: 768px) {
-  
-  .sort-container {
-    justify-content: center;
-    margin: 0;
-    margin-bottom: 10px;
+/* Styles for most mobile devices (smartphones in portrait) */
+@media only screen and (max-width: 768px) {
+
+  .arrow-container {
+    display: none;
   }
+
+  .product-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .banner {
+    margin-bottom: 0;
+  }
+
+  .banner-img {
+    display: none;
+  }
+
+  .filter-toggle-btn {
+    position: sticky;
+    background-color: transparent;
+    border: none;
+    display: flex;
+    cursor: pointer;
+    padding: 0;
+  }
+
+  .filter-box.mobile {
+    position: relative;
+    border: none;
+    top: 0;
+    padding: 0;
+    margin: 0;
+  }
+
+  .mobile-filter-box {
+    position: absolute;
+    left: 45px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    padding: auto;
+    z-index: 10;
+    width: 75vw;
+    margin: 0;
+  }
+
+  .sort-container {
+    margin-right: 0;
+    margin-bottom: 20px;
+    flex-direction: column;
+  }
+
+  .view-container.products .row {
+    display: flex;
+    min-height: auto;
+    padding: 10px;
+  }
+
+
 
 }

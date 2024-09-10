@@ -70,11 +70,8 @@ const Wishlist = () => {
         const initialize = async () => {
             if (loading) return; 
 
-            // if (session && session.id) {
             await fetchWishlist();
-            // } else {
-            // navigate('/login');
-            // }
+       
         };
         initialize();
 
