@@ -15,10 +15,11 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
+  const [menuOpen, setMenuOpen] = useState(false);
   const searchContainerRef = useRef(null);
   const resultsContainerRef = useRef(null)
   const menuRef = useRef(null);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const buttonRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -36,6 +37,7 @@ const Navbar = () => {
   };
 
   const handleClickOutside = (event) => {
+    // close search if click outside
     if (
       searchContainerRef.current &&
       !searchContainerRef.current.contains(event.target) &&
@@ -46,6 +48,15 @@ const Navbar = () => {
       setSearchQuery('');
       setSearchResults([]);
     }
+
+    // close menu if click outside
+    if (
+      menuRef.current && !menuRef.current.contains(event.target) &&
+      buttonRef.current && !buttonRef.current.contains(event.target)
+    ) {
+      setMenuOpen(false);
+    }
+
   };
 
   const handleTitleClick = async () => {
@@ -61,8 +72,9 @@ const Navbar = () => {
     );
   };
 
-  const toggleMenu = () => {
-    setMenuOpen(!menuOpen);
+  const toggleMenu = (event) => {
+    event.stopPropagation();
+    setMenuOpen((prevState) => !prevState);
   };
 
   const handleProductClick = (name) => {
@@ -245,30 +257,30 @@ const Navbar = () => {
               </>
             )}
           </div>
-          
+
         </div>
       </div>
-      
+
       {/* mobile */}
       <div className="nav-bar mobile">
         <div className="nav-container">
 
           {/* Left elements */}
           <div className="nav-left">
-            <button className={`menu-toggle-btn menu-item ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
+            <button className={`menu-toggle-btn menu-item ${menuOpen ? 'active' : ''}`} onClick={toggleMenu} ref={buttonRef}>
               <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" class="bi bi-list" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
               </svg>
             </button>
 
             {/* Collapsible menu */}
-            <nav className={`nav-menu ${menuOpen ? 'open' : ''}`}>
+            <nav className={`nav-menu ${menuOpen ? 'open' : ''}`} ref={menuRef}>
               <ul>
                 <li><Link to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>Home</Link></li>
-                <li><Link to="/wishlist">Wishlist</Link></li>
-                <li><Link to="/profile">Profile</Link></li>
-                <li><Link to="/about">About</Link></li>
-                <li><Link to="/contact">Contact</Link></li>
+                <li><Link to="/wishlist" className={`menu-item ${location.pathname === '/wishlist' ? 'active' : ''}`}>Wishlist</Link></li>
+                <li><Link to="/profile" className={`menu-item ${location.pathname === '/profile' ? 'active' : ''}`}>Profile</Link></li>
+                <li><Link to="/about" className={`menu-item ${location.pathname === '/about' ? 'active' : ''}`}>About</Link></li>
+                <li><Link to="/contact" className={`menu-item ${location.pathname === '/contact' ? 'active' : ''}`}>Contact</Link></li>
                 {session && session.id ? (
                   <li><Link to="/">Logout</Link></li>
                 ) : (

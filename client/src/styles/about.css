@@ -14,3 +14,16 @@
 .view-container.about p {
     font-size: 20px;
 }
+
+/* Styles for most mobile devices */
+@media only screen and (max-width: 768px) {
+
+    .view-container.about{
+        width: 90%;
+    }
+
+    .view-container.about p {
+        font-size: 16px;
+    }
+
+}

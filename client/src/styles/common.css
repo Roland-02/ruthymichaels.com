@@ -66,6 +66,28 @@ body {
     align-items: center;
 }
 
+/* menu buttons */
+.menu-item svg {
+    cursor: pointer;
+    transition: transform 0.3s ease, fill 0.3s ease;
+}
+
+.menu-item:hover svg {
+    transform: scale(1.1);
+    fill: #ff68b3;
+}
+
+.menu-item.active svg {
+    fill: #ff68b3;
+}
+
+.nav-admin-label {
+    margin-left: 2vw;
+    font-size: 20px;
+    font-weight: 600;
+    text-decoration: underline;
+}
+
 .logo-image {
     width: 125px;
     cursor: pointer;
@@ -106,12 +128,17 @@ body {
 .nav-menu ul li a {
     display: block;
     color: #000000;
-    font-size: 20px;
+    font-size: 22px;
     text-decoration: none;
 }
 
 .nav-menu.open {
     display: flex;
+}
+
+.menu-item.active {
+    color: #ff68b3;
+    text-decoration: underline;
 }
 
 /* search button */
@@ -150,28 +177,6 @@ body {
 
 .search-icon.expanded {
     fill: #ff68b3;
-}
-
-/* menu buttons */
-.menu-item svg {
-    cursor: pointer;
-    transition: transform 0.3s ease, fill 0.3s ease;
-}
-
-.menu-item:hover svg {
-    transform: scale(1.1);
-    fill: #ff68b3;
-}
-
-.menu-item.active svg {
-    fill: #ff68b3;
-}
-
-.nav-admin-label {
-    margin-left: 2vw;
-    font-size: 20px;
-    font-weight: 600;
-    text-decoration: underline;
 }
 
 /* footer */
@@ -575,5 +580,7 @@ body {
     .similar-product:hover{
         transform: none;
     }
+
+    
 
 }

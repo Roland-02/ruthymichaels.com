@@ -69,3 +69,12 @@
 .submit-button:hover {
     background-color: #2275cf;
 }
+
+/* Styles for most mobile devices */
+@media only screen and (max-width: 768px) {
+
+    .view-container.contact{
+        width: 90%
+    }
+
+}
