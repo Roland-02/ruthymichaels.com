@@ -255,7 +255,7 @@ const Navbar = () => {
 
           {/* Left elements */}
           <div className="nav-left">
-            <button className="menu-toggle-btn" onClick={toggleMenu}>
+            <button className={`menu-toggle-btn menu-item ${menuOpen ? 'active' : ''}`} onClick={toggleMenu}>
               <svg xmlns="http://www.w3.org/2000/svg" width="50" height="50" class="bi bi-list" viewBox="0 0 16 16">
                 <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
               </svg>
@@ -264,7 +264,7 @@ const Navbar = () => {
             {/* Collapsible menu */}
             <nav className={`nav-menu ${menuOpen ? 'open' : ''}`}>
               <ul>
-                <li><Link to="/">Home</Link></li>
+                <li><Link to="/" className={`menu-item ${location.pathname === '/' ? 'active' : ''}`}>Home</Link></li>
                 <li><Link to="/wishlist">Wishlist</Link></li>
                 <li><Link to="/profile">Profile</Link></li>
                 <li><Link to="/about">About</Link></li>
