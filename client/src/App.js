@@ -22,6 +22,8 @@ const App = () => {
             <Router>
                 <Routes>
 
+                    <Route path="/profile" element={<Profile />} />
+
                     <Route path="/" element={<Index />} />
                     <Route path="/home" element={<Index />} />
                     <Route path="/index" element={<Index />} />
@@ -36,7 +38,7 @@ const App = () => {
 
                     {/* Protected Routes (requires logged in user) */}
                     <Route path="/wishlist" element={<ProtectedRoute element={<Wishlist />} />} />
-                    <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} />
+                    {/* <Route path="/profile" element={<ProtectedRoute element={<Profile />} />} /> */}
                     <Route path="/profile/review_item/:id" element={<ProtectedRoute element={<Profile form="review" />} />} />
                     <Route path="/profile/change_password/:id" element={<ProtectedRoute element={<Profile form="change_password" />} />} />
 

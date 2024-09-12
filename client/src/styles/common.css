@@ -581,6 +581,9 @@ body {
         transform: none;
     }
 
+    .login-container {
+        width: 90%;
+    }
     
 
 }

@@ -128,10 +128,10 @@ const Login = () => {
         }
     };
 
-    
+
     return (
         <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
-            <h2 className="text-center mt-2 mb-2">Login</h2>
+            <h2 className="text-center mt-2 mb-3">Login</h2>
 
             {errorMessage && (
                 <div className="error-container">

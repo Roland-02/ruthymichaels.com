@@ -22,7 +22,6 @@ const Profile = ({ form }) => {
     const [overlayVisible, setOverlayVisible] = useState(false);
     const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
-    window.scrollTo(0, 0);
 
 
     const [User, setUser] = useState({
@@ -161,28 +160,98 @@ const Profile = ({ form }) => {
     };
 
     const fetchOrders = async () => {
-        try {
-            const response = await axios.get(`/server/order_history/${session.id}`);
+        const fakeOrders = [
+            {
+                order_id: '12345',
+                date: '2024-01-10',
+                items: [
+                    {
+                        product_id: '101',
+                        item: 'Wireless Headphones',
+                        quantity: 1,
+                        price: 99.99
+                    }
+                ]
+            },
+            {
+                order_id: '12346',
+                date: '2024-02-02',
+                items: [
+                    {
+                        product_id: '102',
+                        item: 'Smartphone Case',
+                        quantity: 2,
+                        price: 19.99
+                    }
+                ]
+            },
+            {
+                order_id: '12347',
+                date: '2024-03-15',
+                items: [
+                    {
+                        product_id: '103',
+                        item: 'Bluetooth Speaker',
+                        quantity: 1,
+                        price: 49.99
+                    },
+                    {
+                        product_id: '104',
+                        item: 'Portable Charger',
+                        quantity: 1,
+                        price: 29.99
+                    }
+                ]
+            },
+            {
+                order_id: '12348',
+                date: '2024-04-05',
+                items: [
+                    {
+                        product_id: '105',
+                        item: 'Gaming Mouse',
+                        quantity: 1,
+                        price: 59.99
+                    }
+                ]
+            },
+            {
+                order_id: '12349',
+                date: '2024-05-18',
+                items: [
+                    {
+                        product_id: '106',
+                        item: 'Mechanical Keyboard',
+                        quantity: 1,
+                        price: 89.99
+                    }
+                ]
+            }
+        ];
+        setOrders(fakeOrders)
 
-            // Assuming the response is the order history data array
-            const formattedOrders = response.data.map(order => ({
-                ...order,
-                date: order.date,
-                items: order.items.map(item => ({
-                    ...item,
-                    price: item.price
-                }))
-            }));
-            setOrders(formattedOrders);
+        // try {
+        //     const response = await axios.get(`/server/order_history/${session.id}`);
 
-            const user_reviews = await fetchUserReviews();
-            setReviews(user_reviews)
+        //     // Assuming the response is the order history data array
+        //     const formattedOrders = response.data.map(order => ({
+        //         ...order,
+        //         date: order.date,
+        //         items: order.items.map(item => ({
+        //             ...item,
+        //             price: item.price
+        //         }))
+        //     }));
+        //     setOrders(formattedOrders);
+       
+        //     const user_reviews = await fetchUserReviews();
+        //     setReviews(user_reviews)
 
 
-        } catch (error) {
-            console.error('Failed to fetch orders:', error);
-            setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
-        }
+        // } catch (error) {
+        //     console.error('Failed to fetch orders:', error);
+        //     setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
+        // }
     };
 
     const fetchUserReviews = async () => {
@@ -220,8 +289,21 @@ const Profile = ({ form }) => {
     };
 
     useEffect(() => {
+        if (!session) {
+          // If no session exists, set a mock session
+          setSession({
+            id: 1,
+            email: 'fakeuser@domain.com',
+            method: null,
+          });
+        }
+      }, [session, setSession]);
+
+    useEffect(() => {
         const initialize = async () => {
-            // if (loading) return;
+            window.scrollTo(0, 0);
+
+            if (loading) return;
 
             // Fetch the user's info if a session exists
             try {
@@ -256,7 +338,6 @@ const Profile = ({ form }) => {
 
     }, [form]);
 
-    console.log(session)
 
     return (
         <div>

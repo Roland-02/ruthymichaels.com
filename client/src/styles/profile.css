@@ -3,19 +3,19 @@
 }
 
 .profile-container {
-    width: 90%;
+    width: 100%;
     gap: 20px;
     display: flex;
     align-items: center;
     flex-direction: column;
-    padding-bottom: 150px;
+    justify-content: center; 
+
 }
 
 .profile-info {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
     width: 100%;
 }
 
@@ -104,6 +104,8 @@
 /* order history table */
 .order-history{
     width: 50%;
+    display: flex;
+    flex-direction: column;
 }
 
 table {
@@ -138,7 +140,6 @@ th {
 .review-btn:hover {
     background-color: #ff7bbd;
 }
-
 
 /* leave review form */
 .review-container {
@@ -251,7 +252,6 @@ th {
     text-decoration: underline;
 }
 
-
 /* change password form */
 .change-password-form {
     width: 100%;
@@ -313,7 +313,6 @@ th {
     text-align: center;
 }
 
-
 /* delete account */
 .delete-account-container {
     position: absolute;
@@ -338,8 +337,65 @@ th {
 }
 
 
-/* Styles for most mobile devices (smartphones in portrait) */
+/* Styles for most mobile devices */
 @media only screen and (max-width: 768px) {
+
+    .profile-section {
+        width: 70%;
+    }
+
+    .order-history {
+        width: 70%;
+    }
+
+    .profile-section label {
+        font-size: 18px;
+    }
+    
+    .order.mobile {
+        display: block;
+    }
+
+    .order-history h2{
+        font-size: 20px;
+    }
+
+    .mobile-order {
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+        padding: 10px;
+        background-color: #f9f9f9;
+    }
+
+    .mobile-order-header {
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        cursor: pointer;
+    }
+
+    .mobile-order-details {
+        margin-top: 10px;
+    }
+
+    .mobile-order-details a {
+        font-size: 19px;
+    }
+
+    .mobile-order-item {
+        padding: 8px 0;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .mobile-order-item:last-child {
+        border-bottom: none;
+    }
+
+    .review-link-container {
+        display: flex;
+        justify-content: center;
+    }
+
 
     
 }
