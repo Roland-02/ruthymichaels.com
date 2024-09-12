@@ -248,6 +248,7 @@
   .filter-toggle-btn {
     position: fixed;
     left: 10px;
+    top: 120px;
     background-color: transparent;
     cursor: pointer;
     border: none;
@@ -257,7 +258,6 @@
 
   .filter-box {
     position: sticky;
-    top: 110px;
     border: none;
     width: 50vw;
     margin: 0;
@@ -272,7 +272,7 @@
     width: 60%;
     height: 75%;
     padding: 10px;
-    padding-top: 20px;
+    padding-top: 30px;
     background-color: #fff;
     border: 1px solid #ccc;
     transition: left 5.5s ease-in-out;

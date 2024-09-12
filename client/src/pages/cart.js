@@ -324,7 +324,6 @@ const Cart = () => {
     }, [cartProducts]);
 
     useEffect(() => {
-
         const params = new URLSearchParams(location.search);
         const orderSuccess = params.get('order_success');
         const token = params.get('token');

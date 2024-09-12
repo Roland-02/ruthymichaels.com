@@ -32,7 +32,7 @@ const Index = ({ form }) => {
   useEffect(() => {
 
     const initialize = async () => {
-  window.scrollTo(0, 0);
+      window.scrollTo(0, 0);
 
       const params = new URLSearchParams(location.search);
       const verified = params.get('verified');
@@ -53,15 +53,13 @@ const Index = ({ form }) => {
       if (tokenFromQuery) {
         setToken(tokenFromQuery);
       }
-      
-    }
 
+    }
     initialize();
 
   }, [location, navigate]);
 
   useEffect(() => {
-
     // Determine which form to show based on the 'form' prop
     if (form === 'login' || form === 'createAccount' || form === 'change_password') {
       setOverlayVisible(true);

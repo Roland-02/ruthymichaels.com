@@ -29,6 +29,10 @@ const Login = () => {
         setShowPassword(!showPassword);
     };
 
+    const handleClose = () => {
+        navigate('/')
+    }
+
     const handleResendVerification = async () => {
         try {
             // const email = session.email
@@ -89,6 +93,7 @@ const Login = () => {
 
             } else if (result.id) {
                 setSession({ id: result.id, email: result.email, method: null });
+                
                 navigate('/');
 
             } else {
@@ -131,6 +136,9 @@ const Login = () => {
 
     return (
         <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+            
+            <button className="close-button" onClick={handleClose}>×</button>
+
             <h2 className="text-center mt-2 mb-3">Login</h2>
 
             {errorMessage && (

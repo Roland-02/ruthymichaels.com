@@ -23,10 +23,14 @@ const CreateAccount = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
 
-  
+
   const togglePassword = () => {
     setShowPassword(!showPassword);
   };
+
+  const handleClose = () => {
+    navigate('/')
+  }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -89,6 +93,8 @@ const CreateAccount = () => {
 
   return (
     <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+      <button className="close-button" onClick={handleClose}>×</button>
+
       <h2 className="text-center mt-2 mb-4">Create Account</h2>
       {error && <label className="error-label">{error}</label>}
 
@@ -168,7 +174,7 @@ const CreateAccount = () => {
         </div>
 
         <div className="text-center">
-          <p>Already have an account? <a href="/login">Sign in</a></p>
+          <p>Already registered? <a href="/login">Sign in</a></p>
         </div>
       </form>
     </div>

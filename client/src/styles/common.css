@@ -186,7 +186,7 @@ body {
     left: 0;
     width: 100%;
     height: 150px;
-    background-color: #f59af1;
+    background-color: #ff68b494;
     margin-top: 7vh;
 }
 
@@ -217,10 +217,11 @@ body {
 
 .login-container {
     position: absolute;
-    top: 47%;
+    top: 50%;
     left: 50%;
     width: 100%;
     max-width: 400px;
+    height: auto;
     transform: translate(-50%, -50%);
     z-index: 101;
     background-color: #fff;
@@ -313,6 +314,23 @@ body {
     text-decoration: underline;
 }
 
+.close-button {
+    position: absolute;
+    top: -5px;
+    right: 5px;
+    font-size: 24px;
+    font-weight: bold;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.close-button:hover {
+    color: #ff0000;
+    /* Change color on hover */
+}
+
 /* Results Container Styles */
 .results-container {
     position: absolute;
@@ -388,7 +406,8 @@ body {
     top: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 30%;
+    /* width: auto; */
+    width: 50%;
     height: 75px;
     margin-top: 75px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -496,6 +515,12 @@ body {
     display: none;
 }
 
+@media only screen and (max-width: 225px) {
+    .logo-image{
+        display: none;
+    }
+}
+
 /* Styles for most mobile devices */
 @media only screen and (max-width: 768px) {
 
@@ -584,46 +609,10 @@ body {
         width: 90%;
     }
 
-    /* message */
     .message-banner {
-        position: fixed;
-        top: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 30%;
-        height: 75px;
-        margin-top: 75px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-
-        padding: 15px;
-        z-index: 101;
-        cursor: pointer;
-        transition: all 0.3s ease-in-out;
-
-        white-space: nowrap;
+        width: auto;
+        max-width: 70%;
+        padding: 10px;
     }
-
-    .message-banner.default {
-        background-color: #f0f8ff;
-    }
-
-    .message-banner.error {
-        background-color: #ff93a7;
-    }
-
-    .message-banner.success {
-        background-color: #98ffb2;
-    }
-
-    .message-banner:hover {
-        box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
-    }
-
 
 }

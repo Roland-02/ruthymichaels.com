@@ -18,7 +18,6 @@ const Wishlist = () => {
     const [wishlist, setWishlist] = useState([]);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
-    window.scrollTo(0, 0);
 
 
     const fetchWishlist = async () => {
@@ -68,6 +67,8 @@ const Wishlist = () => {
 
     useEffect(() => {
         const initialize = async () => {
+            window.scrollTo(0, 0);
+
             if (loading) return; 
 
             await fetchWishlist();

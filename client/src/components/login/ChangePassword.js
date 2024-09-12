@@ -20,6 +20,10 @@ const ChangePassword = ({ token }) => {
         setShowPassword(!showPassword);
     };
 
+    const handleClose = () => {
+        navigate('/')
+      }
+
     const handleChangePassword = async (e) => {
         e.preventDefault();
 
@@ -52,6 +56,9 @@ const ChangePassword = ({ token }) => {
             <MessageBanner message={message} setMessage={setMessage} />
 
             <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+
+                <button className="close-button" onClick={handleClose}>×</button>
+
                 <h2 className="text-center mt-2 mb-2">Change Password</h2>
 
                 {error && <label className="error-label">{error}</label>}

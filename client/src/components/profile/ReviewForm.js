@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 import '../../styles/profile.css';
 import '../../styles/common.css';
@@ -7,11 +8,8 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
     const [rating, setRating] = useState(0);
     const [hoverRating, setHoverRating] = useState(0);
     const [review, setReview] = useState('');
+    const navigate = useNavigate();
 
-    useEffect(() => {
-        setRating(initialRating);
-        setReview(initialReview);
-    }, [initialRating, initialReview]);
 
     const handleClick = (rate) => {
         setRating(rate);
@@ -24,6 +22,10 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
     const handleMouseLeave = () => {
         setHoverRating(0);
     };
+
+    const handleClose = () => {
+        navigate('/profile')
+    }
 
     const handleSave = () => {
         onSave({
@@ -41,9 +43,17 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
         })
     }
 
+    useEffect(() => {
+        setRating(initialRating);
+        setReview(initialReview);
+    }, [initialRating, initialReview]);
+
+
     return (
         <div className='review-container'>
             <div className="review-form">
+            <button className="close-button" onClick={handleClose}>×</button>
+
                 <h2>Leave a Review</h2>
                 <p>{item_name}</p>
 

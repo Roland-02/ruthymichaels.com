@@ -77,4 +77,8 @@
         width: 90%
     }
 
+    .contact-form .input-group label {
+        font-size: 18px;
+    }
+
 }
