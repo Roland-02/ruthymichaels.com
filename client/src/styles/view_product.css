@@ -273,7 +273,6 @@
     }
 
     .product-details-side {
-        margin-top: 10px;
         text-align: center;
     }
 
@@ -308,7 +307,7 @@
     }
 
     .product-average-rating {
-        font-size: 1.25em;
+        font-size: 0.9em;
     }
 
     .product-average-rating .product-stars {

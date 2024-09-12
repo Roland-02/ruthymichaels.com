@@ -266,6 +266,8 @@ const View_Product = () => {
 
     useEffect(() => {
         const initialize = async () => {
+            window.scrollTo(0, 0);
+
             await fetchProduct();
             await fetchCartProducts();
 
@@ -274,69 +276,20 @@ const View_Product = () => {
             }
 
         };
-        // initialize();
-
-        const ex = {
-            id: 1,
-            name: 'Lego Star Wars Millennium Falcon',
-            type: 'Toy',
-            description: 'Detailed model of the iconic Millennium Falcon from Star Wars, featuring over 1,000 pieces. Perfect for Star Wars fans and model builders.',
-            age: '8+',
-            price: '129.99',
-            imageUrls: [
-                'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
-                'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
-                'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
-                'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
-            ]
-        };
-
-        setProduct(ex)
-        setSelectedImage(ex.imageUrls[0]);
-
+        initialize();
 
     }, [session, navigate]);
 
     useEffect(() => {
-        // if (product && product.id) {
-        //     fetchProductReviews(product.id);
+        if (product && product.id) {
+            fetchProductReviews(product.id);
 
-        //     const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-        //     const avg = sum / reviews.length;
+            const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
+            const avg = sum / reviews.length;
 
-        //     setAverageRating(Math.round(avg));
+            setAverageRating(Math.round(avg));
 
-        // }
-
-        const exampleReviews = [
-            {
-                user_email: "john.doe@example.com",
-                review: "Great product! Really enjoyed using it, highly recommend.",
-                rating: 5
-            },
-            {
-                user_email: "jane.smith@example.com",
-                review: "Good quality but a bit pricey for what you get.",
-                rating: 4
-            },
-            {
-                user_email: "michael.brown@example.com",
-                review: "Product was okay, but customer service was fantastic!",
-                rating: 3
-            },
-            {
-                user_email: "emily.jones@example.com",
-                review: "Not what I expected. The product quality could be improved.",
-                rating: 2
-            },
-            {
-                user_email: "david.wilson@example.com",
-                review: "Terrible experience. The product broke after a week.",
-                rating: 1
-            }
-        ];
-        setReviews(exampleReviews)
-
+        }  
     }, [product, reviews]);
 
 
