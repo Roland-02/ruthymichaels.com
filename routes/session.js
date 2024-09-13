@@ -225,7 +225,7 @@ router.post('/login', (req, res) => {
 
             res.cookie('sessionEmail', user.email, { httpOnly: true, secure: true });
             res.cookie('sessionID', user.user_id, { httpOnly: true, secure: true });
-            res.cookie('sessionRole', 'user', { httpOnly: true, secure: true });
+            res.cookie('sessionRole', user.role, { httpOnly: true, secure: true });
 
             // Assuming you create a session or return user data here
             return res.status(200).json({ id: user.user_id, email: user.email });

@@ -46,7 +46,7 @@ const ChangePassword = ({ token }) => {
                 setMessage({ content: 'Error changing password', product: null, action: 'error' });
             }
         } catch (error) {
-            console.error('Error changing password:', error);
+            setMessage({ content: 'Error changing password', product: null, action: 'error' });
         }
     };
 

@@ -46,7 +46,7 @@ const Login = () => {
 
             }
         } catch (error) {
-            console.error('Error resending verification link:', error);
+            setMessage({ content: 'Error sending verification', product: null, action: 'error' });
         }
     };
 
@@ -68,7 +68,6 @@ const Login = () => {
             }
 
         } catch (error) {
-            console.error('Error sending password reset link:', error);
             setMessage({ content: 'Error sending password reset link.', product: null, action: 'error' });
         }
     };
@@ -97,12 +96,9 @@ const Login = () => {
 
             } else {
                 setErrorMessage(result.message);
-
             }
 
-        } catch (error) {
-            console.log(error)
-        }
+        } catch (error) {}
     };
 
     const responseFacebook = (response) => {
@@ -114,7 +110,6 @@ const Login = () => {
             setSession({ id: response.userID, email: response.email, method: 'facebook', role: 'user' });
             navigate('/');
         } else {
-            console.log('User cancelled login or did not fully authorize.');
             setErrorMessage('Please log into this app.');
         }
     };
@@ -129,7 +124,6 @@ const Login = () => {
             setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google', role: 'user' });
             navigate('/');
         } else {
-            console.log('User cancelled login or did not fully authorize.');
             setErrorMessage('Please log into this app.');
         }
     };
@@ -212,9 +206,6 @@ const Login = () => {
                             <GoogleLogin
                                 cssClass="loginBtn"
                                 onSuccess={responseGoogle}
-                                onError={(error) => {
-                                    console.log('Login Failed', error);
-                                }}
                             />
                         </div>
                     </GoogleOAuthProvider>}

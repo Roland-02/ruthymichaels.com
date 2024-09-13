@@ -46,10 +46,10 @@ const Cart = () => {
                     setTotalPrice(newTotalPrice);
 
                 } else {
-                    console.error('Failed to fetch cart products');
+                    setMessage({ content: 'Failed to fetch cart', product: null, action: 'error' });
                 }
-            } catch (error) {
-                console.error('Error fetching cart products:', error);
+            } catch (error) {            
+                setMessage({ content: 'Failed to fetch cart', product: null, action: 'error' });
             }
 
         } else {
@@ -85,7 +85,7 @@ const Cart = () => {
                     setTotalPrice(totalPrice);
 
                 } catch (error) {
-                    console.error('Failed to fetch products from cache:', error);
+                    setMessage({ content: 'Failed to fetch cart', product: null, action: 'error' });
                 }
 
             }
@@ -103,10 +103,7 @@ const Cart = () => {
                 setWishlist([])
             }
 
-        } catch (error) {
-            console.error('Error fetching loved products:', error);
-
-        }
+        } catch (error) {}
     };
 
     const handleLoveClick = async (productID) => {
@@ -131,11 +128,9 @@ const Cart = () => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product unloved successfully');
                         setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to unlove product:', response.data);
                         setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
                     }
                 } else {
@@ -147,17 +142,14 @@ const Cart = () => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product loved successfully');
                         setMessage({ content: 'Added to wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to love product:', response.data);
                         setMessage({ content: 'Error adding to wishlist', productID, action: 'love' });
 
                     }
                 }
             } catch (error) {
-                console.error('Error toggling love state:', error);
                 // Revert the state if the request fails
                 setWishlist((prev) => ({
                     ...prev,
@@ -242,13 +234,11 @@ const Cart = () => {
                 });
 
                 if (response.status === 200) {
-                    console.log('Product quantity updated successfully on the server');
-                } else {
-                    console.error('Failed to update product quantity on the server');
+                    setMessage({ content: 'Updated quantity', product: null, action: 'success' });
                 }
 
             } catch (error) {
-                console.error('Error updating product quantity on the server:', error);
+                setMessage({ content: 'Failed to update quantity', product: null, action: 'error' });
             }
 
         } else {
@@ -288,13 +278,11 @@ const Cart = () => {
                 // Redirect to the Stripe Checkout page
                 await stripe.redirectToCheckout({ sessionId });
 
-                console.log('Proceeding to checkout');
-
             } else {
-                console.error('Failed to create checkout session');
+                setMessage({ content: 'Error during checkout', product: null, action: 'error' });
             }
         } catch (error) {
-            console.error('Error during checkout:', error);
+            setMessage({ content: 'Error during checkout', product: null, action: 'error' });
         }
     };
 

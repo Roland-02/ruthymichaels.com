@@ -30,9 +30,7 @@ const Navbar = () => {
       setSession(null);
       navigate('/');
 
-    } catch (error) {
-      console.error('Error signing out:', error);
-    }
+    } catch (error) {}
 
   };
 
@@ -108,7 +106,7 @@ const Navbar = () => {
           setSearchResults(formattedResults);
 
         } catch (err) {
-          console.error('Error fetching search results', err);
+          setMessage({ content: 'Error fetching search results', product: null, action: 'error' });
         }
       }
     };

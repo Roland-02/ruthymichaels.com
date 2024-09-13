@@ -71,7 +71,6 @@ const CreateAccount = () => {
       setSession({ id: response.userID, email: response.email, method: 'facebook', role: 'user' });
       navigate('/');
     } else {
-      console.log('User cancelled login or did not fully authorize.');
       setError('Please log into this app.');
     }
 
@@ -87,7 +86,6 @@ const CreateAccount = () => {
       setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google', role: 'user' });
       navigate('/');
     } else {
-      console.log('User cancelled login or did not fully authorize.');
       setError('Please log into this app.');
     }
   };
@@ -166,9 +164,6 @@ const CreateAccount = () => {
               <GoogleLogin
                 cssClass="loginBtn"
                 onSuccess={responseGoogle}
-                onError={() => {
-                  console.log('Login Failed');
-                }}
               />
             </div>
           </GoogleOAuthProvider>}

@@ -13,7 +13,6 @@ export const SessionProvider = ({ children }) => {
                 const response = await axios.get('/session');
                 setSession(response.data);
             } catch (error) {
-                console.error('Error fetching session data:', error);
             } finally {
                 setLoading(false);
             }

@@ -48,7 +48,6 @@ const Products_View = ({ session }) => {
 
     }, [location.pathname, navigate]);
 
-    console.log(products)
 
     const handleDelete = async (productId) => {
         try {

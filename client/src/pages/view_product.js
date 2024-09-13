@@ -51,9 +51,7 @@ const View_Product = () => {
                 navigate('/')
             }
 
-        } catch (error) {
-            console.error('Error fetching product: ', error);
-        }
+        } catch (error) {}
     };
 
     const fetchProductReviews = async (product_id) => {
@@ -72,10 +70,7 @@ const View_Product = () => {
                 setReviews([]);
 
             }
-        } catch (error) {
-            console.error('Error fetching user reviews:', error);
-            setReviews([]);
-        }
+        } catch (error) {setReviews([]);}
     };
 
     const fetchWishlist = async () => {
@@ -89,10 +84,7 @@ const View_Product = () => {
                 setWishlist([])
             }
 
-        } catch (error) {
-            console.error('Error fetching loved products:', error);
-
-        }
+        } catch (error) {}
     };
 
     const fetchCartProducts = async () => {
@@ -108,10 +100,7 @@ const View_Product = () => {
                 setCartedProducts(cartProductIDs);
             }
 
-        } catch (error) {
-            console.error('Error fetching loved products:', error);
-
-        }
+        } catch (error) {}
     };
 
     const handleLoveClick = async (productID) => {
@@ -136,11 +125,9 @@ const View_Product = () => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product unloved successfully');
                         setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to unlove product:', response.data);
                         setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
                     }
                 } else {
@@ -152,17 +139,14 @@ const View_Product = () => {
                     });
 
                     if (response.status === 200) {
-                        console.log('Product loved successfully');
                         setMessage({ content: 'Added to wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to love product:', response.data);
                         setMessage({ content: 'Error adding to wishlist', productID, action: 'love' });
 
                     }
                 }
             } catch (error) {
-                console.error('Error toggling love state:', error);
                 // Revert the state if the request fails
                 setWishlist((prev) => ({
                     ...prev,
@@ -198,15 +182,12 @@ const View_Product = () => {
                 });
 
                 if (response.status === 200) {
-                    console.log('Product quantity updated successfully');
                     setMessage({ content: 'Added to basket', productID, action: 'cart' });
                 } else {
-                    console.error('Failed to update product quantity in basket:', response.data);
                     setMessage({ content: 'Failed to update quantity in basket', productID, action: 'cart' });
                 }
 
             } catch (error) {
-                console.error('Error toggling cart state:', error);
                 setCartedProducts((prev) => {
                     if (isCart) {
                         return prev.map(item =>
@@ -220,7 +201,6 @@ const View_Product = () => {
             }
         } else {
             // Logic for when the user is not signed in (store in cache)
-            console.log('Store cart in cache');
 
             // Retrieve the current cart from localStorage
             let cachedCart = JSON.parse(localStorage.getItem('cartProducts')) || [];

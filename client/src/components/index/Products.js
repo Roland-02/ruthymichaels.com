@@ -57,7 +57,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
 
         } catch (error) {
-            console.error('Error fetching products:', error);
+            setMessage({ content: 'Error loading products', product: null, action: 'error' });
 
         } finally {
             setLoading(false);
@@ -77,7 +77,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             }
 
         } catch (error) {
-            console.error('Error fetching loved products:', error);
+            setMessage({ content: 'Error loading wishlist', product: null, action: 'error' });
 
         }
     };
@@ -97,7 +97,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             }
 
         } catch (error) {
-            console.error('Error fetching loved products:', error);
+            setMessage({ content: 'Error loading cart', product: null, action: 'error' });
 
         }
     };
@@ -132,7 +132,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to unlove product:', response.data);
                         setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
 
                     }
@@ -148,13 +147,11 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         setMessage({ content: 'Added to wishlist', productID, action: 'love' });
 
                     } else {
-                        console.error('Failed to love product:', response.data);
                         setMessage({ content: 'Error adding to wishlist', productID, action: 'love' });
 
                     }
                 }
             } catch (error) {
-                console.error('Error toggling love state:', error);
                 // Revert the state if the request fails
                 setWishlist((prev) => ({
                     ...prev,
@@ -193,7 +190,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         setMessage({ content: 'Removed from basket', productID, action: 'cart' });
 
                     } else {
-                        console.error('Failed to uncart product:', response.data);
                         setMessage({ content: 'Failed to remove from basket', productID, action: 'cart' });
 
                     }
@@ -208,13 +204,9 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
                     if (response.status === 200) {
                         setMessage({ content: 'Added to basket', productID, action: 'cart' });
-
-                    } else {
-                        console.error('Failed to add to basket', response.data);
                     }
                 }
             } catch (error) {
-                console.error('Error toggling love state:', error);
                 // Revert the state if the request fails
                 setCartedProducts((prev) => ({
                     ...prev,

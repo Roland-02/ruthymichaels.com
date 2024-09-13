@@ -45,13 +45,9 @@ const SimilarProducts = ({ product }) => {
 
                 setSimilar(filteredProducts);
 
-            } else {
-                console.log('error');
             }
 
-        } catch (error) {
-            console.error('Error fetching products: ', error);
-        }
+        } catch (error) {}
 
     };
 

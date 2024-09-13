@@ -23,7 +23,6 @@ const Profile = ({ form }) => {
     const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
 
-    console.log(session)
 
     const [User, setUser] = useState({
         email: session ? session.email : '',
@@ -36,9 +35,7 @@ const Profile = ({ form }) => {
                 params: { email: session.email }
             });
             setVerificationStatus(response.data.verified);
-        } catch (error) {
-            console.error('Error checking verification status:', error);
-        }
+        } catch (error) {}
     };
 
     const handleResendVerification = async () => {
@@ -52,9 +49,7 @@ const Profile = ({ form }) => {
             } else {
                 setMessage({ content: `${response.data.message}`, product: '', action: 'error' });
             }
-        } catch (error) {
-            console.error('Error resending verification link:', error);
-        }
+        } catch (error) {}
     };
 
     const handleReviewClick = (product_id, item_name) => {
@@ -96,13 +91,11 @@ const Profile = ({ form }) => {
                 setMessage({ content: 'Thank you for your review', product: null, action: 'success' });
 
             } else {
-                console.error('Failed to save the review.');
                 setMessage({ content: 'Failed to save your review. Please try again', product: null, action: 'error' });
             }
 
         } catch (error) {
             setMessage({ content: 'Please rate and review before saving!', product: null, action: 'error' });
-            console.error('Error saving the review:', error);
         } finally {
             setReviewItem(null);
             setOverlayVisible(false);
@@ -128,7 +121,6 @@ const Profile = ({ form }) => {
 
         } catch (error) {
             setMessage({ content: 'Error deleting review', product: null, action: 'error' });
-            console.error('Error saving the review:', error);
 
         } finally {
             setReviewItem(null);
@@ -154,7 +146,6 @@ const Profile = ({ form }) => {
                     setMessage({ content: 'There was an error deleting your account', product: '', action: 'error' })
                 }
             } catch (error) {
-                console.error('Error deleting account:', error);
                 setMessage({ content: 'There was an error deleting your account', product: '', action: 'error' })
             }
         }
@@ -176,7 +167,6 @@ const Profile = ({ form }) => {
             setOrders(formattedOrders);
 
         } catch (error) {
-            console.error('Failed to fetch orders:', error);
             setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
         }
     };
@@ -198,9 +188,7 @@ const Profile = ({ form }) => {
             } else {
                 setReviews({});
             }
-        } catch (error) {
-            console.log('No reviews found for user');
-        }
+        } catch (error) {}
     };
 
     const handleChange = (e) => {
@@ -234,9 +222,7 @@ const Profile = ({ form }) => {
                     await checkVerificationStatus();
                 }
 
-            } catch (error) {
-                console.error('Error fetching user info:', error);
-            }
+            } catch (error) {}
 
         }
 
