@@ -23,6 +23,7 @@ const Profile = ({ form }) => {
     const [verificationStatus, setVerificationStatus] = useState(null);
     const navigate = useNavigate();
 
+    console.log(session)
 
     const [User, setUser] = useState({
         email: session ? session.email : '',
@@ -173,10 +174,6 @@ const Profile = ({ form }) => {
                 }))
             }));
             setOrders(formattedOrders);
-       
-            const user_reviews = await fetchUserReviews();
-            setReviews(user_reviews)
-
 
         } catch (error) {
             console.error('Failed to fetch orders:', error);
@@ -189,20 +186,20 @@ const Profile = ({ form }) => {
             const response = await axios.get(`/server/fetch_user_reviews/${session.id}`);
             if (response.status === 200) {
                 const reviewsArray = response.data.reviews;
-
-                // Convert the array to an object keyed by "order_id_product_id"
+    
+                // Convert the array to an object keyed by "product_id"
                 const reviewsObject = reviewsArray.reduce((acc, review) => {
                     acc[review.product_id] = review;  // Key by product_id only
                     return acc;
                 }, {});
-
-                return reviewsObject;
+    
+                setReviews(reviewsObject);
+                
             } else {
-                return {};
+                setReviews({});
             }
         } catch (error) {
-            console.error('Error fetching user reviews:', error);
-            return {};
+            console.log('No reviews found for user');
         }
     };
 
@@ -224,7 +221,6 @@ const Profile = ({ form }) => {
 
             if (Loading) return;
 
-            // Fetch the user's info if a session exists
             try {
                 setUser(prevState => ({
                     ...prevState,
@@ -232,6 +228,7 @@ const Profile = ({ form }) => {
                 }));
 
                 await fetchOrders();
+                await fetchUserReviews();
 
                 if (session.method === null) {
                     await checkVerificationStatus();

@@ -92,8 +92,7 @@ const Login = () => {
                 setVerificationStatus(false);
 
             } else if (result.id) {
-                setSession({ id: result.id, email: result.email, method: null });
-                
+                setSession({ id: result.id, email: result.email, method: null, role: 'user' });
                 navigate('/');
 
             } else {
@@ -111,7 +110,8 @@ const Login = () => {
             Cookies.set('sessionID', response.userID, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionEmail', response.email, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionMethod', 'facebook', { path: '/', secure: true, sameSite: 'Strict' });
-            setSession({ id: response.userID, email: response.email, method: 'facebook' });
+            Cookies.set('sessionRole', 'user', { path: '/', secure: true, sameSite: 'Strict' });
+            setSession({ id: response.userID, email: response.email, method: 'facebook', role: 'user' });
             navigate('/');
         } else {
             console.log('User cancelled login or did not fully authorize.');
@@ -125,7 +125,8 @@ const Login = () => {
             Cookies.set('sessionID', decodedToken.sub, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionEmail', decodedToken.email, { path: '/', secure: true, sameSite: 'Strict' });
             Cookies.set('sessionMethod', 'google', { path: '/', secure: true, sameSite: 'Strict' });
-            setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google' });
+            Cookies.set('sessionRole', 'user', { path: '/', secure: true, sameSite: 'Strict' });
+            setSession({ id: decodedToken.sub, email: decodedToken.email, method: 'google', role: 'user' });
             navigate('/');
         } else {
             console.log('User cancelled login or did not fully authorize.');

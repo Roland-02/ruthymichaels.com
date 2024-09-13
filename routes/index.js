@@ -653,7 +653,6 @@ router.get('/fetch_user_reviews/:user_id', async (req, res) => {
 
             // Transform the result into a plain array
             const reviews = result.map(row => ({
-                // order_id: row.order_id,
                 product_id: row.product_id,
                 rating: row.rating,
                 review: row.review,

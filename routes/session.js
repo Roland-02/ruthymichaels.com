@@ -223,6 +223,10 @@ router.post('/login', (req, res) => {
                 return res.status(405).json({ message: 'Admin verification sent to email', verified: false });
             }
 
+            res.cookie('sessionEmail', user.email, { httpOnly: true, secure: true });
+            res.cookie('sessionID', user.user_id, { httpOnly: true, secure: true });
+            res.cookie('sessionRole', 'user', { httpOnly: true, secure: true });
+
             // Assuming you create a session or return user data here
             return res.status(200).json({ id: user.user_id, email: user.email });
         });
@@ -276,6 +280,7 @@ router.post('/createAccount', async (req, res) => {
                     const user_id = result.insertId;
                     res.cookie('sessionEmail', email, { httpOnly: true, secure: true });
                     res.cookie('sessionID', user_id, { httpOnly: true, secure: true });
+                    res.cookie('sessionRole', 'user', { httpOnly: true, secure: true });
 
                     connection.release();
                     console.log("--------> Created new User");
