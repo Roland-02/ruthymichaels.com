@@ -8,6 +8,8 @@ import '../../styles/index.css';
 import '../../styles/common.css'
 import '../../bootstrap/css/mdb.min.css';
 
+import LoadingSpinner from '../common/LoadingSpinner';
+
 
 const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const { session } = useContext(SessionContext);
@@ -23,6 +25,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [maxPrice, setMaxPrice] = useState(1000);
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
     const filterRef = useRef(null);
     const navigate = useNavigate();
 
@@ -33,15 +36,14 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
     const fetchProducts = async () => {
         try {
+            setLoading(true);
             const response = await axios.get('/server/get_products');
             const allProducts = response.data;
-            console.log()
             const formattedProducts = allProducts.map(prod => {
                 const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
                 const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                 return { ...prod, imageUrls };
             });
-
             setProducts(formattedProducts)
             setAllProducts(formattedProducts)
             const types = [...new Set(formattedProducts.map(product => product.type))];
@@ -53,8 +55,13 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             setMaxPrice(maxPriceRounded);
             setSelectedPrice(maxPriceRounded);
 
+
         } catch (error) {
             console.error('Error fetching products:', error);
+
+        } finally {
+            setLoading(false);
+
         }
     };
 
@@ -554,6 +561,9 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
                     </div>
                 )}
+
+{loading && <LoadingSpinner />}
+
 
                 {/* Products Container */}
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">

@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom'; // Use Navigate component from reac
 import { SessionContext } from './SessionContext';
 
 const ProtectedRoute = ({ element }) => {
-    const { session, loading } = useContext(SessionContext);
+    const { session, Loading } = useContext(SessionContext);
 
-    if (loading) return; 
+    if (Loading) return; 
 
     // If no session exists, redirect to login
     if (!(session && session.id)) {

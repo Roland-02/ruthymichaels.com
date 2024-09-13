@@ -12,35 +12,35 @@ const Admin = ({ session }) => {
     const [token, setToken] = useState(null);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     const initialize = async () => {
+        const initialize = async () => {
     
-    //       const params = new URLSearchParams(location.search);
-    //       const verified = params.get('verified');
-    //       const tokenFromQuery = params.get('token');
+          const params = new URLSearchParams(location.search);
+          const verified = params.get('verified');
+          const tokenFromQuery = params.get('token');
     
-    //       if (verified) {
-    //         if (verified === 'true') {
-    //           setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
+          if (verified) {
+            if (verified === 'true') {
+              setMessage({ content: 'Your account has been verified succesfully', product: null, action: 'success' });
     
-    //         } else {
-    //           setMessage({ content: 'Account verification failed', product: null, action: 'error' });
+            } else {
+              setMessage({ content: 'Account verification failed', product: null, action: 'error' });
     
-    //         }
+            }
     
-    //         navigate('/');
-    //       }
+            navigate('/');
+          }
     
-    //       if (tokenFromQuery) {
-    //         setToken(tokenFromQuery);
-    //       }
+          if (tokenFromQuery) {
+            setToken(tokenFromQuery);
+          }
 
-    //     }
+        }
     
-    //     initialize();
+        initialize();
     
-    //   }, [location, navigate]);
+      }, [location, navigate]);
 
 
     const handleClick_products = () => {

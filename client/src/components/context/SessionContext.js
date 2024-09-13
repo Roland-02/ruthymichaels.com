@@ -5,7 +5,7 @@ export const SessionContext = createContext();
 
 export const SessionProvider = ({ children }) => {
     const [session, setSession] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [Loading, setLoading] = useState(true);
 
     useEffect(() => {
         const checkSession = async () => {
@@ -24,7 +24,7 @@ export const SessionProvider = ({ children }) => {
     }, []);
     
     return (
-        <SessionContext.Provider value={{ session, setSession, loading }}>
+        <SessionContext.Provider value={{ session, setSession, Loading }}>
             {children}
         </SessionContext.Provider>
     );

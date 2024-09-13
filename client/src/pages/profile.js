@@ -14,7 +14,7 @@ import ReviewForm from '../components/profile/ReviewForm';
 
 
 const Profile = ({ form }) => {
-    const { session, setSession, loading } = useContext(SessionContext);
+    const { session, setSession, Loading } = useContext(SessionContext);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const [orders, setOrders] = useState([]);
     const [reviews, setReviews] = useState({});
@@ -222,7 +222,7 @@ const Profile = ({ form }) => {
         const initialize = async () => {
             window.scrollTo(0, 0);
 
-            if (loading) return;
+            if (Loading) return;
 
             // Fetch the user's info if a session exists
             try {
@@ -245,7 +245,7 @@ const Profile = ({ form }) => {
 
         initialize();
 
-    }, [session, navigate]);
+    }, [session, Loading, navigate]);
 
     useEffect(() => {
         if (form === 'review' || form === 'change_password') {

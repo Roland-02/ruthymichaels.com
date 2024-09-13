@@ -11,8 +11,6 @@ import MessageBanner from '../components/common/MessageBanner';
 
 
 const Contact = () => {
-    window.scrollTo(0, 0);
-
     const { session } = useContext(SessionContext);
     const navigate = useNavigate();
     const [email, setEmail] = useState(session ? session.email : '');
@@ -20,7 +18,6 @@ const Contact = () => {
     const [text, setText] = useState('');
     const [message, setMessage] = useState({ content: null, product: null, action: null });
 
-    window.scrollTo(0, 0);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -3,9 +3,9 @@ import { Navigate } from 'react-router-dom';
 import { SessionContext } from './SessionContext';
 
 const AdminProtectedRoute = ({ element }) => {
-    const { session, loading } = useContext(SessionContext);
+    const { session, Loading } = useContext(SessionContext);
 
-    if (loading) return; 
+    if (Loading) return; 
 
     if (!(session && session.role === 'admin')) {
         return <Navigate to="/" replace />;

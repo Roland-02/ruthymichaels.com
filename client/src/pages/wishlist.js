@@ -14,7 +14,7 @@ import MessageBanner from '../components/common/MessageBanner';
 
 
 const Wishlist = () => {
-    const { session, loading } = useContext(SessionContext);
+    const { session, Loading } = useContext(SessionContext);
     const [wishlist, setWishlist] = useState([]);
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
@@ -69,14 +69,14 @@ const Wishlist = () => {
         const initialize = async () => {
             window.scrollTo(0, 0);
 
-            if (loading) return; 
+            if (Loading) return; 
 
             await fetchWishlist();
        
         };
         initialize();
 
-    }, [session, loading, navigate]);
+    }, [session, Loading, navigate]);
 
 
     return (
