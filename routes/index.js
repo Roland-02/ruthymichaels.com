@@ -141,10 +141,10 @@ router.get('/search', async (req, res) => {
 
         if (err) throw (err)
 
-        const sqlQuery = `SELECT * FROM products WHERE name LIKE ? OR type LIKE ? OR description LIKE ?`;
+        const sqlQuery = `SELECT * FROM products WHERE name LIKE ? OR type LIKE ? OR description LIKE ? OR age LIKE ?`;
         const searchTerm = `%${query}%`;
 
-        connection.query(sqlQuery, [searchTerm, searchTerm, searchTerm], (err, results) => {
+        connection.query(sqlQuery, [searchTerm, searchTerm, searchTerm, searchTerm], (err, results) => {
             if (err) {
                 return res.status(500).send('Server error');
             }

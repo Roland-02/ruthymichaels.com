@@ -51,7 +51,7 @@ const View_Product = () => {
                 navigate('/')
             }
 
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const fetchProductReviews = async (product_id) => {
@@ -70,7 +70,7 @@ const View_Product = () => {
                 setReviews([]);
 
             }
-        } catch (error) {setReviews([]);}
+        } catch (error) { setReviews([]); }
     };
 
     const fetchWishlist = async () => {
@@ -84,7 +84,7 @@ const View_Product = () => {
                 setWishlist([])
             }
 
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const fetchCartProducts = async () => {
@@ -100,7 +100,7 @@ const View_Product = () => {
                 setCartedProducts(cartProductIDs);
             }
 
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const handleLoveClick = async (productID) => {
@@ -258,6 +258,26 @@ const View_Product = () => {
         };
         initialize();
 
+        // const ex = {
+        //     id: 1,
+        //     name: 'Lego Star Wars Millennium Falcon',
+        //     type: 'Toy',
+        //     description: 'Detailed model of the iconic Millennium Falcon from Star Wars, featuring over 1,000 pieces. Perfect for Star Wars fans and model builders.',
+        //     age: '8+',
+        //     price: '129.99',
+        //     imageUrls: [
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //         'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0',
+        //     ]
+        // };
+        // setProduct(ex)
+        // setSelectedImage(ex.imageUrls[0]);
+
     }, [session, navigate]);
 
     useEffect(() => {
@@ -269,7 +289,7 @@ const View_Product = () => {
 
             setAverageRating(Math.round(avg));
 
-        }  
+        }
     }, [product, reviews]);
 
 
@@ -307,6 +327,9 @@ const View_Product = () => {
                     <div className="product-details-side">
                         <h2 className='product-name'>{product.name}</h2>
                         <p className='product-description'>{product.description}</p>
+                        <div className="product-type-age">
+                            <span className="product-type">{product.type}</span>
+                            <span className="product-age">{product.age === 1 ? 'Adults' : 'Kids'}</span>                        </div>
                         <div className='buy-container'>
                             <p className='product-price'>£{product.price}</p>
                             <div className="quantity-container">

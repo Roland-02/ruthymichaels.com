@@ -122,7 +122,7 @@ const Products_View = ({ session }) => {
                                         <td>{product.name}</td>
                                         <td>{product.type}</td>
                                         <td>{product.description}</td>
-                                        <td>{product.age === 0 ? 'Kids' : 'Adults'}</td>
+                                        <td>{product.age}</td>
                                         <td>£{product.price}</td>
                                         <td>
                                             <svg

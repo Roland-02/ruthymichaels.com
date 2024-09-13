@@ -554,7 +554,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     </div>
                 )}
 
-{loading && <LoadingSpinner />}
+                {loading && <LoadingSpinner />}
 
 
                 {/* Products Container */}

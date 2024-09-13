@@ -207,8 +207,8 @@ const ProductForm = () => {
                                             onChange={(e) => setFormData({ ...formData, age: e.target.value })}
                                         >
                                             <option value="">Select Age Category</option>
-                                            <option value="0">Kids</option>
-                                            <option value="1">Adults</option>
+                                            <option value="Kids">Kids</option>
+                                            <option value="Adults">Adults</option>
                                         </select>
                                     </div>
                                 </div>

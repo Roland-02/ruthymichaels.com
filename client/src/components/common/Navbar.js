@@ -30,7 +30,7 @@ const Navbar = () => {
       setSession(null);
       navigate('/');
 
-    } catch (error) {}
+    } catch (error) { }
 
   };
 
@@ -106,7 +106,6 @@ const Navbar = () => {
           setSearchResults(formattedResults);
 
         } catch (err) {
-          setMessage({ content: 'Error fetching search results', product: null, action: 'error' });
         }
       }
     };
@@ -193,9 +192,10 @@ const Navbar = () => {
                       <img src={result.imageUrls[0]} alt={result.name} />
                     </div>
                     <div className="result-details">
-                      <p className="name">{highlightText(result.name, searchQuery)}</p>
-                      <p className="type">{highlightText(result.type, searchQuery)}</p>
-                      <p className="description">{highlightText(result.description, searchQuery)}</p>
+                      <h4 className="result-name">{highlightText(result.name, searchQuery)}</h4>
+                      <p className="result-type">{highlightText(result.type, searchQuery)}</p>
+                      <p className="result-age">{highlightText(result.age, searchQuery)}</p>
+                      <p className="result-description">{highlightText(result.description, searchQuery)}</p>
                     </div>
                   </div>
                 ))}
@@ -329,9 +329,10 @@ const Navbar = () => {
                       <img src={result.imageUrls[0]} alt={result.name} />
                     </div>
                     <div className="result-details">
-                      <p className="name">{highlightText(result.name, searchQuery)}</p>
-                      <p className="type">{highlightText(result.type, searchQuery)}</p>
-                      <p className="description">{highlightText(result.description, searchQuery)}</p>
+                      <h4 className="result-name">{highlightText(result.name, searchQuery)}</h4>
+                      <p className="result-type">{highlightText(result.type, searchQuery)}</p>
+                      <p className="result-age">{highlightText(result.age, searchQuery)}</p>
+                      <p className="result-description">{highlightText(result.description, searchQuery)}</p>
                     </div>
                   </div>
                 ))}
