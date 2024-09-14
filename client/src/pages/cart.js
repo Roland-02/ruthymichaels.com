@@ -282,7 +282,7 @@ const Cart = () => {
                 setMessage({ content: 'Error during checkout', product: null, action: 'error' });
             }
         } catch (error) {
-            setMessage({ content: 'Error during checkout', product: null, action: 'error' });
+            setMessage({ content: 'Error checking out', product: null, action: 'error' });
         }
     };
 
@@ -323,7 +323,7 @@ const Cart = () => {
             setTotalPrice(0);
         }
 
-    }, [location, session, cartProducts, totalPrice, navigate]);
+    }, [location, session, cartProducts, navigate]);
 
 
     return (

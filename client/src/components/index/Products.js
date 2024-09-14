@@ -157,7 +157,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     ...prev,
                     [productID]: isLoved,
                 }));
-                setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'love' });
+                setMessage({ content: 'Error occurred while updating wishlist', product: '', action: 'error' });
 
             }
         } else {
@@ -212,7 +212,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                     ...prev,
                     [productID]: isCart,
                 }));
-                setMessage({ content: 'Error saving basket', productID, action: 'cart' });
+                setMessage({ content: 'Error saving basket', product: '', action: 'error' });
 
             }
         } else {
@@ -283,7 +283,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
         initialize();
 
-    }, [session, initialProducts]);
+    }, [session, navigate, initialProducts]);
 
     useEffect(() => {
         const filteredAndSortedProducts = sortProducts(products, sortOption);
@@ -555,7 +555,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                 )}
 
                 {loading && <LoadingSpinner />}
-
 
                 {/* Products Container */}
                 <div className="col-lg-10 col-md-10 col-sm-10 col-10">

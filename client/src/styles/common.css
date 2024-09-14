@@ -458,7 +458,7 @@ body {
 .similar-products-container {
     width: 90vw;
     height: 350px;
-    border: 1px solid #ccc;
+    border: 1px solid #ddd;
     display: flex;
     overflow-x: auto;
     overflow-y: hidden;
@@ -668,7 +668,7 @@ body {
     
     .result-name {
         font-size: 18px;
-        margin: 0px;
+        margin-bottom: 4px;
     }
     
     .result-type {

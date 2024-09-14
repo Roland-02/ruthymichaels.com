@@ -12,9 +12,12 @@
     justify-content: center;
 }
 
+.empty-wishlist {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-/* Styles for most mobile devices (smartphones in portrait) */
-@media only screen and (max-width: 768px) {
-
-    
+.empty-wishlist img {
+    width: 50%;
 }

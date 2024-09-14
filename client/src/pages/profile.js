@@ -179,7 +179,7 @@ const Profile = ({ form }) => {
     
                 // Convert the array to an object keyed by "product_id"
                 const reviewsObject = reviewsArray.reduce((acc, review) => {
-                    acc[review.product_id] = review;  // Key by product_id only
+                    acc[review.product_id] = review;  
                     return acc;
                 }, {});
     

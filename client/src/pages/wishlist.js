@@ -11,7 +11,7 @@ import Footer from '../components/common/Footer';
 import Products from '../components/index/Products';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
-
+import EmptyGraphic from '../images/NotFound_Rocketman.png';
 
 const Wishlist = () => {
     const { session, Loading } = useContext(SessionContext);
@@ -19,11 +19,10 @@ const Wishlist = () => {
     const [message, setMessage] = useState({ content: null, product: null, action: null });
     const navigate = useNavigate();
 
-
     const fetchWishlist = async () => {
         try {
             const response = await axios.get(`/server/get_wishlist_products/${session.id}`);
-            if (response.status == 200) {
+            if (response.status === 200) {
                 const productData = response.data;
 
                 const formatted = productData.map(product => {
@@ -33,14 +32,13 @@ const Wishlist = () => {
                 });
 
                 setWishlist(formatted);
-
+            } else {
+                setWishlist([]);
             }
-
         } catch (error) {
-            console.error('Error fetching wishlist:', error);
             setMessage({ content: 'Error fetching wishlist', product: null, action: 'error' });
+            setWishlist([]);
         }
-
     };
 
     const updateWishlist = async (productID) => {
@@ -51,28 +49,21 @@ const Wishlist = () => {
             });
 
             if (response.status === 200) {
-                console.log('Product removed from wishlist successfully');
                 setWishlist(prevWishlist => prevWishlist.filter(product => product.id !== productID));
-                setMessage({ content: 'Removed from wishlist', productID, action: 'love' });
+                setMessage({ content: 'Removed from wishlist', productID, action: 'success' });
             } else {
-                console.error('Failed to remove product from wishlist:', response.data);
-                setMessage({ content: 'Error removing from wishlist', productID, action: 'love' });
+                setMessage({ content: 'Error removing from wishlist', productID, action: 'error' });
             }
-
         } catch (error) {
-            console.error('Error removing product from wishlist:', error);
-            setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'love' });
+            setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'error' });
         }
     };
 
     useEffect(() => {
         const initialize = async () => {
-            window.scrollTo(0, 0);
-
-            if (Loading) return; 
+            if (Loading) return;
 
             await fetchWishlist();
-       
         };
         initialize();
 
@@ -87,7 +78,18 @@ const Wishlist = () => {
 
             <div className="wishlist">
                 <div className="wishlist-container">
-                    <Products initialProducts={wishlist} setMessage={setMessage} updateWishlist={updateWishlist} />
+                    {wishlist.length === 0 ? (
+                        <div className="empty-wishlist">
+                            <h2>Your wishlist is empty!</h2>
+                            <img src={EmptyGraphic} alt="No items in wishlist" />
+                        </div>
+                    ) : (
+                        <Products
+                            initialProducts={wishlist}
+                            setMessage={setMessage}
+                            updateWishlist={updateWishlist}
+                        />
+                    )}
                 </div>
                 <SimilarProducts />
             </div>
