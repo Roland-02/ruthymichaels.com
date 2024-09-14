@@ -38,6 +38,14 @@ const CreateAccount = () => {
       setError('Passwords do not match');
       return;
     }
+
+    // validate password - 6 characters and min 1 number
+    const passwordRegex = /^(?=.*\d)[a-zA-Z\d]{6,}$/;
+    if (!passwordRegex.test(password)) {
+        setError('Password must be at least 6 characters and include a number');
+        return;
+    }
+
     try {
 
       const response = await fetch('/createAccount', {
@@ -92,7 +100,7 @@ const CreateAccount = () => {
 
 
   return (
-    <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+    <div className="page-form-container">
       <button className="close-button" onClick={handleClose}>×</button>
 
       <h2 className="text-center mt-2 mb-4">Create Account</h2>

@@ -11,7 +11,7 @@ import Footer from '../components/common/Footer';
 import Products from '../components/index/Products';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner';
-import EmptyGraphic from '../images/NotFound_Rocketman.png';
+// import EmptyGraphic from '../images/NotFound_Rocketman.png';
 
 const Wishlist = () => {
     const { session, Loading } = useContext(SessionContext);
@@ -30,8 +30,8 @@ const Wishlist = () => {
                     const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
                     return { ...product, imageUrls };
                 });
-
                 setWishlist(formatted);
+
             } else {
                 setWishlist([]);
             }
@@ -51,11 +51,12 @@ const Wishlist = () => {
             if (response.status === 200) {
                 setWishlist(prevWishlist => prevWishlist.filter(product => product.id !== productID));
                 setMessage({ content: 'Removed from wishlist', productID, action: 'success' });
+
             } else {
                 setMessage({ content: 'Error removing from wishlist', productID, action: 'error' });
             }
         } catch (error) {
-            setMessage({ content: 'Error occurred while updating wishlist', productID, action: 'error' });
+            setMessage({ content: 'Error updating wishlist', productID, action: 'error' });
         }
     };
 
@@ -78,18 +79,11 @@ const Wishlist = () => {
 
             <div className="wishlist">
                 <div className="wishlist-container">
-                    {wishlist.length === 0 ? (
-                        <div className="empty-wishlist">
-                            <h2>Your wishlist is empty!</h2>
-                            <img src={EmptyGraphic} alt="No items in wishlist" />
-                        </div>
-                    ) : (
                         <Products
                             initialProducts={wishlist}
                             setMessage={setMessage}
                             updateWishlist={updateWishlist}
                         />
-                    )}
                 </div>
                 <SimilarProducts />
             </div>

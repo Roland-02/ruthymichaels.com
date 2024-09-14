@@ -142,19 +142,9 @@ th {
 }
 
 /* leave review form */
-.review-container {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
+.page-form-container.review {
     max-width: 600px;
-    height: auto;
-    transform: translate(-50%, -50%);
-    border-radius: 10px;
-    z-index: 101;
-    background-color: #fff;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    padding: 15px;
+    padding: 15px
 }
 
 .review-form {
@@ -165,7 +155,7 @@ th {
     gap: 10px;
 }
 
-.review-container h2 {
+.page-form-container.review h2 {
     text-align: center;
     text-decoration: underline;
     margin-bottom: 0px;
@@ -178,7 +168,7 @@ th {
     width: 100%;
 }
 
-.review-container p {
+.page-form-container.review p {
     margin-bottom: 0px;
     font-size: 20px;
     font-weight: 500;

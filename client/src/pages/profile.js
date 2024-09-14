@@ -35,7 +35,7 @@ const Profile = ({ form }) => {
                 params: { email: session.email }
             });
             setVerificationStatus(response.data.verified);
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const handleResendVerification = async () => {
@@ -49,10 +49,11 @@ const Profile = ({ form }) => {
             } else {
                 setMessage({ content: `${response.data.message}`, product: '', action: 'error' });
             }
-        } catch (error) {}
+        } catch (error) { }
     };
 
-    const handleReviewClick = (product_id, item_name) => {
+    const handleReviewClick = (product_id, product_name) => {
+        console.log(product_name)
         const existingReview = reviews[product_id];
 
         if (existingReview) {
@@ -60,7 +61,7 @@ const Profile = ({ form }) => {
             setReviewItem({
                 // order_id,
                 product_id,
-                item_name,
+                product_name,
                 rating: existingReview.rating,
                 review: existingReview.review
             });
@@ -69,7 +70,7 @@ const Profile = ({ form }) => {
             setReviewItem({
                 // order_id,
                 product_id,
-                item_name,
+                product_name,
                 rating: 0,
                 review: ''
             });
@@ -176,19 +177,19 @@ const Profile = ({ form }) => {
             const response = await axios.get(`/server/fetch_user_reviews/${session.id}`);
             if (response.status === 200) {
                 const reviewsArray = response.data.reviews;
-    
+
                 // Convert the array to an object keyed by "product_id"
                 const reviewsObject = reviewsArray.reduce((acc, review) => {
-                    acc[review.product_id] = review;  
+                    acc[review.product_id] = review;
                     return acc;
                 }, {});
-    
+
                 setReviews(reviewsObject);
-                
+
             } else {
                 setReviews({});
             }
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const handleChange = (e) => {
@@ -222,7 +223,7 @@ const Profile = ({ form }) => {
                     await checkVerificationStatus();
                 }
 
-            } catch (error) {}
+            } catch (error) { }
 
         }
 
@@ -239,6 +240,7 @@ const Profile = ({ form }) => {
 
     }, [form]);
 
+    console.log(reviewItem)
 
     return (
         <div>
@@ -255,7 +257,7 @@ const Profile = ({ form }) => {
                             onDelete={handleReviewDelete}
                             order_id={reviewItem.order_id}
                             product_id={reviewItem.product_id}
-                            item_name={reviewItem.item_name}
+                            item_name={reviewItem.product_name}
                             rating={reviewItem.rating}
                             review={reviewItem.review}
                         />}

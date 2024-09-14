@@ -130,7 +130,7 @@ const Login = () => {
 
 
     return (
-        <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+        <div className="page-form-container">
             
             <button className="close-button" onClick={handleClose}>×</button>
 

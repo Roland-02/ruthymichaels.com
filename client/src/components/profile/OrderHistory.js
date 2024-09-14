@@ -5,6 +5,8 @@ import '../../styles/common.css';
 const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
     const [expandedOrders, setExpandedOrders] = useState({});
 
+    console.log(orders)
+
     const toggleExpandOrder = (order_id) => {
         setExpandedOrders((prevState) => ({
             ...prevState,
@@ -50,7 +52,7 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                                         <td>
                                             <a
                                                 className={`review-link ${reviews[item.product_id] ? 'reviewed' : ''}`}
-                                                onClick={() => handleReviewClick(item.product_id, order.item_name)}
+                                                onClick={() => handleReviewClick(item.product_id, item.item)}
                                             >
                                                 {reviews[item.product_id] ? 'reviewed' : 'review'}
                                             </a>

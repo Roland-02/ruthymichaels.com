@@ -55,7 +55,7 @@ const ChangePassword = ({ token }) => {
         <div>
             <MessageBanner message={message} setMessage={setMessage} />
 
-            <div className="col-lg login-container border rounded justify-content-center align-items-center text-center">
+            <div className="page-form-container">
 
                 <button className="close-button" onClick={handleClose}>×</button>
 

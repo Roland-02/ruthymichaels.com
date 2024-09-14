@@ -24,7 +24,7 @@ router.get('/get_products', async (req, res) => {
             }
 
             if (results.length == 0) {
-                return res.status(404).send('No products not found');
+                return res.status(204).send('No products not found');
             }
 
             res.status(200).json(results);
@@ -603,11 +603,11 @@ router.get('/fetch_product_reviews/:product_id', async (req, res) => {
 
             if (err) {
                 console.error('Error executing query:', err);
-                return res.status(500).json({ error: 'Database query error' });
+                return res.status(500);
             }
 
             if (!result || result.length === 0) {
-                return; //res.status(404).json({ message: 'No reviews found for this product' });
+                return res.status(204);
             }
 
             // Transform the result into a plain array
@@ -648,7 +648,7 @@ router.get('/fetch_user_reviews/:user_id', async (req, res) => {
             }
 
             if (!result || result.length === 0) {
-                return res.status(404).json({ message: 'No reviews found for this user' });
+                return res.status(204).json({ message: 'No reviews found for this user' });
             }
 
             // Transform the result into a plain array
@@ -688,7 +688,7 @@ router.post('/delete_review', async (req, res) => {
             if (result.affectedRows > 0) {
                 res.status(200).send({ message: 'Review deleted successfully' });
             } else {
-                res.status(404).send({ message: 'Review not found' });
+                res.status(204).send({ message: 'Review not found' });
             }
 
         });
@@ -704,8 +704,8 @@ router.post('/contact', (req, res) => {
     const transporter = nodemailer.createTransport({
         service: 'Gmail',
         auth: {
-            user: process.env.myEmail,       
-            pass: process.env.myEmailPassword 
+            user: process.env.myEmail,
+            pass: process.env.myEmailPassword
         }
     });
 
@@ -755,15 +755,15 @@ router.post('/delete_account/:user_id', async (req, res) => {
 
             // Execute all queries
             await connection.query(deleteUserQuery, [user_id], (err, result) => {
-                if(err) throw err;
+                if (err) throw err;
             });
 
             await connection.query(deleteCartQuery, [user_id], (err, result) => {
-                if(err) throw err;
+                if (err) throw err;
             });
 
             await connection.query(deleteWishlistQuery, [user_id], (err, result) => {
-                if(err) throw err;
+                if (err) throw err;
             });
 
             // Commit the transaction if all queries succeed

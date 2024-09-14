@@ -50,10 +50,9 @@ const ReviewForm = ({ onSave, onDelete, order_id, product_id, item_name, rating:
 
 
     return (
-        <div className='review-container'>
+        <div className='page-form-container review'>
             <div className="review-form">
             <button className="close-button" onClick={handleClose}>×</button>
-
                 <h2>Leave a Review</h2>
                 <p>{item_name}</p>
 
