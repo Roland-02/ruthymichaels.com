@@ -1,20 +1,37 @@
 /* MANAGE PRODUCTS */
-.manage-products-container {
+.admin-container {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  flex-direction: column;
   height: 100vh;
   width: 100vh;
 }
 
 .manage-products-button {
-  width: 50%;
+  width: 45%;
   height: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #9a9a9ab6;
+  background-color: #4f8dffb6;
+  color: rgb(0, 0, 0);
+  font-size: 32px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.manage-products-button:hover {
+  color: #000000;
+}
+
+.view-sales-button {
+  width: 45%;
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #ff6565b6;
   color: rgb(0, 0, 0);
   font-size: 32px;
   text-align: center;

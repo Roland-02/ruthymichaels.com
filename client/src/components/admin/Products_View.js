@@ -48,7 +48,6 @@ const Products_View = ({ session }) => {
 
     }, [location.pathname, navigate]);
 
-
     const handleDelete = async (productId) => {
         try {
             const response = await axios.post(`/admin/products/delete_product/${productId}`);

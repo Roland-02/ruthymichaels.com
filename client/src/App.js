@@ -41,7 +41,9 @@ const App = () => {
                     <Route path="/profile/change_password/:id" element={<ProtectedRoute element={<Profile form="change_password" />} />} />
 
                     {/* Admin Protected Routes (requires admin role) */}
-                    <Route path="/admin" element={<AdminProtectedRoute element={<Admin />} />} />
+                    <Route path="/admin" element={<Admin />} />
+
+                    {/* <Route path="/admin" element={<AdminProtectedRoute element={<Admin />} />} /> */}
                     <Route path="/admin/products" element={<AdminProtectedRoute element={<AdminProducts />} />} />
                     <Route path="/admin/products/add_product" element={<AdminProtectedRoute element={<AdminProducts />} />} />
                     <Route path="/admin/products/edit_product/:id" element={<AdminProtectedRoute element={<AdminProducts />} />} />
