@@ -290,7 +290,7 @@ body {
 }
 
 .page-form-container {
-    position: absolute;
+    position: fixed;
     top: 50%;
     left: 50%;
     width: 100%;

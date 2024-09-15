@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../context/SessionContext';
-
+import { motion } from 'framer-motion';
 import axios from 'axios';
 
 import '../../styles/index.css';
@@ -299,7 +299,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             }
 
             if (selectedAge !== "") {
-                filtered = filtered.filter(product => product.age === parseInt(selectedAge));
+                filtered = filtered.filter(product => product.age === selectedAge);
             }
 
             const roundedSelectedPrice = Math.ceil(parseFloat(selectedPrice));
@@ -311,6 +311,31 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         filterProducts();
     }, [selectedType, selectedAge, selectedPrice]);
 
+    // filter slide animation
+    const filterVariants = {
+        hidden: {
+            x: '-100%',
+            opacity: 0,
+        },
+        visible: {
+            x: '0%',
+            opacity: 1,
+            transition: {
+                type: 'tween',
+                duration: 0.2,
+                ease: 'easeInOut',
+            },
+        },
+        exit: {
+            x: '-100%',
+            opacity: 0,
+            transition: {
+                type: 'tween',
+                duration: 0.4,
+                ease: 'easeInOut',
+            },
+        },
+    };
 
     return (
         <section className="view-container products">
@@ -385,9 +410,9 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                         type="radio"
                                         id="kids"
                                         name="age"
-                                        value="0"  // Age 0 for kids
-                                        checked={selectedAge === '0'}
-                                        onChange={() => setSelectedAge("0")}
+                                        value="Kids"  // Age 0 for kids
+                                        checked={selectedAge === 'Kids'}
+                                        onChange={() => setSelectedAge("Kids")}
                                     />
                                     <label htmlFor="kids">Kids</label>
                                 </div>
@@ -396,9 +421,9 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                         type="radio"
                                         id="adults"
                                         name="age"
-                                        value="1"  // Age 1 for adults
-                                        checked={selectedAge === '1'}
-                                        onChange={() => setSelectedAge("1")}
+                                        value="Adults"  // Age 1 for adults
+                                        checked={selectedAge === 'Adults'}
+                                        onChange={() => setSelectedAge("Adults")}
                                     />
                                     <label htmlFor="adults">Adults</label>
                                 </div>
@@ -444,7 +469,15 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                             </button>
 
                             {isFilterOpen && (
-                                <div className={`mobile-filter-box ${isFilterOpen ? 'open' : ''}`}>
+                                // <div className={`mobile-filter-box ${isFilterOpen ? 'open' : ''}`}>
+                                <motion.div
+                                    className={`mobile-filter-box  ${isFilterOpen ? 'open' : ''}`}
+                                    initial="hidden"
+                                    animate={isFilterOpen ? 'visible' : 'hidden'}
+                                    exit="exit"
+                                    variants={filterVariants}
+                                >
+
                                     {/* Sort By */}
                                     <h4>Sort by</h4>
                                     <div className="sort-container">
@@ -546,7 +579,8 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                             </label>
                                         </div>
                                     </div>
-                                </div>
+                                </motion.div>
+                                // </div>
                             )}
 
                         </div>

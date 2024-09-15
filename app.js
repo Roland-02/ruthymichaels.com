@@ -58,4 +58,4 @@ app.get('*', (req, res) => {
 // Start https server
 const server = https.createServer(sslOptions, app);
 const port = process.env.PORT;
-server.listen(port, () => console.log(`Web server started, page accessible here ${process.env.DOMAIN}`));
+app.listen(port, () => console.log(`Web server started, page accessible here ${process.env.DOMAIN}`));

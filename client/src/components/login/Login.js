@@ -212,7 +212,7 @@ const Login = () => {
 
                 </div>
                 <div className="text-center">
-                    <p>Don't have an account? <a href="/createAccount">Sign up</a></p>
+                    <p>Don't have an account? <a href="/create_account">Sign up</a></p>
                     <p className='forgot-password'><a onClick={handleForgotPassword}>Forgot Password?</a></p>
 
                 </div>
