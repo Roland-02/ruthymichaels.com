@@ -58,7 +58,7 @@
 }
 
 .empty-wishlist img {
-  width: 50%;
+  width: 100%;
 }
 
 /* products display */
@@ -103,6 +103,7 @@
   transform: scale(1.005);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 
 .card-body {
   display: flex;
