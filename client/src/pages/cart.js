@@ -297,7 +297,6 @@ const Cart = () => {
             if (session && session.id) {
                 await fetchWishlist();
             }
-
         };
         initialize();
 
