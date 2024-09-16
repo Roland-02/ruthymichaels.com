@@ -5,8 +5,7 @@ import '../../styles/common.css';
 const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
     const [expandedOrders, setExpandedOrders] = useState({});
 
-    console.log(orders)
-
+    
     const toggleExpandOrder = (order_id) => {
         setExpandedOrders((prevState) => ({
             ...prevState,

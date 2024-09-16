@@ -104,12 +104,21 @@
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
-
 .card-body {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+}
+
+.card-body .progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0;
+  background-color: #ff68b494;
+  transition: width 0.2s linear;
 }
 
 .card-body img {

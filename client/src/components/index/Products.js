@@ -27,9 +27,96 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [timer, setTimer] = useState(null);
+    const [progressInterval, setProgressInterval] = useState(null);
     const filterRef = useRef(null);
     const navigate = useNavigate();
 
+
+
+    const handleMouseEnter = (product) => {
+        const imgElement = document.getElementById(`product-image-${product.id}`);
+        const progressBar = document.getElementById(`progress-bar-${product.id}`);
+
+        progressBar.style.width = '0%';
+
+        let progress = 0;
+        let phase = 1;
+
+        // Progress bar logic: phase 1 fills to 50%, phase 2 fills to 100%
+        const interval = setInterval(() => {
+            progress += 1;
+
+            if (phase === 1 && progress <= 50) {
+                progressBar.style.width = `${progress}%`;
+            } else if (phase === 2 && progress <= 100) {
+                progressBar.style.width = `${progress}%`;
+            }
+
+            if (progress === 50 && phase === 1) {
+
+                clearInterval(interval);
+
+                // Switch to the second image after a short delay
+                setTimeout(() => {
+                    if (imgElement && product.imageUrls[1]) {
+                        imgElement.src = product.imageUrls[1];
+                    }
+
+                    // Start phase 2 (fill the remaining 50%)
+                    phase = 2;
+                    progress = 50;
+                    const phase2Interval = setInterval(() => {
+                        progress += 1;
+                        if (progress <= 100) {
+                            progressBar.style.width = `${progress}%`;
+                        } else {
+                            clearInterval(phase2Interval);
+                        }
+                    }, 20);
+                    setProgressInterval(phase2Interval);
+                }, 200);
+            }
+
+        }, 15);
+
+        // Store the interval ID so we can clear it later
+        setProgressInterval(interval);
+
+        // Set a timer for switching to the second image after 1 second
+        const newTimer = setTimeout(() => {
+            if (imgElement && product.imageUrls[1]) {
+                imgElement.src = product.imageUrls[1];
+            }
+        }, 1500);
+
+        setTimer(newTimer);
+    };
+
+
+    const handleMouseLeave = (product) => {
+        const imgElement = document.getElementById(`product-image-${product.id}`);
+        const progressBar = document.getElementById(`progress-bar-${product.id}`);
+
+        // Reset the image back to the original one
+        if (imgElement) {
+            imgElement.src = product.imageUrls[0];
+        }
+
+        // Clear the timer and progress interval
+        if (timer) {
+            clearTimeout(timer);
+            setTimer(null);
+        }
+
+        if (progressInterval) {
+            clearInterval(progressInterval);
+            setProgressInterval(null);
+        }
+
+        // Reset progress bar
+        progressBar.style.width = '0%';
+    };
 
     const toggleFilterMenu = () => {
         setIsFilterOpen(prevState => !prevState);
@@ -284,6 +371,27 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
         initialize();
 
+        // const sampleWishlist = [
+        //     {
+        //         id: 1,
+        //         name: 'Proroductroductduct roduct roductroduct',
+        //         type: 'book',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '10.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
+        //     },
+        //     {
+        //         id: 2,
+        //         name: 'Product 2',
+        //         type: 'journal',
+        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
+        //         price: '20.00',
+        //         imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
+        //     },
+        // ];
+        // setProducts(sampleWishlist);
+        // setAllProducts(sampleWishlist);
+
     }, [session, navigate, initialProducts]);
 
     useEffect(() => {
@@ -337,6 +445,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             },
         },
     };
+
 
     return (
         <section className="view-container products">
@@ -612,20 +721,18 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                         e.stopPropagation();
                                         handleProductClick(product.name);
                                     }}>
-                                        <div className="card-body">
+                                        <div className="card-body"
+                                            onMouseEnter={() => handleMouseEnter(product)}
+                                            onMouseLeave={() => handleMouseLeave(product)}
+                                        >
+                                            <div className="progress-bar" id={`progress-bar-${product.id}`}></div>
                                             <img
                                                 src={product.imageUrls[0]}
                                                 className='product-image'
                                                 alt="Product"
-                                                onMouseEnter={(e) => {
-                                                    if (product.imageUrls[1]) {
-                                                        e.currentTarget.src = product.imageUrls[1];
-                                                    }
-                                                }}
-                                                onMouseLeave={(e) => {
-                                                    e.currentTarget.src = product.imageUrls[0];
-                                                }}
+                                                id={`product-image-${product.id}`}  // Unique ID for each product's image
                                             />
+
                                             <div className='product-details'>
                                                 <h2 className="card-title">{product.name}</h2>
                                                 <h5 className="card-price">£{product.price}</h5>
@@ -675,7 +782,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
             </div>
 
-        </section>
+        </section >
     );
 
 };

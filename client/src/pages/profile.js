@@ -240,7 +240,6 @@ const Profile = ({ form }) => {
 
     }, [form]);
 
-    console.log(reviewItem)
 
     return (
         <div>
