@@ -229,7 +229,6 @@ body {
     margin-top: 15px;
 }
 
-
 .result-name {
     font-size: 22px;
 }
@@ -519,7 +518,7 @@ body {
 
 /* 404 page not found */
 .back-to-shopping {
-    color: #ff69b4;
+    color: #ff80c0;
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;

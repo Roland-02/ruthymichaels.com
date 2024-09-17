@@ -14,6 +14,8 @@ const Footer = () => {
           <div className="footer-links">
             <Link to="/about" className="footer-link">About us</Link>
             <Link to="/contact" className="footer-link">Contact</Link>
+            <Link to="/privacy" className="footer-link">Privacy</Link>
+
           </div>
         </div>
       </div>

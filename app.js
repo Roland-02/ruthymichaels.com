@@ -34,7 +34,6 @@ app.use(session({
 }));
 
 // URL routes - links to separate files where specific requests are handled
-
 var adminRoute = require('./routes/admin');
 app.use('/admin', adminRoute);
 

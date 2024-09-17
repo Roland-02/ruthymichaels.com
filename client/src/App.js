@@ -12,11 +12,12 @@ import Wishlist from './pages/wishlist';
 import Profile from './pages/profile';
 import About from './pages/about';
 import Contact from './pages/contact';
+import Privacy from './pages/privacy';
+import NotFound from './components/common/NotFound';
 
 import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
 
-import NotFound from './components/common/NotFound';
 
 const App = () => {
     return (
@@ -34,6 +35,7 @@ const App = () => {
                     <Route path="/about" element={<About />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/cart" element={<Cart />} />
+                    <Route path="/privacy" element={<Privacy />} />
 
                     {/* Protected Routes (requires logged in user) */}
                     <Route path="/change_password" element={<ProtectedRoute element={<Index form="change_password" />} />} />

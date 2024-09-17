@@ -7,31 +7,97 @@ const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
 
 const transporter = nodemailer.createTransport({
-        service: 'Gmail',
-        auth: {
-            user: process.env.myEmail,
-            pass: process.env.myEmailPassword,
-        },
+    service: 'Gmail',
+    auth: {
+        user: process.env.myEmail,
+        pass: process.env.myEmailPassword,
+    },
 });
 
 // Function to send email
 const sendVerificationEmail = (userEmail) => {
-    
+
     const token = jwt.sign({ email: userEmail }, process.env.JWT_SECRET, { expiresIn: '1h' });
     const verificationUrl = `${process.env.DOMAIN}/verify_email?token=${token}`;
 
-    const mailOptions = {
-        from: process.env.myEmail,
-        to: userEmail,
-        subject: 'Email Verification',
-        html: `<p>
+    const emailContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background-color: #f4f4f4;
+                font-family: Arial, sans-serif;
+                color: #333;
+            }
+            .container {
+                background-color: #fff;
+                width: 90%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                font-size: 24px;
+                color: #ff68b4;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+            }
+            .header img {
+                width: 150px;
+                margin-bottom: 10px;
+            }
+            .content {
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            .content p {
+                margin-bottom: 10px;
+            }
+            .footer {
+                margin-top: 30px;
+                padding: 5px;
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+                border-top: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+           <div class="header">
+                <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+            </div>
+            <div class="content">
+             <p>
         Please verify your email by clicking on the link below:</p>
         <p>
         <a href="${verificationUrl}">${verificationUrl}</a>
         </p>
         <p>
         This link will expire in 1 hour</p>
-        <p>`,
+        <p>
+            </div>
+            <div class="footer">
+                &copy; 2024 RuthyMichaels.com. All rights reserved.
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    const mailOptions = {
+        from: process.env.myEmail,
+        to: userEmail,
+        subject: 'Email Verification',
+        html: emailContent,
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -52,14 +118,72 @@ const sendAdminVerificationEmail = async (user) => {
     );
 
     const verificationUrl = `${process.env.DOMAIN}/admin/verify_admin?token=${token}`;
-    
+
+    const emailContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background-color: #f4f4f4;
+                font-family: Arial, sans-serif;
+                color: #333;
+            }
+            .container {
+                background-color: #fff;
+                width: 90%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                font-size: 24px;
+                color: #ff68b4;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+            }
+            .header img {
+                width: 150px;
+                margin-bottom: 10px;
+            }
+            .content {
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            .content p {
+                margin-bottom: 10px;
+            }
+            .footer {
+                margin-top: 30px;
+                padding: 5px;
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+                border-top: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+        <p>Click the link below to verify and complete your admin login:</p>
+               <a href="${verificationUrl}">${verificationUrl}</a>
+        </div>
+    </body>
+    </html>
+    `;
+
     // Send email
     const mailOptions = {
         from: process.env.myEmail,
         to: process.env.myEmail, // Sends to the specified admin email
         subject: 'Admin Login Verification',
-        html: `<p>Click the link below to verify and complete your admin login:</p>
-               <a href="${verificationUrl}">${verificationUrl}</a>`,
+        html: emailContent,
     };
 
     await transporter.sendMail(mailOptions);
@@ -173,7 +297,7 @@ router.post('/resend_verification/:email', (req, res) => {
                 } else {
                     res.status(400).json({ message: 'Email is already verified or does not exist.' });
                 }
-                
+
             });
         });
 
@@ -218,7 +342,7 @@ router.post('/login', (req, res) => {
                 return res.status(400).json({ message: 'Email or password incorrect' });
             }
 
-            if(user.role === 'admin'){
+            if (user.role === 'admin') {
                 sendAdminVerificationEmail(user);
                 return res.status(405).json({ message: 'Admin verification sent to email', verified: false });
             }
@@ -340,7 +464,7 @@ router.post('/change_password', async (req, res) => {
 
         const salt = await bcrypt.genSalt(10);
         const hashPassword = await bcrypt.hash(password, salt);
-    
+
         getConnection((err, connection) => {
             if (err) throw err;
 

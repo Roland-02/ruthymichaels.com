@@ -17,7 +17,11 @@ const Contact = () => {
     const [orderRef, setOrderRef] = useState('');
     const [text, setText] = useState('');
     const [message, setMessage] = useState({ content: null, product: null, action: null });
+    const location = useLocation();
 
+    useEffect(() => {
+        window.scrollTo(0, 0); // Scroll to the top when the component is rendered
+    }, [location])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
