@@ -79,7 +79,7 @@ const sendVerificationEmail = (userEmail) => {
              <p>
         Please verify your email by clicking on the link below:</p>
         <p>
-        <a href="${verificationUrl}">${verificationUrl}</a>
+        <a href="${verificationUrl}">Verify account</a>
         </p>
         <p>
         This link will expire in 1 hour</p>
@@ -172,7 +172,7 @@ const sendAdminVerificationEmail = async (user) => {
     <body>
         <div class="container">
         <p>Click the link below to verify and complete your admin login:</p>
-               <a href="${verificationUrl}">${verificationUrl}</a>
+               <a href="${verificationUrl}">Verify admin account</a>
         </div>
     </body>
     </html>

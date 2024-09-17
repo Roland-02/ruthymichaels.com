@@ -753,6 +753,9 @@ router.post('/delete_account/:user_id', async (req, res) => {
             // Delete user from user_wishlist
             const deleteWishlistQuery = `DELETE FROM user_wishlist WHERE user_id = ?`;
 
+            // Delete user reviews from product review
+            const deleteReviewQuary = `DELETE FROM product_reviews WHERE user_id = ?`;
+
             // Execute all queries
             await connection.query(deleteUserQuery, [user_id], (err, result) => {
                 if (err) throw err;
@@ -763,6 +766,10 @@ router.post('/delete_account/:user_id', async (req, res) => {
             });
 
             await connection.query(deleteWishlistQuery, [user_id], (err, result) => {
+                if (err) throw err;
+            });
+
+            await connection.query(deleteReviewQuary, [user_id], (err, result) => {
                 if (err) throw err;
             });
 

@@ -10,6 +10,7 @@ import '../../bootstrap/css/mdb.min.css';
 
 import LoadingSpinner from '../common/LoadingSpinner';
 import EmptyGraphic from '../../images/NotFound_Rocketman.png';
+import MissingImage from '../../images/missing_image.jpg'
 
 
 const Products = ({ setMessage, initialProducts, updateWishlist }) => {
@@ -731,6 +732,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                                 className='product-image'
                                                 alt="Product"
                                                 id={`product-image-${product.id}`}  // Unique ID for each product's image
+                                                onError={(e) => e.target.src = MissingImage} // Fallback to missing_image.jpg if image fails to load
                                             />
 
                                             <div className='product-details'>
