@@ -9,7 +9,7 @@ const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8u
 const nodemailer = require('nodemailer');
 const tokenStore = {};
 
-// const stripe = Stripe('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') 
+// const stripe = Stripe(`${process.env.STIPE_SECRET_KEY}`) 
 
 
 const transporter = nodemailer.createTransport({
@@ -57,7 +57,6 @@ router.post('/create_checkout_session', async (req, res) => {
         };
     }));
     
-
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -218,6 +217,8 @@ ${shipping_address.country}
 Payment Details:
 ${brand} ${funding}
 **** **** **** ${last4}
+
+You will be notified when your items have been shipped, please allow 3-5 working days for delivery.
 
 I hope you enjoy your purchase!
 

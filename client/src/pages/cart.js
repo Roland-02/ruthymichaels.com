@@ -272,7 +272,7 @@ const Cart = () => {
                 const { sessionId } = response.data;
 
                 // public key
-                // const stripe = await loadStripe('pk_live_51PlctuBPrf3ZwXpUBl8bTM4jqf54PUPghK2VVfqeyI1fQ9z0RM8BXFi3BtyS2XsVnYB4pGz1Dthu5GulpuRdYsMF00lrA5QIK7');
+                // const stripe = await loadStripe({proces});
                 const stripe = await loadStripe('pk_test_51PlctuBPrf3ZwXpUkfK0s9oTqyQ5GgKKfSRcCjPytuBNCV2voy9e9AQg7F9TlJ4Sr6uGJhNOqF8HhCXirKZlSzt600tWDo1C85');
 
                 // Redirect to the Stripe Checkout page

@@ -16,6 +16,8 @@ import Contact from './pages/contact';
 import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
 
+import NotFound from './components/common/NotFound';
+
 const App = () => {
     return (
         <SessionProvider>
@@ -45,6 +47,9 @@ const App = () => {
                     <Route path="/admin/products" element={<AdminProtectedRoute element={<AdminProducts />} />} />
                     <Route path="/admin/products/add_product" element={<AdminProtectedRoute element={<AdminProducts />} />} />
                     <Route path="/admin/products/edit_product/:id" element={<AdminProtectedRoute element={<AdminProducts />} />} />
+
+                    {/* Catch-all Route for Not Found pages */}
+                    <Route path="*" element={<NotFound />} />
 
                 </Routes>
             </Router>
