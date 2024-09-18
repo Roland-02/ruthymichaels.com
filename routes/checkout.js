@@ -28,110 +28,6 @@ const generateToken = () => {
     return crypto.randomBytes(16).toString('hex');
 };
 
-router.post('/test', async (req, res) => {
-    const emailContent = `
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body {
-            background-color: #f4f4f4;
-            font-family: Arial, sans-serif;
-            color: #333;
-        }
-        .container {
-            background-color: #fff;
-            width: 90%;
-            max-width: 600px;
-            margin: 0 auto;
-            padding: 20px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-        }
-        .header {
-            text-align: center;
-            font-size: 24px;
-            color: #ff68b4;
-            border-bottom: 1px solid #ccc;
-            margin-bottom: 20px;
-        }
-        .header img {
-            width: 150px;
-            margin-bottom: 10px;
-        }
-        .content {
-            font-size: 16px;
-            line-height: 1.6;
-        }
-        .content p {
-            margin-bottom: 10px;
-        }
-        .footer {
-            margin-top: 30px;
-            padding: 5px;
-            text-align: center;
-            font-size: 14px;
-            color: #777;
-            border-top: 1px solid #ccc;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-       <div class="header">
-            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
-        </div>
-        <div class="content">
-        <p>Dear ${customer_name},</p>
-        <p>Thank you for your order!</p>
-
-        <p><strong>Order ID:</strong> ${session.id}</p>
-
-        <p><strong>Items Ordered:</strong><br/> ${orderDetails}</p>
-
-        <p><strong>Shipping Cost:</strong> £${shipping_cost}</p>
-
-        <p><strong>Shipping Address:</strong><br/>
-        ${shipping_address.line1}<br/>
-        ${shipping_address.line2 ? `${shipping_address.line2}<br/>` : ''}
-        ${shipping_address.city}<br/>
-        ${shipping_address.postal_code}<br/>
-        ${shipping_address.country}</p>
-
-        <p><strong>Payment Details:</strong><br/>
-        ${brand} ${funding}<br/>
-        **** **** **** ${last4}</p>
-
-        <p>You will be notified when your items have been shipped. Please allow 3-5 working days for delivery.</p>
-
-        <p>I hope you enjoy your purchase!</p>
-
-        <p>Regards,</p>
-        <p>Ruthy Michaels</p>
-    </div>
-
-    <div class="footer">
-        &copy; 2024 RuthyMichaels.com. All rights reserved.
-    </div>
-    </div>
-</body>
-</html>
-`;
-
-    await transporter.sendMail({
-        from: `${process.env.myEmail}`, // Sender address
-        to: 'rolandolajide902@gmail.com', // Receiver address
-        subject: 'Order Confirmation - Thank you for your purchase!',
-        html: emailContent, // Set as HTML content
-    });
-
-    return res.send(emailContent);
-
-})
-
 // process checkout
 router.post('/create_checkout_session', async (req, res) => {
     const { cartItems, user_id, user_email, shipping_cost } = req.body;
@@ -210,6 +106,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
     // Handle the event
     switch (event.type) {
         case 'checkout.session.completed':
+
             const session = event.data.object;
             const session_id = session.id;
             const user_id = session.metadata.user_id;
@@ -245,206 +142,216 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                 };
             }));
 
-            // Connect to database
-            getConnection((err, connection) => {
+
+            // Connect to the database
+            getConnection(async (err, connection) => {
                 if (err) {
                     console.error('Database connection failed:', err);
                     return res.status(500).send('Database connection failed');
                 }
 
-                // Create a new order in the `orders` table
-                const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost) VALUES (?, ?, NOW(), ?)`;
-                const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100]);
+                try {
+                    // Start the transaction
+                    connection.beginTransaction(async (err) => {
+                        if (err) {
+                            throw new Error('Transaction initialization failed');
+                        }
 
-                connection.query(insert_order_query, async (err, result) => {
-                    if (err) {
-                        console.error('Error inserting order:', err);
-                        return res.status(500).json({ message: 'Database insertion error' });
-                    }
+                        // Create a new order in the `orders` table
+                        const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost) VALUES (?, ?, NOW(), ?)`;
+                        const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100]);
 
-                    // Insert each item into the `order_items` table
-                    try {
-                        const orderItemPromises = lineItemDetails.map((item) => {
-                            const insert_order_item = `INSERT INTO order_items (order_item_id, order_id, product_id, qty) VALUES (0, ?, ?, ?)`;
-                            const insert_order_item_query = mysql.format(insert_order_item, [session_id, item.metadata, item.quantity]);
-
-                            return new Promise((resolve, reject) => {
-                                connection.query(insert_order_item_query, async (err, result) => {
-                                    if (err) throw err;
-
-                                    resolve(result);
+                        // Insert order into the `orders` table
+                        connection.query(insert_order_query, async (err, result) => {
+                            if (err) {
+                                return connection.rollback(() => {
+                                    console.error('Error inserting order:', err);
+                                    return res.status(500).json({ message: 'Database insertion error' });
                                 });
-                            });
-                        });
-
-                        // Wait for all items to be inserted
-                        await Promise.all(orderItemPromises);
-
-                        console.log('stored order')
-
-                    } catch (error) {
-                        console.error('Error inserting order items:', error);
-                        return res.status(500).json({ message: 'Error inserting order items' });
-
-                    } finally {
-                        connection.release();
-
-                    }
-
-                });
-
-            });
-
-            // send the confirmation email
-            try {
-
-                // Create the email content
-                const emailContent = `
-                <!DOCTYPE html>
-                <html lang="en">
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                    <style>
-                        body {
-                            background-color: #f4f4f4;
-                            font-family: Arial, sans-serif;
-                            color: #333;
-                        }
-                        .container {
-                            background-color: #fff;
-                            width: 90%;
-                            max-width: 600px;
-                            margin: 0 auto;
-                            padding: 20px;
-                            border-radius: 8px;
-                            border: 1px solid #ccc;
-                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-                        }
-                        .header {
-                            text-align: center;
-                            font-size: 24px;
-                            color: #ff68b4;
-                            border-bottom: 1px solid #ccc;
-                            margin-bottom: 20px;
-                        }
-                        .header img {
-                            width: 150px;
-                            margin-bottom: 10px;
-                        }
-                        .content {
-                            font-size: 16px;
-                            line-height: 1.6;
-                        }
-                        .content p {
-                            margin-bottom: 10px;
-                        }
-                        .footer {
-                            margin-top: 30px;
-                            padding: 5px;
-                            text-align: center;
-                            font-size: 14px;
-                            color: #777;
-                            border-top: 1px solid #ccc;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <div class="container">
-                       <div class="header">
-                            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
-                        </div>
-                        <div class="content">
-                        <p>Dear ${customer_name},</p>
-                        <p>Thank you for your order!</p>
-                
-                        <p><strong>Order ID:</strong> ${session.id}</p>
-                
-                        <p><strong>Items Ordered:</strong><br/> ${orderDetails.replace(/\n/g, '<br/>')}</p>
-                
-                        <p><strong>Shipping Cost:</strong> £${shipping_cost}</p>
-                
-                        <p><strong>Shipping Address:</strong><br/>
-                        ${shipping_address.line1}<br/>
-                        ${shipping_address.line2 ? `${shipping_address.line2}<br/>` : ''}
-                        ${shipping_address.city}<br/>
-                        ${shipping_address.postal_code}<br/>
-                        ${shipping_address.country}</p>
-                
-                        <p><strong>Payment Details:</strong><br/>
-                        ${brand} ${funding}<br/>
-                        **** **** **** ${last4}</p>
-                
-                        <p>You will be notified when your items have been shipped. Please allow 3-5 working days for delivery.</p>
-                
-                        <p>I hope you enjoy your purchase!</p>
-                
-                        <p>Kind regards,</p>
-                        <p>Ruthy Michaels</p>
-                    </div>
-                
-                    <div class="footer">
-                        &copy; 2024 RuthyMichaels.com. All rights reserved.
-                    </div>
-                    </div>
-                </body>
-                </html>
-                `;
-
-                await transporter.sendMail({
-                    from: `${process.env.myEmail}`, // Sender address
-                    to: customer_email, // Receiver address
-                    subject: 'Order Confirmation - Thank you for your purchase!',
-                    html: emailContent,
-                });
-
-                console.log('sent confirmation email')
-
-            } catch (error) {
-                console.log('Error sending confirmation email:', error);
-                return res.sendStatus(500);
-            }
-
-            // Process cart deletion
-            try {
-                if (user_id) {
-                    // Call the logic directly without making an HTTP request
-                    getConnection((err, connection) => {
-                        if (err) throw err;
-
-                        const query = 'DELETE FROM user_cart WHERE user_id = ?';
-                        connection.query(query, [user_id], (error, results) => {
-                            connection.release();
-
-                            if (error) {
-                                console.error('Error deleting cart', error);
-                                throw new Error('Database deletion failed');
                             }
 
-                            console.log('Cart cleared successfully after payment');
+                            // Insert each item into `order_items`
+                            const orderItemPromises = lineItemDetails.map((item) => {
+                                const insert_order_item = `INSERT INTO order_items (order_item_id, order_id, product_id, qty) VALUES (0, ?, ?, ?)`;
+                                const insert_order_item_query = mysql.format(insert_order_item, [session_id, item.metadata, item.quantity]);
+
+                                return new Promise((resolve, reject) => {
+                                    connection.query(insert_order_item_query, (err, result) => {
+                                        if (err) reject(err); // Reject the promise on error
+                                        resolve(result);
+                                    });
+                                });
+                            });
+
+                            try {
+                                // Wait for all items to be inserted
+                                await Promise.all(orderItemPromises);
+                                console.log('Stored order and items successfully');
+                            } catch (error) {
+                                return connection.rollback(() => {
+                                    console.error('Error inserting order items:', error);
+                                    return res.status(500).json({ message: 'Error inserting order items' });
+                                });
+                            }
+
+                            // Send confirmation email
+                            try {
+                                const emailContent = `
+                                <!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <style>
+                                        body {
+                                            background-color: #f4f4f4;
+                                            font-family: Arial, sans-serif;
+                                            color: #333;
+                                        }
+                                        .container {
+                                            background-color: #fff;
+                                            width: 90%;
+                                            max-width: 600px;
+                                            margin: 0 auto;
+                                            padding: 20px;
+                                            border-radius: 8px;
+                                            border: 1px solid #ccc;
+                                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                                        }
+                                        .header {
+                                            text-align: center;
+                                            font-size: 24px;
+                                            color: #ff68b4;
+                                            border-bottom: 1px solid #ccc;
+                                            margin-bottom: 20px;
+                                        }
+                                        .header img {
+                                            width: 150px;
+                                            margin-bottom: 10px;
+                                        }
+                                        .content {
+                                            font-size: 16px;
+                                            line-height: 1.6;
+                                        }
+                                        .content p {
+                                            margin-bottom: 10px;
+                                        }
+                                        .footer {
+                                            margin-top: 30px;
+                                            padding: 5px;
+                                            text-align: center;
+                                            font-size: 14px;
+                                            color: #777;
+                                            border-top: 1px solid #ccc;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                       <div class="header">
+                                            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+                                        </div>
+                                        <div class="content">
+                                        <p>Dear ${customer_name},</p>
+                                        <p>Thank you for your order!</p>
+                                
+                                        <p><strong>Order ID:</strong> ${session.id}</p>
+                                
+                                        <p><strong>Items Ordered:</strong><br/> ${orderDetails.replace(/\n/g, '<br/>')}</p>
+                                
+                                        <p><strong>Shipping Cost:</strong> £${shipping_cost}</p>
+                                
+                                        <p><strong>Shipping Address:</strong><br/>
+                                        ${shipping_address.line1}<br/>
+                                        ${shipping_address.line2 ? `${shipping_address.line2}<br/>` : ''}
+                                        ${shipping_address.city}<br/>
+                                        ${shipping_address.postal_code}<br/>
+                                        ${shipping_address.country}</p>
+                                
+                                        <p><strong>Payment Details:</strong><br/>
+                                        ${brand} ${funding}<br/>
+                                        **** **** **** ${last4}</p>
+                                
+                                        <p>You will be notified when your items have been shipped. Please allow 3-5 working days for delivery.</p>
+                                
+                                        <p>I hope you enjoy your purchase!</p>
+                                
+                                        <p>Kind regards,</p>
+                                        <p>Ruthy Michaels</p>
+                                    </div>
+                                
+                                    <div class="footer">
+                                        &copy; 2024 RuthyMichaels.com. All rights reserved.
+                                    </div>
+                                    </div>
+                                </body>
+                                </html>
+                                `;
+                                await transporter.sendMail({
+                                    from: `${process.env.myEmail}`,
+                                    to: customer_email,
+                                    subject: 'Order Confirmation - Thank you for your purchase!',
+                                    html: emailContent,
+                                });
+
+                                console.log('Confirmation email sent');
+
+                            } catch (emailError) {
+                                return connection.rollback(() => {
+                                    console.error('Error sending confirmation email:', emailError);
+                                    return res.status(500).json({ message: 'Email sending failed' });
+                                });
+                            }
+
+                            // Clear cart after checkout
+                            if (user_id) {
+                                connection.query('DELETE FROM user_cart WHERE user_id = ?', [user_id], (error, results) => {
+                                    if (error) {
+                                        return connection.rollback(() => {
+                                            console.error('Error clearing cart:', error);
+                                            return res.status(500).json({ message: 'Cart deletion failed' });
+                                        });
+                                    }
+                                    console.log('Cart cleared successfully');
+
+                                    // Commit the transaction after everything is successful
+                                    connection.commit((commitErr) => {
+                                        if (commitErr) {
+                                            return connection.rollback(() => {
+                                                console.error('Transaction commit failed:', commitErr);
+                                                return res.status(500).json({ message: 'Transaction commit failed' });
+                                            });
+                                        }
+
+                                        // All steps completed successfully, send final response
+                                        res.status(200).json({ message: 'Order processed successfully' });
+                                    });
+                                });
+                            } else {
+                                return connection.rollback(() => {
+                                    console.error('User ID missing, cannot clear cart');
+                                    return res.status(400).json({ message: 'User ID missing, cannot clear cart' });
+                                });
+                            }
                         });
                     });
 
-                    console.log('cleared cache')
-                    return res.sendStatus(200);
+                } catch (error) {
+                    console.error('Error processing checkout:', error);
+                    return res.status(500).json({ message: 'Checkout processing error' });
 
-                } else {
-                    return res.status(400).send('User ID is required');
+                } finally {
+                    connection.release();
                 }
-
-            } catch (error) {
-                console.log('Error clearing cart:', error);
-                return res.sendStatus(500);
-            }
-
-
+            });
+            break;
 
         default:
-            console.log(`Unhandled event type ${event.type}`);
-            res.sendStatus(400);
+            console.log(`Unhandled event type: ${event.type}`);
+            res.status(400).send(`Unhandled event type: ${event.type}`);
     }
-
 });
+
 
 
 module.exports = router;

@@ -94,7 +94,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         setTimer(newTimer);
     };
 
-
     const handleMouseLeave = (product) => {
         const imgElement = document.getElementById(`product-image-${product.id}`);
         const progressBar = document.getElementById(`progress-bar-${product.id}`);
@@ -715,7 +714,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                         </div>
                     ) : (
                         <div className={`card-container ${initialProducts ? 'center-layout' : 'default-layout'}`}>
-
                             {products.map((product) => (
                                 <div className="col-lg-3 col-md-4 col-sm-6 col-12" key={product.id}>
                                     <div className="product-card" onClick={(e) => {
@@ -739,6 +737,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                                 <h2 className="card-title">{product.name}</h2>
                                                 <h5 className="card-price">£{product.price}</h5>
                                             </div>
+
                                         </div>
 
                                         <div className="card-footer">

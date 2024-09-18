@@ -51,7 +51,7 @@ const View_Product = () => {
                 navigate('/')
             }
 
-        } catch (error) {}
+        } catch (error) { }
     };
 
     const fetchProductReviews = async (product_id) => {

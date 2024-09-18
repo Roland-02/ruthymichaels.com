@@ -73,17 +73,13 @@
 
 .product-type-age {
     display: flex;
+    justify-content: space-evenly;
 }
 
 .product-type, .product-age {
     font-size: 24px;
     font-weight: 100;
 }
-
-.product-age {
-    margin-left: 10vw;
-}
-
 
 .product-price {
     font-size: 36px;
