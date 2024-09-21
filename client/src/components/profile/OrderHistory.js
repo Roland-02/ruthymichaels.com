@@ -5,7 +5,12 @@ import '../../styles/common.css';
 const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
     const [expandedOrders, setExpandedOrders] = useState({});
 
-    
+    const currencySymbols = {
+        GBP: '£',
+        USD: '$',
+        EUR: '€',
+    };
+
     const toggleExpandOrder = (order_id) => {
         setExpandedOrders((prevState) => ({
             ...prevState,
@@ -25,7 +30,7 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                             <th>Order ID</th>
                             <th>Item</th>
                             <th>Quantity</th>
-                            <th>Price</th>
+                            <th>Total</th>
                             <th>Date</th>
                             <th></th>
                         </tr>
@@ -42,7 +47,11 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                                         )}
                                         <td>{item.item}</td>
                                         <td>{item.quantity}</td>
-                                        <td>£{item.price.toFixed(2)}</td>
+                                        {index === 0 && (
+                                            <td rowSpan={order.items.length}>
+                                                {currencySymbols[order.currency]}{order.totalPrice.toFixed(2)}
+                                            </td>
+                                        )}
                                         {index === 0 && (
                                             <td rowSpan={order.items.length}>
                                                 {new Date(order.date).toLocaleDateString('en-GB')}
@@ -62,6 +71,7 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                         ))}
                     </tbody>
                 </table>
+
             </div>
 
             {/* Mobile version - Expandable */}
@@ -77,23 +87,31 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                         {/* Expanded content */}
                         {expandedOrders[order.order_id] && (
                             <div className="mobile-order-details">
-                                {order.items.map((item) => (
-                                    <div key={`${order.order_id}-${item.product_id}`} className="mobile-order-item">
-                                        <p>Item: {item.item}</p>
-                                        <p>Quantity: {item.quantity}</p>
-                                        <p>Price: £{item.price.toFixed(2)}</p>
-                                        <p>Date: {new Date(order.date).toLocaleDateString('en-GB')}</p>
-                                        <div className="review-link-container">
-                                            <a
-                                                className={`review-link ${reviews[item.product_id] ? 'reviewed' : ''}`}
-                                                onClick={() => handleReviewClick(item.product_id, order.item_name)}
-                                            >
-                                                {reviews[item.product_id] ? 'reviewed' : 'review'}
-                                            </a>
+                                {order.items.map((item, index) => (
+                                    <div className="mobile-order-item">
+                                        {index === 0 && (
+                                            <p>Total Price: <strong>{currencySymbols[order.currency]}{order.totalPrice.toFixed(2)}</strong></p>
+                                        )}
+                                        {index === 0 && (
+                                            <p>Date: <strong>{new Date(order.date).toLocaleDateString('en-GB')}</strong> </p>
+                                        )}
+
+                                        <div key={`${order.order_id}-${item.product_id}`} >
+                                            <p>Item: {item.item}</p>
+                                            <p>Quantity: {item.quantity}</p>
+                                            <div className="review-link-container">
+                                                <a
+                                                    className={`review-link ${reviews[item.product_id] ? 'reviewed' : ''}`}
+                                                    onClick={() => handleReviewClick(item.product_id, item.item)}
+                                                >
+                                                    {reviews[item.product_id] ? 'reviewed' : 'review'}
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}
                             </div>
+
                         )}
                     </div>
                 ))}

@@ -30,7 +30,7 @@ const generateToken = () => {
 
 // process checkout
 router.post('/create_checkout_session', async (req, res) => {
-    const { cartItems, user_id, user_email, shipping_cost } = req.body;
+    const { cartItems, user_id, user_email, shipping_cost, currency } = req.body;
     const generatedToken = generateToken();
     tokenStore[user_id] = generatedToken;
 
@@ -47,7 +47,7 @@ router.post('/create_checkout_session', async (req, res) => {
         // Create a Stripe price object
         const price = await stripe.prices.create({
             unit_amount: item.price * 100, // Stripe expects the amount in cents
-            currency: 'gbp',
+            currency: currency, 
             product: product.id,
         });
 
@@ -63,7 +63,7 @@ router.post('/create_checkout_session', async (req, res) => {
             line_items: line_items,
             mode: 'payment',
             shipping_address_collection: {
-                allowed_countries: ['GB', 'US', 'CA'], // Specify the countries you want to accept shipping addresses from
+                allowed_countries: ['AC', 'AD', 'AE', 'AF', 'AG', 'AI', 'AL', 'AM', 'AO', 'AQ', 'AR', 'AT', 'AU', 'AW', 'AX', 'AZ', 'BA', 'BB', 'BD', 'BE', 'BF', 'BG', 'BH', 'BI', 'BJ', 'BL', 'BM', 'BN', 'BO', 'BQ', 'BR', 'BS', 'BT', 'BV', 'BW', 'BY', 'BZ', 'CA', 'CD', 'CF', 'CG', 'CH', 'CI', 'CK', 'CL', 'CM', 'CN', 'CO', 'CR', 'CV', 'CW', 'CY', 'CZ', 'DE', 'DJ', 'DK', 'DM', 'DO', 'DZ', 'EC', 'EE', 'EG', 'EH', 'ER', 'ES', 'ET', 'FI', 'FJ', 'FK', 'FO', 'FR', 'GA', 'GB', 'GD', 'GE', 'GF', 'GG', 'GH', 'GI', 'GL', 'GM', 'GN', 'GP', 'GQ', 'GR', 'GS', 'GT', 'GU', 'GW', 'GY', 'HK', 'HN', 'HR', 'HT', 'HU', 'ID', 'IE', 'IL', 'IM', 'IN', 'IO', 'IQ', 'IS', 'IT', 'JE', 'JM', 'JO', 'JP', 'KE', 'KG', 'KH', 'KI', 'KM', 'KN', 'KR', 'KW', 'KY', 'KZ', 'LA', 'LB', 'LC', 'LI', 'LK', 'LR', 'LS', 'LT', 'LU', 'LV', 'LY', 'MA', 'MC', 'MD', 'ME', 'MF', 'MG', 'MK', 'ML', 'MM', 'MN', 'MO', 'MQ', 'MR', 'MS', 'MT', 'MU', 'MV', 'MW', 'MX', 'MY', 'MZ', 'NA', 'NC', 'NE', 'NG', 'NI', 'NL', 'NO', 'NP', 'NR', 'NU', 'NZ', 'OM', 'PA', 'PE', 'PF', 'PG', 'PH', 'PK', 'PL', 'PM', 'PN', 'PR', 'PS', 'PT', 'PY', 'QA', 'RE', 'RO', 'RS', 'RU', 'RW', 'SA', 'SB', 'SC', 'SE', 'SG', 'SH', 'SI', 'SJ', 'SK', 'SL', 'SM', 'SN', 'SO', 'SR', 'SS', 'ST', 'SV', 'SX', 'SZ', 'TA', 'TC', 'TD', 'TF', 'TG', 'TH', 'TJ', 'TK', 'TL', 'TM', 'TN', 'TO', 'TR', 'TT', 'TV', 'TW', 'TZ', 'UA', 'UG', 'US', 'UY', 'UZ', 'VA', 'VC', 'VE', 'VG', 'VN', 'VU', 'WF', 'WS', 'XK', 'YE', 'YT', 'ZA', 'ZM', 'ZW', 'ZZ'],
             },
 
             shipping_options: [
@@ -72,7 +72,7 @@ router.post('/create_checkout_session', async (req, res) => {
                         type: 'fixed_amount',
                         fixed_amount: {
                             amount: shipping_cost * 100, // Shipping cost in cents (5.00 GBP here)
-                            currency: 'gbp',
+                            currency: currency,
                         },
                         display_name: 'Standard Shipping',
                         delivery_estimate: {
@@ -114,18 +114,28 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             const customer_name = session.customer_details.name;
             const shipping_address = session.customer_details.address;
             const shipping_cost = session.total_details.amount_shipping / 100;
+            const currency = session.currency.toUpperCase(); // Get the currency used in the transaction
+
+            // Define currency symbols
+            const currencySymbols = {
+                GBP: '£',
+                USD: '$',
+                EUR: '€',
+            };
+
+            const symbol = currencySymbols[currency] || ''; // Fallback to empty string if currency not defined
 
             // get card details
             const paymentIntent = await stripe.paymentIntents.retrieve(session.payment_intent);
             const paymentMethod = await stripe.paymentMethods.retrieve(paymentIntent.payment_method);
             const brand = capitalizeFirstLetter(paymentMethod.card.brand);
             const funding = capitalizeFirstLetter(paymentMethod.card.funding);
-            const last4 = paymentMethod.card.last4
+            const last4 = paymentMethod.card.last4;
 
             // fetch line items
             const lineItems = await stripe.checkout.sessions.listLineItems(session_id);
             const orderDetails = lineItems.data.map(item => {
-                return `${item.quantity} x ${item.description} (£${item.amount_total / 100} GBP)`;
+                return `${item.quantity} x ${item.description} (${symbol}${(item.amount_total / 100).toFixed(2)} ${currency})`;
             }).join('\n');
 
             // Retrieve product metadata for each line item
@@ -158,8 +168,8 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                         }
 
                         // Create a new order in the `orders` table
-                        const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost) VALUES (?, ?, NOW(), ?)`;
-                        const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100]);
+                        const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost, currency) VALUES (?, ?, NOW(), ?, ?)`;
+                        const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100, session.currency]);
 
                         // Insert order into the `orders` table
                         connection.query(insert_order_query, async (err, result) => {
@@ -259,7 +269,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                 
                                         <p><strong>Items Ordered:</strong><br/> ${orderDetails.replace(/\n/g, '<br/>')}</p>
                                 
-                                        <p><strong>Shipping Cost:</strong> £${shipping_cost}</p>
+                                        <p><strong>Shipping Cost:</strong> ${symbol}${shipping_cost}</p>
                                 
                                         <p><strong>Shipping Address:</strong><br/>
                                         ${shipping_address.line1}<br/>
@@ -272,7 +282,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                         ${brand} ${funding}<br/>
                                         **** **** **** ${last4}</p>
                                 
-                                        <p>You will be notified when your items have been shipped. Please allow 3-5 working days for delivery.</p>
+                                        <p>You will be notified when your items have been shipped.</p>
                                 
                                         <p>I hope you enjoy your purchase!</p>
                                 
@@ -351,7 +361,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             res.status(400).send(`Unhandled event type: ${event.type}`);
     }
 });
-
 
 
 module.exports = router;

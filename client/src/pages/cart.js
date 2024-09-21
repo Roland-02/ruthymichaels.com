@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
+import CurrencyContext from '../components/context/CurrencyContext';
 import { loadStripe } from '@stripe/stripe-js';
 
 import '../styles/cart.css';
@@ -15,6 +16,7 @@ import axios from 'axios';
 
 const Cart = () => {
     const { session, Loading } = useContext(SessionContext);
+    const { currency, exchangeRates } = useContext(CurrencyContext);
     const [cartProducts, setCartedProducts] = useState([]);
     const [wishlist, setWishlist] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
@@ -24,6 +26,20 @@ const Cart = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+
+    const currencySymbols = {
+        GBP: '£',
+        USD: '$',
+        EUR: '€',
+    };
+
+    const convertPrice = (priceInGBP, currency) => {
+        if(currency === 'GBP'){
+            return priceInGBP.toFixed(2);
+        }
+        const rate = exchangeRates[currency] || 1;
+        return (priceInGBP * rate).toFixed(2);
+    };
 
     const fetchCartProducts = async () => {
         if (session && session.id) {
@@ -256,16 +272,22 @@ const Cart = () => {
     };
 
     const handleProductClick = (name) => {
-        navigate(`/${name}`);
+        navigate(`/item/${name}`);
     };
 
     const handleCheckout = async () => {
         try {
+            const convertedCartItems = cartProducts.map((product) => ({
+                ...product,
+                price: convertPrice(product.price, currency),  // Convert the price to the selected currency
+            }));
+
             const response = await axios.post(`/checkout/create_checkout_session`, {
-                cartItems: cartProducts,
+                cartItems: convertedCartItems,
                 user_id: session.id || null,
                 user_email: session.email || '',
-                shipping_cost: shippingCost,
+                shipping_cost: convertPrice(shippingCost, currency),
+                currency: currency,
             });
 
             if (response.status === 200) {
@@ -359,7 +381,7 @@ const Cart = () => {
                                                 <p className="cart-product-type">{product.type}</p>
                                             </div>
                                             <div className="cart-product-bottom">
-                                                <p className="cart-product-price">£{product.price}</p>
+                                                <p className="cart-product-price">{currencySymbols[currency]}{convertPrice(product.price, currency)}</p>
 
                                                 <input
                                                     type="number"
@@ -405,9 +427,9 @@ const Cart = () => {
                     <div className="col-lg-4">
                         <div className="cart-summary">
                             <h3>Order Summary</h3>
-                            <p><span>Subtotal:</span> <span>£{totalPrice.toFixed(2)}</span></p>
-                            <p><span>Shipping:</span> <span>£{shippingCost.toFixed(2)}</span></p>
-                            <h4><span>Total:</span> <span>£{(totalPrice + shippingCost).toFixed(2)}</span></h4>
+                            <p><span>Subtotal:</span><span>{currencySymbols[currency]}{convertPrice(totalPrice, currency)}</span></p>
+                            <p><span>Shipping:</span><span>{currencySymbols[currency]}{convertPrice(shippingCost, currency)}</span></p>
+                            <h4><span>Total:</span> <span>{currencySymbols[currency]}{convertPrice(totalPrice + shippingCost, currency)}</span></h4>
                             <button className="checkout-button" onClick={handleCheckout} disabled={cartProducts.length === 0}>
                                 Checkout
                             </button>

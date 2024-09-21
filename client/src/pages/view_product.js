@@ -2,6 +2,7 @@ import React from 'react';
 import { useState, useEffect, useContext } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
+import CurrencyContext from '../components/context/CurrencyContext';
 import axios from 'axios';
 
 import '../styles/view_product.css'
@@ -15,6 +16,7 @@ import MessageBanner from '../components/common/MessageBanner'
 
 const View_Product = () => {
     const { session } = useContext(SessionContext);
+    const { currency, exchangeRates } = useContext(CurrencyContext);
     const { name } = useParams();
     const [product, setProduct] = useState({
         id: null,
@@ -34,6 +36,28 @@ const View_Product = () => {
     const [averageRating, setAverageRating] = useState([]);
     const navigate = useNavigate();
 
+
+    const currencySymbols = {
+        GBP: '£',
+        USD: '$',
+        EUR: '€',
+    };
+
+    const convertPrice = (priceInGBP, currency) => {
+        if(currency === 'GBP'){
+            return `${currencySymbols[currency]}${priceInGBP}`
+        }
+        const rate = exchangeRates[currency];
+        const convertedPrice = (priceInGBP * rate).toFixed(2);
+        return `${currencySymbols[currency]}${convertedPrice}`;
+    };
+
+    const convertPriceNumeric = (priceInGBP, currency) => {
+        const rate = exchangeRates[currency] || 1;
+        return (priceInGBP * rate).toFixed(2);
+    };
+
+    const totalPriceNumeric = (convertPriceNumeric(product.price, currency) * quantity).toFixed(2);
 
     const fetchProduct = async () => {
         try {
@@ -311,9 +335,10 @@ const View_Product = () => {
                         <p className='product-description'>{product.description}</p>
                         <div className="product-type-age">
                             <span className="product-type">{product.type}</span>
-                            <span className="product-age">{product.age === 1 ? 'Adults' : 'Kids'}</span>                        </div>
+                            <span className="product-age">{product.age}</span>                        
+                            </div>
                         <div className='buy-container'>
-                            <p className='product-price'>£{product.price}</p>
+                            <p className='product-price'>{convertPrice(product.price, currency)}</p>
                             <div className="quantity-container">
                                 <button onClick={decreaseQuantity}>-</button>
                                 <input
@@ -324,7 +349,7 @@ const View_Product = () => {
                                 <button onClick={increaseQuantity}>+</button>
                             </div>
 
-                            <p className='product-total'>Total: £{(product.price * quantity).toFixed(2)}</p>
+                            <p className='product-total'>Total: {currencySymbols[currency]}{totalPriceNumeric}</p>
 
                             <div className='cart-container'>
                                 {wishlist.includes(product.id) ? (

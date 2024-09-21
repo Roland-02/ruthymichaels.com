@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../components/context/SessionContext';
+import CurrencyContext from '../components/context/CurrencyContext';
 import axios from 'axios';
 
 import '../styles/profile.css';
@@ -160,9 +161,10 @@ const Profile = ({ form }) => {
             const formattedOrders = response.data.map(order => ({
                 ...order,
                 date: order.date,
+                totalPrice: order.total_cost,
+                currency: order.currency.toUpperCase(),
                 items: order.items.map(item => ({
                     ...item,
-                    price: item.price
                 }))
             }));
             setOrders(formattedOrders);
@@ -171,6 +173,7 @@ const Profile = ({ form }) => {
             setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
         }
     };
+
 
     const fetchUserReviews = async () => {
         try {

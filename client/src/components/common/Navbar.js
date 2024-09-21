@@ -3,6 +3,8 @@ import { Link, useLocation } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { SessionContext } from '../context/SessionContext';
+import CurrencyContext from '../context/CurrencyContext';
+
 import axios from 'axios';
 
 import logo from '../../images/Ruthy_Michaels_logo.png';
@@ -12,6 +14,7 @@ import '../../bootstrap/css/mdb.min.css';
 
 const Navbar = () => {
   const { session, setSession } = useContext(SessionContext);
+  const { currency, changeCurrency } = useContext(CurrencyContext);
   const [searchQuery, setSearchQuery] = useState('');
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
@@ -23,6 +26,11 @@ const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
+
+  const handleCurrencyChange = (event) => {
+    const selectedCurrency = event.target.value;
+    changeCurrency(selectedCurrency);
+  };
 
   const handleSignOut = async () => {
     try {
@@ -214,6 +222,13 @@ const Navbar = () => {
 
           {/* Right elements */}
           <div className="nav-right">
+
+          <select className='select-currency' value={currency} onChange={handleCurrencyChange}>
+              <option value="GBP">🇬🇧 GBP</option>
+              <option value="USD">🇺🇸 USD</option>
+              <option value="EUR">🇪🇺 EUR</option>
+            </select>
+
             {session && session.role === 'admin' ? (
               <>
                 <Link to="/admin" className={`menu-item ${location.pathname === '/admin' ? 'active' : ''}`}>

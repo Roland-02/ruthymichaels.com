@@ -9,7 +9,6 @@
     align-items: center;
     flex-direction: column;
     justify-content: center; 
-
 }
 
 .profile-info {
@@ -26,7 +25,7 @@
 
 .input-group {
     align-items: left;
-    flex-direction: column; 
+    flex-direction: column;
 }
 
 .input-with-button {
@@ -144,7 +143,7 @@ th {
 /* leave review form */
 .page-form-container.review {
     max-width: 600px;
-    padding: 15px
+    padding: 15px;
 }
 
 .review-form {
@@ -305,10 +304,10 @@ th {
 
 /* delete account */
 .delete-account-container {
-    position: absolute;
-    bottom: 0;
+    position: relative;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 5vh;
+ 
 }
 
 .delete-account-btn {

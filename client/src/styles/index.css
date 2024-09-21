@@ -81,16 +81,6 @@
   justify-content: center;
 }
 
-.card-body .progress-bar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  height: 4px;
-  width: 0;
-  background-color: #ff68b494;
-  transition: width 0.2s linear;
-}
-
 .card-body img {
   width: 100%;
   height: auto;

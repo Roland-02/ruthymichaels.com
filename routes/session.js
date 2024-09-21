@@ -171,8 +171,16 @@ const sendAdminVerificationEmail = async (user) => {
     </head>
     <body>
         <div class="container">
+        <div class="header">
+            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+        </div>
+        <div class="content">
         <p>Click the link below to verify and complete your admin login:</p>
-               <a href="${verificationUrl}">Verify admin account</a>
+        <a href="${verificationUrl}">Verify admin account</a>
+        </div>
+        </div>
+        <div class="footer">
+            &copy; 2024 RuthyMichaels.com. All rights reserved.
         </div>
     </body>
     </html>

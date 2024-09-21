@@ -93,6 +93,12 @@ body {
     cursor: pointer;
 }
 
+.select-currency{
+    position:relative;
+    right: 10%;
+    border: none;
+}
+
 /* nav bar for mobile */
 .nav-menu {
     display: none;
@@ -557,7 +563,6 @@ body {
         transform: rotate(360deg);
     }
 }
-
 
 .mobile {
     display: none;

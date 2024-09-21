@@ -470,7 +470,7 @@ router.get('/order_history/:user_id', async (req, res) => {
         getConnection(async (err, connection) => {
             if (err) throw err;
 
-            const ordersQuery = `SELECT order_id, date, total_cost 
+            const ordersQuery = `SELECT order_id, date, total_cost, currency 
                                  FROM orders 
                                  WHERE user_id = ? 
                                  ORDER BY date DESC`;
@@ -485,7 +485,7 @@ router.get('/order_history/:user_id', async (req, res) => {
                 // Fetch order items for each order
                 const orderItemsPromises = orders.map(order => {
                     return new Promise((resolve, reject) => {
-                        const itemsQuery = `SELECT oi.product_id, p.name as item, oi.qty as quantity, p.price as price
+                        const itemsQuery = `SELECT oi.product_id, p.name as item, oi.qty as quantity
                                             FROM order_items oi
                                             JOIN products p ON oi.product_id = p.id
                                             WHERE oi.order_id = ?`;

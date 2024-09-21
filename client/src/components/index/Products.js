@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { SessionContext } from '../context/SessionContext';
+import CurrencyContext from '../context/CurrencyContext';
+
 import { motion } from 'framer-motion';
 import axios from 'axios';
 
@@ -15,6 +17,7 @@ import MissingImage from '../../images/missing_image.jpg'
 
 const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const { session } = useContext(SessionContext);
+    const { currency, exchangeRates } = useContext(CurrencyContext);
     const [products, setProducts] = useState([]);
     const [allProducts, setAllProducts] = useState([products]);
     const [wishlist, setWishlist] = useState([]);
@@ -28,94 +31,22 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
     const [selectedPrice, setSelectedPrice] = useState(maxPrice);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [timer, setTimer] = useState(null);
-    const [progressInterval, setProgressInterval] = useState(null);
     const filterRef = useRef(null);
     const navigate = useNavigate();
 
-
-
-    const handleMouseEnter = (product) => {
-        const imgElement = document.getElementById(`product-image-${product.id}`);
-        const progressBar = document.getElementById(`progress-bar-${product.id}`);
-
-        progressBar.style.width = '0%';
-
-        let progress = 0;
-        let phase = 1;
-
-        // Progress bar logic: phase 1 fills to 50%, phase 2 fills to 100%
-        const interval = setInterval(() => {
-            progress += 1;
-
-            if (phase === 1 && progress <= 50) {
-                progressBar.style.width = `${progress}%`;
-            } else if (phase === 2 && progress <= 100) {
-                progressBar.style.width = `${progress}%`;
-            }
-
-            if (progress === 50 && phase === 1) {
-
-                clearInterval(interval);
-
-                // Switch to the second image after a short delay
-                setTimeout(() => {
-                    if (imgElement && product.imageUrls[1]) {
-                        imgElement.src = product.imageUrls[1];
-                    }
-
-                    // Start phase 2 (fill the remaining 50%)
-                    phase = 2;
-                    progress = 50;
-                    const phase2Interval = setInterval(() => {
-                        progress += 1;
-                        if (progress <= 100) {
-                            progressBar.style.width = `${progress}%`;
-                        } else {
-                            clearInterval(phase2Interval);
-                        }
-                    }, 20);
-                    setProgressInterval(phase2Interval);
-                }, 200);
-            }
-
-        }, 15);
-
-        // Store the interval ID so we can clear it later
-        setProgressInterval(interval);
-
-        // Set a timer for switching to the second image after 1 second
-        const newTimer = setTimeout(() => {
-            if (imgElement && product.imageUrls[1]) {
-                imgElement.src = product.imageUrls[1];
-            }
-        }, 1500);
-
-        setTimer(newTimer);
+    const currencySymbols = {
+        GBP: '£',
+        USD: '$',
+        EUR: '€',
     };
 
-    const handleMouseLeave = (product) => {
-        const imgElement = document.getElementById(`product-image-${product.id}`);
-        const progressBar = document.getElementById(`progress-bar-${product.id}`);
-
-        // Reset the image back to the original one
-        if (imgElement) {
-            imgElement.src = product.imageUrls[0];
+    const convertPrice = (priceInGBP, currency) => {
+        if(currency === 'GBP'){
+            return `${currencySymbols[currency]}${priceInGBP}`
         }
-
-        // Clear the timer and progress interval
-        if (timer) {
-            clearTimeout(timer);
-            setTimer(null);
-        }
-
-        if (progressInterval) {
-            clearInterval(progressInterval);
-            setProgressInterval(null);
-        }
-
-        // Reset progress bar
-        progressBar.style.width = '0%';
+        const rate = exchangeRates[currency];
+        const convertedPrice = (priceInGBP * rate).toFixed(2);
+        return `${currencySymbols[currency]}${convertedPrice}`;
     };
 
     const toggleFilterMenu = () => {
@@ -446,7 +377,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
         },
     };
 
-
     return (
         <section className="view-container products">
             <div className="row">
@@ -554,7 +484,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                 />
                                 <div className="price-label">
                                     <label htmlFor="price-range">
-                                        up to <strong>£{selectedPrice}</strong>
+                                        up to <strong>{convertPrice(selectedPrice, currency)}</strong>
                                     </label>
                                 </div>
                             </div>
@@ -720,22 +650,26 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
                                         e.stopPropagation();
                                         handleProductClick(product.name);
                                     }}>
-                                        <div className="card-body"
-                                            onMouseEnter={() => handleMouseEnter(product)}
-                                            onMouseLeave={() => handleMouseLeave(product)}
-                                        >
-                                            <div className="progress-bar" id={`progress-bar-${product.id}`}></div>
+                                        <div className="card-body">
                                             <img
                                                 src={product.imageUrls[0]}
                                                 className='product-image'
                                                 alt="Product"
-                                                id={`product-image-${product.id}`}  // Unique ID for each product's image
+                                                id={`product-image-${product.id}`}
                                                 onError={(e) => e.target.src = MissingImage} // Fallback to missing_image.jpg if image fails to load
+                                                onMouseEnter={(e) => {
+                                                    if (product.imageUrls[1]) {
+                                                        e.currentTarget.src = product.imageUrls[1];
+                                                    }
+                                                }}
+                                                onMouseLeave={(e) => {
+                                                    e.currentTarget.src = product.imageUrls[0];
+                                                }}
                                             />
 
                                             <div className='product-details'>
                                                 <h2 className="card-title">{product.name}</h2>
-                                                <h5 className="card-price">£{product.price}</h5>
+                                                <h5 className="card-price"> {convertPrice(product.price, currency)}</h5>
                                             </div>
 
                                         </div>
