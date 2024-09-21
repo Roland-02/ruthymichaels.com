@@ -12,6 +12,7 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner'
+import { argv0 } from 'process';
 
 
 const View_Product = () => {
@@ -87,15 +88,21 @@ const View_Product = () => {
                     ...review,
                     user_email: review.user_email.split('@')[0]
                 }));
-
-                setReviews(formattedReviewsArray)
-
+    
+                setReviews(formattedReviewsArray);
+    
+                // Calculate average rating here
+                const sum = formattedReviewsArray.reduce((acc, review) => acc + review.rating, 0);
+                const avg = formattedReviewsArray.length > 0 ? (sum / formattedReviewsArray.length) : 0;
+    
+                setAverageRating(Math.round(avg));
             } else {
                 setReviews([]);
-
+                setAverageRating(0); // Reset average rating if no reviews
             }
         } catch (error) {
             setReviews([]);
+            setAverageRating(0); // Reset average rating on error
         }
     };
 
@@ -289,12 +296,6 @@ const View_Product = () => {
     useEffect(() => {
         if (product && product.id) {
             fetchProductReviews(product.id);
-
-            const sum = reviews.reduce((acc, review) => acc + review.rating, 0);
-            const avg = sum / reviews.length;
-
-            setAverageRating(Math.round(avg));
-
         }
     }, [product]);
 

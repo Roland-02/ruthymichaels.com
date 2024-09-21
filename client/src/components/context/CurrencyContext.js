@@ -30,6 +30,10 @@ export const CurrencyProvider = ({ children }) => {
     }
   };
 
+  const changeCurrency = (newCurrency) => {
+    setCurrency(newCurrency);
+    localStorage.setItem('currency', newCurrency); // Update localStorage with new currency
+  };
 
   // Check and load exchange rates from localStorage
   useEffect(() => {
@@ -53,9 +57,10 @@ export const CurrencyProvider = ({ children }) => {
     }
   }, []);
 
-  // Get currency from localStorage or Geolocation
+  // Detect currency based on user location
   useEffect(() => {
     const storedCurrency = localStorage.getItem('currency');
+
     if (storedCurrency) {
       setCurrency(storedCurrency);
       return;
@@ -65,14 +70,32 @@ export const CurrencyProvider = ({ children }) => {
       try {
         const response = await axios.get('https://ipapi.co/json/');
         const countryCode = response.data.country_code;
+
+        // Map country codes to currencies
         const currencyMap = {
-          US: 'USD',
-          GB: 'GBP',
-          EU: 'EUR',
+          // Europe (EUR)
+          EUR: ['BE', 'EL', 'LT', 'PT', 'BG', 'ES', 'LU', 'RO', 'CZ', 'FR', 'HU', 'SI', 'DK', 'HR', 'MT', 'SK', 'DE', 'IT', 'NL', 'FI', 'EE', 'CY', 'AT', 'SE', 'IE', 'LV', 'PL'],
+          // North America (USD)
+          USD: ['US', 'CA', 'MX'],
+          // United Kingdom (GBP)
+          GBP: ['GB'],
         };
-        const detectedCurrency = currencyMap[countryCode] || 'GBP';
+
+        let detectedCurrency = 'GBP'; // Default to GBP
+
+        // Check if country is in Europe (EUR)
+        if (currencyMap.EUR.includes(countryCode)) {
+          detectedCurrency = 'EUR';
+        }
+        // Check if country is in North America (USD)
+        else if (currencyMap.USD.includes(countryCode)) {
+          detectedCurrency = 'USD';
+        }
+        // Otherwise, default to GBP or if the country is in the UK
+
         setCurrency(detectedCurrency);
         localStorage.setItem('currency', detectedCurrency);
+        console.log(countryCode)
       } catch (error) {
         console.error('Error fetching geolocation:', error);
         setCurrency('GBP'); // Default to GBP if API fails
@@ -82,16 +105,12 @@ export const CurrencyProvider = ({ children }) => {
     fetchGeolocation();
   }, []);
 
-  const changeCurrency = (newCurrency) => {
-    setCurrency(newCurrency);
-    localStorage.setItem('currency', newCurrency); // Update localStorage with new currency
-  };
-
   return (
     <CurrencyContext.Provider value={{ currency, exchangeRates, changeCurrency }}>
       {children}
     </CurrencyContext.Provider>
   );
+
 };
 
 export default CurrencyContext;

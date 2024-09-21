@@ -54,7 +54,6 @@ const Profile = ({ form }) => {
     };
 
     const handleReviewClick = (product_id, product_name) => {
-        console.log(product_name)
         const existingReview = reviews[product_id];
 
         if (existingReview) {
@@ -173,7 +172,6 @@ const Profile = ({ form }) => {
             setMessage({ content: 'Failed to load order history', product: null, action: 'error' });
         }
     };
-
 
     const fetchUserReviews = async () => {
         try {

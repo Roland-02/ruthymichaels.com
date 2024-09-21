@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { SessionContext } from '../context/SessionContext';
 import CurrencyContext from '../context/CurrencyContext';
-
 import axios from 'axios';
 
 import logo from '../../images/Ruthy_Michaels_logo.png';
@@ -222,13 +221,6 @@ const Navbar = () => {
 
           {/* Right elements */}
           <div className="nav-right">
-
-          <select className='select-currency' value={currency} onChange={handleCurrencyChange}>
-              <option value="GBP">🇬🇧 GBP</option>
-              <option value="USD">🇺🇸 USD</option>
-              <option value="EUR">🇪🇺 EUR</option>
-            </select>
-
             {session && session.role === 'admin' ? (
               <>
                 <Link to="/admin" className={`menu-item ${location.pathname === '/admin' ? 'active' : ''}`}>
