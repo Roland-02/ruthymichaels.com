@@ -302,27 +302,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
 
         initialize();
 
-        // const sampleWishlist = [
-        //     {
-        //         id: 1,
-        //         name: 'Proroductroductduct roduct roductroduct',
-        //         type: 'book',
-        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-        //         price: '10.00',
-        //         imageUrls: ['https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0', 'https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w']
-        //     },
-        //     {
-        //         id: 2,
-        //         name: 'Product 2',
-        //         type: 'journal',
-        //         description: 'eisnjwnfsndlfsnldfknlsdfsafdsfasdfasfsdf',
-        //         price: '20.00',
-        //         imageUrls: ['https://drive.google.com/thumbnail?id=1vXkFsPW6WGHEkYUr_KNKB0E5DJ5WCW-w', 'https://drive.google.com/thumbnail?id=1R8WYVj_9le8fFJnr3OdBRKN_D0RWkwK0']
-        //     },
-        // ];
-        // setProducts(sampleWishlist);
-        // setAllProducts(sampleWishlist);
-
     }, [session, navigate, initialProducts]);
 
     useEffect(() => {

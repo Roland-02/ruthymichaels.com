@@ -1,8 +1,8 @@
 //handle GET request for /home, load film data
 var express = require('express');
+const router = express.Router();
 const { getConnection } = require('../database');
 const mysql = require('mysql');
-const router = express.Router();
 const nodemailer = require('nodemailer');
 
 

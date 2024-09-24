@@ -62,6 +62,8 @@ const Wishlist = () => {
 
     useEffect(() => {
         const initialize = async () => {
+            window.scrollTo(0, 0);
+
             if (Loading) return;
 
             await fetchWishlist();

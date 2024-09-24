@@ -12,7 +12,6 @@ import Navbar from '../components/common/Navbar';
 import Footer from '../components/common/Footer';
 import SimilarProducts from '../components/common/SimilarProducts';
 import MessageBanner from '../components/common/MessageBanner'
-import { argv0 } from 'process';
 
 
 const View_Product = () => {

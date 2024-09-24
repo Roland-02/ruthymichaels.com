@@ -116,6 +116,10 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
             const shipping_cost = session.total_details.amount_shipping / 100;
             const currency = session.currency.toUpperCase(); // Get the currency used in the transaction
 
+            // .... pass order to bookvault
+
+            // .....
+
             // Define currency symbols
             const currencySymbols = {
                 GBP: '£',
@@ -151,7 +155,6 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                     metadata: product.metadata.product_id,
                 };
             }));
-
 
             // Connect to the database
             getConnection(async (err, connection) => {
