@@ -38,7 +38,7 @@ const ProductForm = () => {
                     });
 
                     const imageIds = product.image_URLs ? product.image_URLs.split(',') : [];
-                    const imageUrls = imageIds.map(x => ({ file: null, url: `https://drive.google.com/thumbnail?id=${x}` }));
+                    const imageUrls = imageIds.map(name => ({ file: null, url: `/uploads/${name}` }));
                     setImages([...imageUrls, ...Array(6 - imageUrls.length).fill({ file: null, url: null })]);
 
                     setEdit(true);
@@ -92,11 +92,18 @@ const ProductForm = () => {
         form.append('age', formData.age);
         form.append('price', formData.price);
 
+        // Append new images to the form
         images.forEach((image, index) => {
             if (image && image.file) {
-                form.append('images', image.file);
-            } else if (image && image.url) {
-                form.append(`existingImages[${index}]`, extractDriveId(image.url));
+                form.append('images', image.file);  // Append new files
+            }
+        });
+
+        // Append existing images to the form
+        images.forEach((image, index) => {
+            if (image && image.url && !image.file) {
+                const imageName = image.url.replace('/uploads/', '');  // Remove the '/uploads/' prefix
+                form.append(`existingImages[${index}]`, imageName);  // Append the file name without the prefix
             }
         });
 

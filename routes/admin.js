@@ -5,17 +5,18 @@ const { Readable } = require('stream')
 const { getConnection } = require('../database');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const path = require('path');
+const fs = require('fs');
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+const uploadsDir = path.join(__dirname, '../client/src/uploads');
 
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
 const REDIRECT_URI = process.env.GOOGLE_REDIRECT_URI;
 const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN
-
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
-const drive = google.drive({ version: 'v3', auth: oauth2Client });
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
 
 router.get('/oauth2callback', async (req, res) => {
@@ -47,7 +48,7 @@ router.get('/verify_admin', async (req, res) => {
 
         res.cookie('sessionEmail', decoded.email, { httpOnly: true, secure: true });
         res.cookie('sessionID', decoded.user_id, { httpOnly: true, secure: true });
-        res.cookie('sessionRole', 'admin',  { httpOnly: true, secure: true });
+        res.cookie('sessionRole', 'admin', { httpOnly: true, secure: true });
 
         return res.redirect('/admin');
 
@@ -66,47 +67,35 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
         }
 
         const imageUrls = [];
-
+        // Process each uploaded file
         for (const file of files) {
-            const { buffer, originalname } = file;
-            const driveResponse = await drive.files.create({
-                requestBody: {
-                    name: originalname,
-                    mimeType: file.mimetype
-                },
-                media: {
-                    mimeType: file.mimetype,
-                    body: Readable.from(buffer)
-                }
-            });
-            // Set file permissions to public
-            await drive.permissions.create({
-                fileId: driveResponse.data.id,
-                requestBody: {
-                    role: 'reader',
-                    type: 'anyone'
-                }
-            });
-            imageUrls.push(`${driveResponse.data.id}`);
+            const targetPath = path.join(uploadsDir, file.originalname);
+            fs.writeFileSync(targetPath, file.buffer);
+            imageUrls.push(`${file.originalname}`);
         }
-        const imageUrlsString = imageUrls.join(',');
 
+        // Join image URLs into a single string to store in the database
+        const imageUrlsString = imageUrls.join(',');
+        console.log(imageUrlsString)
 
         getConnection((err, connection) => {
             if (err) throw err;
 
-            let query = 'INSERT INTO products (id, name, type, description, age, price, image_URLs) VALUES (0, ?, ?, ?, ?, ?)';
+            const query = 'INSERT INTO products (id, name, type, description, age, price, image_URLs) VALUES (0, ?, ?, ?, ?, ?, ?)';
+
+            // Now include imageUrlsString as the last value
             connection.query(query, [name, type, description, age, price, imageUrlsString], (error, results) => {
                 connection.release();
 
                 if (error) {
-                    console.error(error);
+                    console.error('Error inserting product into DB:', error);
                     return res.status(500).send('Database insertion failed');
                 }
 
                 res.status(200).send({ message: 'Product added successfully' });
             });
         });
+
 
     } catch (error) {
         console.error('Error:', error);
@@ -120,49 +109,32 @@ router.post('/products/edit_product/:id', upload.array('images', 6), async (req,
         const { name, type, description, age, price } = req.body;
         const files = req.files;
         const existingImages = req.body.existingImages || [];
-        
+
         if (!name || !price || (files.length === 0 && existingImages.length === 0)) {
             return res.status(400).send({ message: 'Name, price and at least 1 image are required' });
         }
-
+        console.log(existingImages)
         // Array to hold all images in their respective order
-        const allImageUrls = new Array(6).fill(null);
+        const allImageUrls = [];
 
-        // Place existing images in their original positions
-        Object.entries(existingImages).forEach(([index, id]) => {
-            allImageUrls[parseInt(index)] = id;
-        });
-
-        // Process and place new images in their respective positions
-        let fileIndex = 0;
-        for (let i = 0; i < allImageUrls.length; i++) {
-            if (!allImageUrls[i] && fileIndex < files.length) {
-                const file = files[fileIndex];
-                const { buffer, originalname } = file;
-                const driveResponse = await drive.files.create({
-                    requestBody: {
-                        name: originalname,
-                        mimeType: file.mimetype
-                    },
-                    media: {
-                        mimeType: file.mimetype,
-                        body: Readable.from(buffer)
-                    }
-                });
-                await drive.permissions.create({
-                    fileId: driveResponse.data.id,
-                    requestBody: {
-                        role: 'reader',
-                        type: 'anyone'
-                    }
-                });
-                allImageUrls[i] = driveResponse.data.id;
-                fileIndex++;
-            }
+        // If there are existing images from the form, add them to the array
+        if (existingImages && Array.isArray(existingImages)) {
+            existingImages.forEach(imageUrl => {
+                if (imageUrl) {
+                    allImageUrls.push(imageUrl);  // Add existing images
+                }
+            });
         }
 
-        // Filter out null values
-        const validImageUrls = allImageUrls.filter(url => url && url !== 'null');
+        // Process new image uploads and add their URLs to the array
+        for (const file of files) {
+            const targetPath = path.join(uploadsDir, file.originalname);
+            fs.writeFileSync(targetPath, file.buffer);
+            allImageUrls.push(`${file.originalname}`);
+        }
+
+        // Make sure there are no more than 6 images in total
+        const validImageUrls = allImageUrls.slice(0, 6);
         const imageUrlsString = validImageUrls.join(',');
 
         getConnection((err, connection) => {
@@ -194,6 +166,7 @@ router.post('/products/delete_product/:id', async (req, res) => {
         getConnection((err, connection) => {
             if (err) throw err;
 
+            // Query to get the image URLs from the product
             let getImageUrlsQuery = 'SELECT image_URLs FROM products WHERE id = ?';
             connection.query(getImageUrlsQuery, [id], async (error, results) => {
                 if (error) {
@@ -202,31 +175,40 @@ router.post('/products/delete_product/:id', async (req, res) => {
                     return res.status(500).send('Database retrieval failed');
                 }
 
-                const imageUrls = results[0].image_URLs.split(',');
+                // Get the image URLs
+                const imageUrls = results[0]?.image_URLs.split(',');
 
-                // Delete files from Google Drive
-                for (const fileId of imageUrls) {
-                    try {
-                        await drive.files.delete({ fileId });
-                    } catch (driveError) {
-                        console.error('Error deleting file from Google Drive:', driveError);
+                if (imageUrls && imageUrls.length > 0) {
+                    // Delete each image from the local uploads directory
+                    for (const imageUrl of imageUrls) {
+                        const filePath = path.join(uploadsDir, imageUrl);
+
+                        try {
+                            // Check if the file exists before trying to delete it
+                            if (fs.existsSync(filePath)) {
+                                fs.unlinkSync(filePath); // Delete the file
+                            }
+                        } catch (fsError) {
+                            console.error('Error deleting file:', fsError);
+                        }
                     }
                 }
 
-                // Delete the product from the database
+                // Now delete the product from the database
                 let deleteProductQuery = 'DELETE FROM products WHERE id = ?';
                 connection.query(deleteProductQuery, [id], (deleteError, deleteResults) => {
                     connection.release();
 
                     if (deleteError) {
                         console.error(deleteError);
-                        return res.status(500).send('Database deletion failed');
+                        return res.status(500).send('Failed to delete product');
                     }
 
-                    res.status(200).send({ message: 'Product deleted successfully' });
+                    res.status(200).send({ message: 'Product and associated images deleted successfully' });
                 });
             });
         });
+
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');

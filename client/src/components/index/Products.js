@@ -60,7 +60,7 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             const allProducts = response.data;
             const formattedProducts = allProducts.map(prod => {
                 const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                const imageUrls = imageIds.map(name => `/uploads/${name}`);
                 return { ...prod, imageUrls };
             });
             setProducts(formattedProducts)

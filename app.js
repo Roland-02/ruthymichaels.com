@@ -48,6 +48,7 @@ app.use('/checkout', checkoutRoute);
 
 // Serve static files from the React app
 app.use(express.static(path.join(__dirname, 'client/build')));
+app.use('/uploads', express.static(path.join(__dirname, 'client/src/uploads')));
 
 // Catch-all route to serve the React app's index.html file
 app.get('*', (req, res) => {

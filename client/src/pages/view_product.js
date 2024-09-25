@@ -68,7 +68,7 @@ const View_Product = () => {
                 window.scrollTo(0, 0);
                 const productData = response.data;
                 const imageIds = productData.image_URLs ? productData.image_URLs.split(',') : [];
-                const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                const imageUrls = imageIds.map(name => `/uploads/${name}`);
                 setProduct({ ...productData, imageUrls });
                 setSelectedImage(imageUrls[0]);
             } else {
