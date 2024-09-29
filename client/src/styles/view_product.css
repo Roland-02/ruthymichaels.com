@@ -65,19 +65,18 @@
 
 .product-description {
     font-size: 20px;
-    font-weight: 100;
+    font-weight: 300;
     max-height: 35vh;
     overflow-y: scroll;
 }
 
-.product-type-age {
-    display: flex;
-    justify-content: space-evenly;
+.product-type-age p {
+    margin-bottom: 5px;
 }
 
 .product-type, .product-age {
     font-size: 24px;
-    font-weight: 100;
+    font-weight: 300;
 }
 
 .product-price {

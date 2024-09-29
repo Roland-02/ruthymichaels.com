@@ -8,8 +8,8 @@
 }
 
 .manage-products-button {
-  width: 45%;
-  height: 50%;
+  width: 30%;
+  height: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -21,13 +21,27 @@
   border-radius: 10px;
 }
 
-.manage-products-button:hover {
+.manage-products-button:hover, .manage-orders-button:hover {
   color: #000000;
 }
 
+.manage-orders-button {
+  width: 30%;
+  height: 30%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #62ff84b6;
+  color: rgb(0, 0, 0);
+  font-size: 32px;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
 .view-sales-button {
-  width: 45%;
-  height: 50%;
+  width: 30%;
+  height: 30%;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -38,14 +52,11 @@
   cursor: pointer;
   border-radius: 10px;
 }
-
-
 /* END MANAGE PRODUCTS */
 
 
-
 /* VIEW PRODUCTS */
-#adminProductsContainer {
+.adminProductsContainer {
   position: relative;
   width: 100%;
   height: 80vh;
@@ -97,6 +108,10 @@
 
 .admin-product-table tbody tr td:last-child {
   border-right: none;
+}
+
+.admin-product-table tbody tr{
+  transition: transform 0.3s ease, fill 0.3s ease;
 }
 
 .admin-product-table tbody tr:hover {
@@ -202,8 +217,17 @@
 
 /* END ADD PRODUCT FORM */
 
+/* UPDATE ORDER FORM */
+.orders-form{
+  padding: 15px;
+}
 
-
+.orders-form .container {
+  /* display: flex; */
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+}
 
 .loading-spinner {
   position: absolute;

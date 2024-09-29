@@ -334,8 +334,8 @@ const View_Product = () => {
                         <h2 className='product-name'>{product.name}</h2>
                         <p className='product-description'>{product.description}</p>
                         <div className="product-type-age">
-                            <span className="product-type">{product.type}</span>
-                            <span className="product-age">{product.age}</span>                        
+                            <p className="product-type">{product.type}</p>
+                            <p className="product-age">{product.age}</p>                        
                             </div>
                         <div className='buy-container'>
                             <p className='product-price'>{convertPrice(product.price, currency)}</p>

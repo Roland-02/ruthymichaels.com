@@ -18,6 +18,7 @@ import NotFound from './components/common/NotFound';
 
 import Admin from './pages/admin';
 import AdminProducts from './components/admin/Products_View';
+import OrdersView from './components/admin/Orders_View';
 
 
 const App = () => {
@@ -49,6 +50,7 @@ const App = () => {
                         {/* Admin Protected Routes (requires admin role) */}
                         <Route path="/admin" element={<AdminProtectedRoute element={<Admin />} />} />
                         <Route path="/admin/products" element={<AdminProtectedRoute element={<AdminProducts />} />} />
+                        <Route path="/admin/orders" element={<AdminProtectedRoute element={<OrdersView />} />} />
                         <Route path="/admin/products/add_product" element={<AdminProtectedRoute element={<AdminProducts />} />} />
                         <Route path="/admin/products/edit_product/:id" element={<AdminProtectedRoute element={<AdminProducts />} />} />
 

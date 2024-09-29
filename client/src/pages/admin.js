@@ -48,12 +48,14 @@ const Admin = ({ session }) => {
       <main>
         <div className='view-container'>
           <div className="admin-container">
-          <Link to="/admin/products" className="manage-products-button">
-            Manage Products
-          </Link>
-            <div
-              className="view-sales-button" onClick={() => window.open('https://dashboard.stripe.com/dashboard', '_blank')}>
-              View Sales
+            <Link to="/admin/products" className="manage-products-button">
+              Products
+            </Link>
+            <Link to="/admin/orders" className="manage-orders-button">
+              Orders
+            </Link>
+            <div className="view-sales-button" onClick={() => window.open('https://dashboard.stripe.com/dashboard', '_blank')}>
+              Sales
             </div>
           </div>
         </div>

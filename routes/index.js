@@ -470,7 +470,7 @@ router.get('/order_history/:user_id', async (req, res) => {
         getConnection(async (err, connection) => {
             if (err) throw err;
 
-            const ordersQuery = `SELECT order_id, date, total_cost, currency 
+            const ordersQuery = `SELECT order_id, date, total_cost, currency, status 
                                  FROM orders 
                                  WHERE user_id = ? 
                                  ORDER BY date DESC`;

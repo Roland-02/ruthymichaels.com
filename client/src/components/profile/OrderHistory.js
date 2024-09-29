@@ -32,6 +32,7 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                             <th>Quantity</th>
                             <th>Total</th>
                             <th>Date</th>
+                            <th>Status</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -55,6 +56,11 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                                         {index === 0 && (
                                             <td rowSpan={order.items.length}>
                                                 {new Date(order.date).toLocaleDateString('en-GB')}
+                                            </td>
+                                        )}
+                                         {index === 0 && (
+                                            <td rowSpan={order.items.length}>
+                                                {order.status}
                                             </td>
                                         )}
                                         <td>
@@ -90,10 +96,11 @@ const OrderHistory = ({ orders, handleReviewClick, reviews }) => {
                                 {order.items.map((item, index) => (
                                     <div className="mobile-order-item">
                                         {index === 0 && (
-                                            <p>Total Price: <strong>{currencySymbols[order.currency]}{order.totalPrice.toFixed(2)}</strong></p>
-                                        )}
-                                        {index === 0 && (
-                                            <p>Date: <strong>{new Date(order.date).toLocaleDateString('en-GB')}</strong> </p>
+                                            <>
+                                                <p>Total Price: <strong>{currencySymbols[order.currency]}{order.totalPrice.toFixed(2)}</strong></p>
+                                                <p>Date: <strong>{new Date(order.date).toLocaleDateString('en-GB')}</strong> </p>
+                                                <p>Status: <strong>{order.status}</strong> </p>
+                                            </>
                                         )}
 
                                         <div key={`${order.order_id}-${item.product_id}`} >

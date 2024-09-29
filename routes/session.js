@@ -5,6 +5,7 @@ var { getConnection } = require('../database');
 var bcrypt = require('bcrypt');
 const nodemailer = require('nodemailer');
 const jwt = require('jsonwebtoken');
+const path = require('path');
 
 const transporter = nodemailer.createTransport({
     service: 'Gmail',
@@ -72,8 +73,10 @@ const sendVerificationEmail = (userEmail) => {
     </head>
     <body>
         <div class="container">
-           <div class="header">
-                <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+             <div class="header">
+                <a href="${process.env.DOMAIN}" target="_blank">
+                    <img src="cid:businessLogo" alt="ruthymichaels.com">
+                </a>                                            
             </div>
             <div class="content">
              <p>
@@ -98,6 +101,13 @@ const sendVerificationEmail = (userEmail) => {
         to: userEmail,
         subject: 'Email Verification',
         html: emailContent,
+        attachments: [
+            {
+                filename: 'Ruthy_Michaels_logo.png',
+                path: path.join(__dirname, '../client/src/images/Ruthy_Michaels_logo.png'),
+                cid: 'businessLogo'
+            }
+        ]
     };
 
     transporter.sendMail(mailOptions, (error, info) => {
@@ -172,7 +182,9 @@ const sendAdminVerificationEmail = async (user) => {
     <body>
         <div class="container">
         <div class="header">
-            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+            <a href="${process.env.DOMAIN}" target="_blank">
+                <img src="cid:businessLogo" alt="ruthymichaels.com">
+            </a>                                            
         </div>
         <div class="content">
         <p>Click the link below to verify and complete your admin login:</p>
@@ -192,6 +204,13 @@ const sendAdminVerificationEmail = async (user) => {
         to: process.env.myEmail, // Sends to the specified admin email
         subject: 'Admin Login Verification',
         html: emailContent,
+        attachments: [
+            {
+                filename: 'Ruthy_Michaels_logo.png',
+                path: path.join(__dirname, '../client/src/images/Ruthy_Michaels_logo.png'),
+                cid: 'businessLogo'
+            }
+        ]
     };
 
     await transporter.sendMail(mailOptions);

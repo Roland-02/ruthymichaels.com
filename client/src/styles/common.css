@@ -282,6 +282,16 @@ body {
     text-decoration: underline;
 }
 
+.developer-credit {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #777;
+}
+
+.developer-credit a:hover {
+    text-decoration: underline;
+}
+
 /* login */
 .overlay {
     position: fixed;
@@ -307,10 +317,6 @@ body {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
     border-radius: 4px;
     text-align: center;
-}
-
-.login-container h2 {
-    text-decoration: underline;
 }
 
 .loginBtn {

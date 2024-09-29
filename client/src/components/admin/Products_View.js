@@ -11,7 +11,6 @@ import Navbar from '../common/Navbar';
 import Footer from '../common/Footer';
 import ProductForm from './ProductForm'
 
-// import ProductForm from './Edit_Product_Form';
 
 const Products_View = ({ session }) => {
     const [products, setProducts] = useState([]);
@@ -93,7 +92,7 @@ const Products_View = ({ session }) => {
                 </div>
             )}
 
-            <div className="container" id="adminProductsContainer">
+            <div className="container adminProductsContainer" id="adminProductsContainer">
 
                 <div className="row">
                     <h2>Stock</h2>

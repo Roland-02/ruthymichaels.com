@@ -8,6 +8,7 @@ const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') // secret key
 const nodemailer = require('nodemailer');
 const tokenStore = {};
+const path = require('path');
 
 // const stripe = Stripe(`${process.env.STIPE_SECRET_KEY}`) 
 
@@ -47,7 +48,7 @@ router.post('/create_checkout_session', async (req, res) => {
         // Create a Stripe price object
         const price = await stripe.prices.create({
             unit_amount: item.price * 100, // Stripe expects the amount in cents
-            currency: currency, 
+            currency: currency,
             product: product.id,
         });
 
@@ -75,10 +76,6 @@ router.post('/create_checkout_session', async (req, res) => {
                             currency: currency,
                         },
                         display_name: 'Standard Shipping',
-                        delivery_estimate: {
-                            minimum: { unit: 'business_day', value: 5 },
-                            maximum: { unit: 'business_day', value: 7 },
-                        },
                     },
                 },
             ],
@@ -171,8 +168,8 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                         }
 
                         // Create a new order in the `orders` table
-                        const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost, currency) VALUES (?, ?, NOW(), ?, ?)`;
-                        const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100, session.currency]);
+                        const insert_order = `INSERT INTO orders (order_id, user_id, date, total_cost, currency, status) VALUES (?, ?, NOW(), ?, ?, ?)`;
+                        const insert_order_query = mysql.format(insert_order, [session_id, user_id, session.amount_total / 100, session.currency, 'Processing']);
 
                         // Insert order into the `orders` table
                         connection.query(insert_order_query, async (err, result) => {
@@ -261,8 +258,10 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                 </head>
                                 <body>
                                     <div class="container">
-                                       <div class="header">
-                                            <img src="${process.env.DOMAIN}/client/src/images/Ruthy_Michaels_logo.png" alt="ruthymichaels.com">
+                                        <div class="header">
+                                            <a href="${process.env.DOMAIN}" target="_blank">
+                                                <img src="cid:businessLogo" alt="ruthymichaels.com">
+                                            </a>                                            
                                         </div>
                                         <div class="content">
                                         <p>Dear ${customer_name},</p>
@@ -285,8 +284,10 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                         ${brand} ${funding}<br/>
                                         **** **** **** ${last4}</p>
                                 
-                                        <p>You will be notified when your items have been shipped.</p>
-                                
+                                        <p>Please note orders are printed on demand through <a href="https://www.bookvault.app" target="_blank">BookVault</a>, which can take 3-5 business days after your order has been processed</p>
+
+                                        <p>You will receive notifications once your items are in print and again when they have been dispatched.</p>                                
+                                        
                                         <p>I hope you enjoy your purchase!</p>
                                 
                                         <p>Kind regards,</p>
@@ -294,7 +295,7 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                     </div>
                                 
                                     <div class="footer">
-                                        &copy; 2024 RuthyMichaels.com. All rights reserved.
+                                        &copy; 2024 ruthyichaels.com. All rights reserved.
                                     </div>
                                     </div>
                                 </body>
@@ -305,9 +306,117 @@ router.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req
                                     to: customer_email,
                                     subject: 'Order Confirmation - Thank you for your purchase!',
                                     html: emailContent,
+                                    attachments: [
+                                        {
+                                            filename: 'Ruthy_Michaels_logo.png',
+                                            path: path.join(__dirname, '../client/src/images/Ruthy_Michaels_logo.png'),
+                                            cid: 'businessLogo'
+                                        }
+                                    ]
                                 });
 
                                 console.log('Confirmation email sent');
+
+                                const fulfillOrderEmail = `
+                                <!DOCTYPE html>
+                                <html lang="en">
+                                <head>
+                                    <meta charset="UTF-8">
+                                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                                    <style>
+                                        body {
+                                            background-color: #f4f4f4;
+                                            font-family: Arial, sans-serif;
+                                            color: #333;
+                                        }
+                                        .container {
+                                            background-color: #fff;
+                                            width: 90%;
+                                            max-width: 600px;
+                                            margin: 0 auto;
+                                            padding: 20px;
+                                            border-radius: 8px;
+                                            border: 1px solid #ccc;
+                                            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+                                        }
+                                        .header {
+                                            text-align: center;
+                                            font-size: 24px;
+                                            color: #ff68b4;
+                                            border-bottom: 1px solid #ccc;
+                                            margin-bottom: 20px;
+                                        }
+                                        .header img {
+                                            width: 150px;
+                                            margin-bottom: 10px;
+                                        }
+                                        .content {
+                                            font-size: 16px;
+                                            line-height: 1.6;
+                                        }
+                                        .content p {
+                                            margin-bottom: 10px;
+                                        }
+                                        .footer {
+                                            margin-top: 30px;
+                                            padding: 5px;
+                                            text-align: center;
+                                            font-size: 14px;
+                                            color: #777;
+                                            border-top: 1px solid #ccc;
+                                        }
+                                    </style>
+                                </head>
+                                <body>
+                                    <div class="container">
+                                        <div class="header">
+                                            <a href="${process.env.DOMAIN}" target="_blank">
+                                                <img src="cid:businessLogo" alt="ruthymichaels.com">
+                                            </a>                                            
+                                        </div>
+                                        <div class="content">
+                                        <p>Order from:  ${customer_name},</p>
+                                        <p> Email address: ${customer_email}</p>
+                                
+                                        <p><strong>Customer reference:</strong> ${session.id}</p>
+                                
+                                        <p><strong>Items Ordered:</strong><br/> ${orderDetails.replace(/\n/g, '<br/>')}</p>
+                                                                
+                                        <p><strong>Shipping Address:</strong><br/>
+                                        ${shipping_address.line1}<br/>
+                                        ${shipping_address.line2 ? `${shipping_address.line2}<br/>` : ''}
+                                        ${shipping_address.city}<br/>
+                                        ${shipping_address.postal_code}<br/>
+                                        ${shipping_address.country}</p>
+                                
+                                        <p><strong>Payment Details:</strong><br/>
+                                        ${brand} ${funding}<br/>
+                                        **** **** **** ${last4}</p>
+                                
+                                      
+                                    </div>
+                                
+                                    <div class="footer">
+                                        &copy; 2024 ruthyichaels.com. All rights reserved.
+                                    </div>
+                                    </div>
+                                </body>
+                                </html>
+                                `;
+
+                                await transporter.sendMail({
+                                    from: `${process.env.myEmail}`,
+                                    to: `${process.env.myEmail}`,
+                                    subject: 'Please fulfill order',
+                                    html: fulfillOrderEmail,
+                                    attachments: [
+                                        {
+                                            filename: 'Ruthy_Michaels_logo.png',
+                                            path: path.join(__dirname, '../client/src/images/Ruthy_Michaels_logo.png'),
+                                            cid: 'businessLogo'
+                                        }
+                                    ]
+                                })
 
                             } catch (emailError) {
                                 return connection.rollback(() => {

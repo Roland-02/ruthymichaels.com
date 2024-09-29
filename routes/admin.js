@@ -5,6 +5,7 @@ const { Readable } = require('stream')
 const { getConnection } = require('../database');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
+const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs');
 const storage = multer.memoryStorage();
@@ -18,6 +19,133 @@ const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN
 const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
+const transporter = nodemailer.createTransport({
+    service: 'Gmail', // or another email service
+    auth: {
+        user: `${process.env.myEmail}`,
+        pass: `${process.env.myEmailPassword}`,
+    },
+});
+
+// Send an update email
+const sendOrderUpdateEmail = async (customer_email, newStatus, order_id, trackingRef) => {
+    let statusMessage = '';
+
+    // Use switch to create unique messages for each status
+    switch (newStatus) {
+        case 'Printing':
+            statusMessage = `
+                <p>Your books are currently being printed by BookVault. Please keep an eye on your inbox for further notifications.</p>`
+            break;
+
+        case 'Shipped':
+            statusMessage = `
+                <p>Your order has now been shipped!</p>
+                <p><strong>Tracking Reference:</strong> ${trackingRef}</p>
+                <p>Track your package via <a href="https://www.yodel.co.uk/track" target="_blank">Yodel Tracking</a>.</p>`;
+            break;
+
+        case 'Delivered':
+            statusMessage = `
+                <p>Your items have been delivered. We hope you enjoy your order!</p>
+                <p>Don't forget to leave a review!</p>`
+            break;
+
+        default:
+            statusMessage = `
+                <p>Your order status has been updated to <strong>${newStatus}</strong>.</p>
+                <p>We will notify you of any further updates!</p>`
+            break;
+    }
+
+    // Create the email content using the unique status message
+    const emailContent = `
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            body {
+                background-color: #f4f4f4;
+                font-family: Arial, sans-serif;
+                color: #333;
+            }
+            .container {
+                background-color: #fff;
+                width: 90%;
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+                border-radius: 8px;
+                border: 1px solid #ccc;
+                box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            }
+            .header {
+                text-align: center;
+                font-size: 24px;
+                color: #ff68b4;
+                border-bottom: 1px solid #ccc;
+                margin-bottom: 20px;
+            }
+            .header img {
+                width: 150px;
+                margin-bottom: 10px;
+            }
+            .content {
+                font-size: 16px;
+                line-height: 1.6;
+            }
+            .content p {
+                margin-bottom: 10px;
+            }
+            .footer {
+                margin-top: 30px;
+                padding: 5px;
+                text-align: center;
+                font-size: 14px;
+                color: #777;
+                border-top: 1px solid #ccc;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <a href="${process.env.DOMAIN}" target="_blank">
+                    <img src="cid:businessLogo" alt="ruthymichaels.com">
+                </a>
+            </div>
+            <div class="content">
+                <p>Hi,</p>
+                <p>Order: <strong>${order_id}</strong> has been updated<strong></p>
+                ${statusMessage}
+                <p>Kind regards,</p>
+                <p>Ruthy Michaels</p>
+            </div>
+            <div class="footer">
+                &copy; 2024 ruthymichaels.com. All rights reserved.
+            </div>
+        </div>
+    </body>
+    </html>
+    `;
+
+    // Send the email
+    await transporter.sendMail({
+        from: process.env.myEmail,
+        to: customer_email,
+        subject: `Order update - ${newStatus}`,
+        html: emailContent,
+        attachments: [
+            {
+                filename: 'Ruthy_Michaels_logo.png',
+                path: path.join(__dirname, '../client/src/images/Ruthy_Michaels_logo.png'),
+                cid: 'businessLogo'
+            }
+        ]
+    });
+};
 
 router.get('/oauth2callback', async (req, res) => {
     const code = req.query.code;
@@ -212,6 +340,63 @@ router.post('/products/delete_product/:id', async (req, res) => {
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');
+    }
+});
+
+router.get('/orders_status', async (req, res) => {
+    try {
+        getConnection(async (err, connection) => {
+            if (err) throw err;
+
+            // Query to join orders and user_login tables
+            const ordersQuery = `
+                SELECT o.order_id, o.status, o.user_id, o.bookVault_ref, o.tracking_ref, ul.email AS user_email 
+                FROM orders o 
+                JOIN user_login ul ON o.user_id = ul.user_id
+            `;
+
+            connection.query(ordersQuery, async (error, orders) => {
+                if (error) {
+                    connection.release();
+                    return res.status(500).send('Failed to fetch orders');
+                }
+
+                try {
+                    // Send the orders with user emails back to the client
+                    res.status(200).json({ orders });
+                } catch (error) {
+                    connection.release();
+                    res.status(500).send('Failed to process order items');
+                }
+            });
+        });
+    } catch (error) {
+        res.status(500).send('Internal server error');
+    }
+});
+
+router.post('/update_order_status', async (req, res) => {
+    const { customer_email, order_id, status, bookVault_ref, tracking_ref } = req.body;
+
+    try {
+        const updateQuery = `UPDATE orders SET status = ?, bookVault_ref = ?, tracking_ref = ? WHERE order_id = ?`;
+
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            connection.query(updateQuery, [status, bookVault_ref, tracking_ref, order_id], (error, results) => {
+                connection.release();
+
+                if (error) {
+                    return res.status(500).send('Error updating order status');
+                }
+
+                sendOrderUpdateEmail(customer_email, status, order_id, tracking_ref)
+                return res.status(200).send('Order status updated');
+            });
+        });
+    } catch (error) {
+        return res.status(500).send('Error processing request');
     }
 });
 
