@@ -26,6 +26,8 @@ const Cart = () => {
     const navigate = useNavigate();
     const location = useLocation();
 
+    console.log(process.env.REACT_APP_STRIPE_PUBLIC_KEY)
+
 
     const currencySymbols = {
         GBP: '£',
@@ -294,8 +296,8 @@ const Cart = () => {
                 const { sessionId } = response.data;
 
                 // public key
-                // const stripe = await loadStripe({proces});
-                const stripe = await loadStripe('pk_test_51PlctuBPrf3ZwXpUkfK0s9oTqyQ5GgKKfSRcCjPytuBNCV2voy9e9AQg7F9TlJ4Sr6uGJhNOqF8HhCXirKZlSzt600tWDo1C85');
+                // const stripe = await loadStripe('pk_test_51PlctuBPrf3ZwXpUkfK0s9oTqyQ5GgKKfSRcCjPytuBNCV2voy9e9AQg7F9TlJ4Sr6uGJhNOqF8HhCXirKZlSzt600tWDo1C85');
+                const stripe = await loadStripe(process.env.STRIPE_PUBLIC_KEY);
 
                 // Redirect to the Stripe Checkout page
                 await stripe.redirectToCheckout({ sessionId });

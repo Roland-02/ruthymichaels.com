@@ -18,9 +18,6 @@ export const CurrencyProvider = ({ children }) => {
       const eurRate = (rates.EUR).toFixed(2);
       const usdRate = (rates.USD).toFixed(2);
 
-      console.log(`EUR Rate: ${eurRate}`);
-      console.log(`USD Rate: ${usdRate}`);
-
       // Optionally store the rates in local storage or state
       localStorage.setItem('exchangeRates', JSON.stringify({ EUR: eurRate, USD: usdRate }));
       localStorage.setItem('lastFetch', Date.now());
@@ -95,9 +92,7 @@ export const CurrencyProvider = ({ children }) => {
 
         setCurrency(detectedCurrency);
         localStorage.setItem('currency', detectedCurrency);
-        console.log(countryCode)
       } catch (error) {
-        console.error('Error fetching geolocation:', error);
         setCurrency('GBP'); // Default to GBP if API fails
       }
     };
