@@ -1,4 +1,4 @@
-# ruthymichaels.com - Online E-commerce Bookstore
+# ruthymichaels.com - Online Bookstore
 
 ## Demo Video
 
