@@ -33,11 +33,25 @@ const SimilarProducts = ({ product }) => {
                     filteredProducts = formattedProducts.filter(x => x.id !== product.id);
 
                     // Order the products, putting those with the same type first
-                    filteredProducts = filteredProducts.sort((a, b) => {
-                        if (a.type === product.type && b.type !== product.type) return -1;
-                        if (a.type !== product.type && b.type === product.type) return 1;
-                        return 0;
-                    });
+                    // Sort products by type, then age, and finally price similarity
+                filteredProducts = filteredProducts.sort((a, b) => {
+                    // Compare by type (same type first)
+                    if (a.type === product.type && b.type !== product.type) return -1;
+                    if (a.type !== product.type && b.type === product.type) return 1;
+
+                    // If type is the same, compare by age (closer age first)
+                    if (a.type === product.type && b.type === product.type) {
+                        const ageDiffA = Math.abs(a.age - product.age);
+                        const ageDiffB = Math.abs(b.age - product.age);
+                        if (ageDiffA < ageDiffB) return -1;
+                        if (ageDiffA > ageDiffB) return 1;
+                    }
+
+                    // If both type and age are similar, compare by price (closest price first)
+                    const priceDiffA = Math.abs(a.price - product.price);
+                    const priceDiffB = Math.abs(b.price - product.price);
+                    return priceDiffA - priceDiffB;
+                });
                 } else {
                     // Randomize the products if no specific product is provided
                     filteredProducts = formattedProducts.sort(() => Math.random() - 0.5);
