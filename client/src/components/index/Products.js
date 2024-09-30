@@ -74,7 +74,6 @@ const Products = ({ setMessage, initialProducts, updateWishlist }) => {
             setMaxPrice(maxPriceRounded);
             setSelectedPrice(maxPriceRounded);
 
-
         } catch (error) {
             setMessage({ content: 'Error loading products', product: null, action: 'error' });
 

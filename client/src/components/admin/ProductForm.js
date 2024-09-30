@@ -62,11 +62,6 @@ const ProductForm = () => {
         fetchProduct();
     }, [id]);
 
-    const extractDriveId = (url) => {
-        const match = url.match(/id=([^&]+)/);
-        return match ? match[1] : null;
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
@@ -141,6 +136,22 @@ const ProductForm = () => {
 
         }
     };
+
+    const handleDeleteImage = async (index) => {
+        const imageUrl = images[index].url.replace('/uploads/', '');
+        try {
+            const response = await axios.post(`/admin/products/delete_image/${id}`, { imageUrl });
+            if (response.status === 200) {
+                // Successfully deleted image
+                const updatedImages = [...images];
+                updatedImages[index].url = null;
+                setImages(updatedImages);
+            }
+        } catch (error) {
+            console.error('Error deleting image:', error);
+        }
+    };
+
 
     return (
         <div className="container">
@@ -242,10 +253,20 @@ const ProductForm = () => {
                                                         </svg>
                                                     )}
                                                 </label>
+                                                {image.url && (
+                                                    <button
+                                                        className="delete-image-button"
+                                                        onClick={() => handleDeleteImage(index)}
+                                                        aria-label={`Delete Image ${index + 1}`}
+                                                    >
+                                                        ✖
+                                                    </button>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
                                 </div>
+
 
                                 <div className="d-flex justify-content-between">
                                     <button type="submit" className="btn btn-primary m-3">

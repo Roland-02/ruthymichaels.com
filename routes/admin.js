@@ -190,21 +190,31 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
     try {
         const { name, type, description, age, price } = req.body;
         const files = req.files;
-        if (!name || !price || files.length === 0) {
-            return res.status(400).send({ message: 'Name, price, and at least one image are required' });
+        console.log(files)
+        if (!name || !price) {
+            return res.status(400).send({ message: 'Name and price are required' });
         }
+
+        const sanitizedProductName = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
 
         const imageUrls = [];
         // Process each uploaded file
         for (const file of files) {
-            const targetPath = path.join(uploadsDir, file.originalname);
+            // Extract the original file name without extension
+            const originalFileName = path.basename(file.originalname, path.extname(file.originalname));
+            // Extract the original file extension (e.g., .jpg, .png)
+            const fileExtension = path.extname(file.originalname);
+        
+            // Create a new unique file name by adding the product name and keeping the original file name
+            const newFileName = `${sanitizedProductName}_${originalFileName}_${Date.now()}${fileExtension}`;
+        
+            const targetPath = path.join(uploadsDir, newFileName);
             fs.writeFileSync(targetPath, file.buffer);
-            imageUrls.push(`${file.originalname}`);
+            imageUrls.push(newFileName);  // Save the new file name (not including the full path)
         }
 
         // Join image URLs into a single string to store in the database
         const imageUrlsString = imageUrls.join(',');
-        console.log(imageUrlsString)
 
         getConnection((err, connection) => {
             if (err) throw err;
@@ -224,7 +234,6 @@ router.post('/products/add_product', upload.array('images', 6), async (req, res)
             });
         });
 
-
     } catch (error) {
         console.error('Error:', error);
         res.status(500).send('An error occurred while processing the request');
@@ -238,37 +247,49 @@ router.post('/products/edit_product/:id', upload.array('images', 6), async (req,
         const files = req.files;
         const existingImages = req.body.existingImages || [];
 
-        if (!name || !price || (files.length === 0 && existingImages.length === 0)) {
-            return res.status(400).send({ message: 'Name, price and at least 1 image are required' });
+        if (!name || !price) {
+            return res.status(400).send({ message: 'Name, price, and at least 1 image are required' });
         }
-        console.log(existingImages)
+
+        // Sanitize the product name to make it file-system friendly
+        const sanitizedProductName = name.replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '');
+
         // Array to hold all images in their respective order
         const allImageUrls = [];
 
-        // If there are existing images from the form, add them to the array
+        // If there are existing images, add them to the array
         if (existingImages && Array.isArray(existingImages)) {
             existingImages.forEach(imageUrl => {
                 if (imageUrl) {
-                    allImageUrls.push(imageUrl);  // Add existing images
+                    allImageUrls.push(imageUrl);  // Add existing images to the list
                 }
             });
         }
 
         // Process new image uploads and add their URLs to the array
-        for (const file of files) {
-            const targetPath = path.join(uploadsDir, file.originalname);
-            fs.writeFileSync(targetPath, file.buffer);
-            allImageUrls.push(`${file.originalname}`);
+         for (const file of files) {
+            // Extract the original file name without the extension
+            const originalFileName = path.basename(file.originalname, path.extname(file.originalname));
+            // Extract file extension
+            const fileExtension = path.extname(file.originalname);
+            // Create a new unique file name by appending the product name, original file name, and timestamp
+            const newFileName = `${sanitizedProductName}_${originalFileName}_${Date.now()}${fileExtension}`;
+
+            const targetPath = path.join(uploadsDir, newFileName);
+            fs.writeFileSync(targetPath, file.buffer);  // Save the file to the uploads directory
+            allImageUrls.push(newFileName);  // Add the new image URL
         }
 
-        // Make sure there are no more than 6 images in total
+
+        // Ensure there are no more than 6 images in total
         const validImageUrls = allImageUrls.slice(0, 6);
         const imageUrlsString = validImageUrls.join(',');
 
         getConnection((err, connection) => {
             if (err) throw err;
 
-            const query = 'UPDATE products SET name = ?, type = ?, description = ?, age = ? , price = ?, image_URLs = ? WHERE id = ?';
+            // Update product details and image URLs in the database
+            const query = 'UPDATE products SET name = ?, type = ?, description = ?, age = ?, price = ?, image_URLs = ? WHERE id = ?';
             connection.query(query, [name, type, description, age, price, imageUrlsString, id], (error, results) => {
                 connection.release();
 
@@ -342,6 +363,77 @@ router.post('/products/delete_product/:id', async (req, res) => {
         res.status(500).send('An error occurred while processing the request');
     }
 });
+
+router.post('/products/delete_image/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { imageUrl } = req.body;
+
+        getConnection((err, connection) => {
+            if (err) throw err;
+
+            // Query to get current image URLs from the product
+            let getImageUrlsQuery = 'SELECT image_URLs FROM products WHERE id = ?';
+            connection.query(getImageUrlsQuery, [id], async (error, results) => {
+                if (error) {
+                    connection.release();
+                    console.error(error);
+                    return res.status(500).send('Database retrieval failed');
+                }
+
+                // Check if the product exists
+                if (!results || results.length === 0) {
+                    connection.release();
+                    return res.status(404).send({ message: 'Product not found' });
+                }
+
+                // Check if image_URLs exists and split them
+                let imageUrls = results[0]?.image_URLs ? results[0].image_URLs.split(',') : [];
+
+                if (!imageUrls.includes(imageUrl)) {
+                    connection.release();
+                    return res.status(400).send({ message: 'Image URL not found in product' });
+                }
+
+                // Remove the imageUrl from the array
+                imageUrls = imageUrls.filter(url => url !== imageUrl);
+
+                // Update the product's image URLs in the database
+                const updatedImageUrls = imageUrls.join(',');
+                let updateImageUrlsQuery = 'UPDATE products SET image_URLs = ? WHERE id = ?';
+                connection.query(updateImageUrlsQuery, [updatedImageUrls, id], (updateError) => {
+                    if (updateError) {
+                        connection.release();
+                        console.error(updateError);
+                        return res.status(500).send('Failed to update image URLs');
+                    }
+
+                    // Delete the image from the local uploads directory
+                    const filePath = path.join(uploadsDir, imageUrl);
+
+                    try {
+                        if (fs.existsSync(filePath)) {
+                            fs.unlinkSync(filePath); // Delete the file
+                        } else {
+                            console.warn(`File not found: ${filePath}`);
+                        }
+                    } catch (fsError) {
+                        console.error('Error deleting file:', fsError);
+                        return res.status(500).send('Failed to delete the image file');
+                    }
+
+                    connection.release();
+                    res.status(200).send({ message: 'Image removed successfully' });
+                });
+            });
+        });
+
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('An error occurred while processing the request');
+    }
+});
+
 
 router.get('/orders_status', async (req, res) => {
     try {

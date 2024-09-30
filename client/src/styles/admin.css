@@ -214,6 +214,22 @@
 .admin-form-label {
   font-weight: 600;
 }
+.delete-image-button {
+  background: none;
+  border: none;
+  color: red; /* Change color to your preference */
+  font-size: 20px; /* Adjust size */
+  cursor: pointer;
+  position: absolute; /* To position it as desired */
+  top: 5px; /* Adjust as needed */
+  right: 5px; /* Adjust as needed */
+}
+
+.image-upload-slot {
+  position: relative; /* To position the button relative to the slot */
+  display: inline-block; /* Align images side by side */
+  margin-right: 10px; /* Space between image slots */
+}
 
 /* END ADD PRODUCT FORM */
 
