@@ -54,7 +54,7 @@ const Cart = () => {
                     // Format imageUrls for each product
                     const formattedProducts = products.map(prod => {
                         const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                        const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                        const imageUrls = imageIds.map(name => `/uploads/${name}`);
                         return { ...prod, imageUrls };
                     });
 
@@ -87,7 +87,7 @@ const Cart = () => {
                     // Format image URLs and ensure each product has a qty
                     const formattedProducts = products.map(prod => {
                         const imageIds = prod.image_URLs ? prod.image_URLs.split(',') : [];
-                        const imageUrls = imageIds.map(id => `https://drive.google.com/thumbnail?id=${id}`);
+                        const imageUrls = imageIds.map(name => `/uploads/${name}`);
 
                         // Find the corresponding cart item to get the qty
                         const cartItem = cachedCart.find(item => item.productID === prod.id);
