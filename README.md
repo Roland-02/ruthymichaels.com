@@ -1,70 +1,86 @@
-# Getting Started with Create React App
+# ruthymichaels.com - Online E-commerce Bookstore
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Demo Video
 
-## Available Scripts
+Click the link to watch a short demonstration: https://drive.google.com/file/d/1mTPGLFAMb_FTrtOl8h1oFQL1-wwM8QCy/view?usp=sharing
 
-In the project directory, you can run:
+## Project Overview:
+In this project, I developed a fully functional **online e-commerce bookstore** from the ground up, using modern web development technologies and best practices. The platform allows users to browse, search, and purchase books seamlessly while offering a robust administrative backend to manage inventory, orders, and users.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Key Features Implemented:
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### **Frontend (User Interface)**:
+1. **Responsive Design**:
+   - Built a mobile-friendly and responsive user interface with **React.js** and **CSS** frameworks like **Bootstrap** and **Tailwind** for an optimized user experience across devices.
+   
+2. **Product Catalog**:
+   - Displayed an interactive catalog of books with filtering options by genre, author, price range, and rating. Each product page featured book descriptions, pricing, user reviews, and images.
 
-### `npm test`
+3. **Search Functionality**:
+   - Integrated a **real-time search** bar with auto-suggestions for books by title, author, or keyword, improving user navigation and ease of use.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+4. **Shopping Cart & Checkout System**:
+   - Implemented a dynamic **shopping cart** feature, allowing users to add, update, and remove items.
+   - Built a secure **checkout process** that supports guest checkout and integrates with **payment gateways** such as PayPal and Stripe for seamless transactions.
 
-### `npm run build`
+5. **User Authentication & Profiles**:
+   - Developed a secure user authentication system with **JWT (JSON Web Tokens)**.
+   - Enabled users to create and manage profiles, track orders, and write reviews on purchased books.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+6. **Product Reviews & Ratings**:
+   - Added a **review system** allowing authenticated users to rate and review books, contributing to a more engaging shopping experience.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+---
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### **Backend (Server & Database)**:
+1. **RESTful API Development**:
+   - Created a scalable backend using **Node.js** and **Express.js**, delivering a RESTful API for managing book data, user accounts, and orders.
+   
+2. **Database Management**:
+   - Designed and managed a **MySQL** database to handle product details (books), customer data, orders, reviews, and payments.
 
-### `npm run eject`
+3. **Admin Panel**:
+   - Developed a comprehensive **admin dashboard** for bookstore owners to manage book inventory, track sales, update prices, and monitor user activity.
+   - Integrated functionality for bulk uploading of book data, images, and stock levels to the system.
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+4. **File Management**:
+   - Enabled multiple image uploads with **file handling** for book covers, ensuring the uniqueness of each image to prevent file overwriting.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. **Security Best Practices**:
+   - Followed security best practices by implementing **data validation**, **password hashing** (using bcrypt), and **sanitization** to protect the platform from attacks like SQL injection and cross-site scripting (XSS).
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### **Additional Functionalities**:
+1. **Wishlist**:
+   - Added a **wishlist feature** so users can save books for future purchases.
+   
+2. **Order History & Tracking**:
+   - Built a **user dashboard** that allowed customers to view and track the status of their previous orders.
 
-## Learn More
+3. **Email Notifications**:
+   - Set up **automated email notifications** for order confirmations, shipping updates, and promotional offers, improving user engagement and communication.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Technologies Used:
+- **Frontend**: React.js, JavaScript (ES6+), HTML5, CSS3, Bootstrap, Tailwind CSS
+- **Backend**: Node.js, Express.js, REST API
+- **Database**: MySQL
+- **Authentication**: JWT, bcrypt (for password encryption)
+- **File Handling**: Multer (for image uploads)
+- **Payment Integration**: Stripe, PayPal
+- **Version Control**: Git, GitHub
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Key Achievements:
+- Successfully built and deployed a full-stack e-commerce bookstore with a focus on user experience, security, and scalability.
+- Implemented real-time search, responsive design, and a seamless checkout experience to enhance the platform’s usability.
+- Delivered an admin dashboard for streamlined management of books, inventory, and orders, contributing to the overall operational efficiency of the platform.
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project showcases my expertise in **full-stack development**, combining **frontend** and **backend** skills to create a robust, secure, and user-friendly e-commerce solution for a bookstore.
