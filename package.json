@@ -2,7 +2,8 @@
     "scripts": {
         "client": "npm start --prefix client",
         "server": "nodemon app.js",
-        "dev": "concurrently \"npm run client\" \"npm run server\""
+        "dev": "concurrently \"npm run client\" \"npm run server\"",
+        "homepage": "https://www.ruthymichaels.com"
     },
     "dependencies": {
         "@google-cloud/local-auth": "^3.0.1",
