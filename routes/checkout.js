@@ -5,7 +5,6 @@ const { getConnection } = require('../database');
 const mysql = require('mysql');
 const crypto = require('crypto');
 const Stripe = require('stripe');
-// const stripe = Stripe('sk_test_51PlctuBPrf3ZwXpUYLS372UPf6irWUnckOGGldQOxforsh8uZvoxkONgGtKtd288wFWfItlWUYp6TyGcCiHgl8Gk00JytJof5o') // secret key
 const stripe = Stripe(`${process.env.STRIPE_SECRET_KEY}`) 
 const nodemailer = require('nodemailer');
 const path = require('path');

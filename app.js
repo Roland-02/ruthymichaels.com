@@ -12,7 +12,7 @@ const https = require('https');
 // load SSL certificate and key
 const sslOptions = {
     key: fs.readFileSync(path.resolve(__dirname, 'keys/private.key')),
-    cert: fs.readFileSync(path.resolve(__dirname, 'keys/certificate.crt'))
+    cert: fs.readFileSync(path.resolve(__dirname, 'keys/certificate.cer'))
 };
 
 //middleware to be used by application
