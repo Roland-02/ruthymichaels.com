@@ -7,7 +7,7 @@ const path = require('path');
 const bodyParser = require('body-parser');
 const fs = require('fs');
 const https = require('https');
-
+const cors = require('cors')
 
 // load SSL certificate and key
 const sslOptions = {
@@ -51,6 +51,20 @@ app.use('/checkout', checkoutRoute);
 app.use(express.static(path.join(__dirname, 'client/build')));
 app.use('/uploads', express.static(path.join(__dirname, 'client/src/uploads')));
 
+const allowedOrigins = ['https://www.ruthymichaels.com', 'https://ruthymichaels.com'];
+
+app.use(cors({
+    origin: function (origin, callback) {
+        if (!origin) return callback(null, true); // Allow non-browser requests like Postman
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        } else {
+            return callback(new Error('Not allowed by CORS'));
+        }
+    },
+    credentials: true  // To allow cookies and session data
+}));
+
 // Catch-all route to serve the React app's index.html file
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
@@ -59,4 +73,4 @@ app.get('*', (req, res) => {
 // Start https server
 const server = https.createServer(sslOptions, app);
 const port = process.env.PORT;
-server.listen(port, () => console.log(`Web server started, page accessible here ${process.env.DOMAIN}`));
+server.listen(port, () => console.log(`Web server running on port ${process.env.PORT}`));
