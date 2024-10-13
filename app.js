@@ -53,17 +53,17 @@ app.use('/uploads', express.static(path.join(__dirname, 'client/src/uploads')));
 
 const allowedOrigins = ['https://www.ruthymichaels.com', 'https://ruthymichaels.com'];
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (!origin) return callback(null, true); // Allow non-browser requests like Postman
-        if (allowedOrigins.includes(origin)) {
-            return callback(null, true);
-        } else {
-            return callback(new Error('Not allowed by CORS'));
-        }
-    },
-    credentials: true  // To allow cookies and session data
-}));
+// app.use(cors({
+//     origin: function (origin, callback) {
+//         if (!origin) return callback(null, true); // Allow non-browser requests like Postman
+//         if (allowedOrigins.includes(origin)) {
+//             return callback(null, true);
+//         } else {
+//             return callback(new Error('Not allowed by CORS'));
+//         }
+//     },
+//     credentials: true  // To allow cookies and session data
+// }));
 
 // Catch-all route to serve the React app's index.html file
 app.get('*', (req, res) => {
@@ -72,5 +72,5 @@ app.get('*', (req, res) => {
 
 // Start https server
 const server = https.createServer(sslOptions, app);
-const port = process.env.PORT;
-server.listen(port, () => console.log(`Web server running on port ${process.env.PORT}`));
+const port = 443 //process.env.PORT;
+server.listen(port, () => console.log(`Web server running on port ${port}`));
